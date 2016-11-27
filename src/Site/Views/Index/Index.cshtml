@@ -1,0 +1,27 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Common.Helpers
+@using BioEngine.Site.ViewModels.News
+@using BioEngine.Site.Components
+@using BioEngine.Site.ViewComponents
+
+@inject UrlManager urlManager
+@model NewsListViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+<div class="article-list">
+    @foreach (var news in Model.News)
+    {
+        @Html.Partial("~/Views/Shared/News/Show.cshtml", new ShowNewsViewModel(news, false, urlManager))
+    }
+
+    @(await Component.InvokeAsync<PagerViewComponent>(new
+{
+    pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (int page) =>
+    {
+        return Url.Action("Index", "Index", new { page = page });
+    }, 20)
+}))
+</div>

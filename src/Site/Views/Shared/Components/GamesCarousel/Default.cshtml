@@ -1,0 +1,17 @@
+﻿@using BioEngine.Site.ViewComponents
+@model IEnumerable<GameItem>
+<nav class="slider">
+    <button class="slider__control slider__control_left" title="Влево"></button>
+    <div class="slider__list">
+        <div class="slider__list-items owl-carousel">
+            @foreach (var gameItem in Model)
+            {
+                <a class="slider__list-item" href="/@(gameItem.Url).html">
+                    <span class="slider__image"
+                          style="background-image: url(/img/slider__@(gameItem.Key).png)">@(gameItem.Title)</span>
+                    </a>
+            }
+        </div>
+    </div>
+    <button class="slider__control slider__control_right" title="Вправо"></button>
+</nav>

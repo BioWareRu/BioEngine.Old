@@ -1,0 +1,68 @@
+﻿@using BioEngine.Common.Models
+@model MenuLevel
+
+@{
+    string ulClass;
+    string liClass;
+    string aClass;
+    string spanClass;
+    if (Model.Level > 0)
+    {
+        ulClass = "header__submenu";
+        liClass = "header__submenu-item";
+        aClass = "header__submenu-link";
+        spanClass = "header__submenu-text";
+    }
+    else
+    {
+        ulClass = "header__menu-list";
+        liClass = "header__menu-item";
+        aClass = "header__menu-link";
+        spanClass = "header__menu-text";
+    }
+    if (Model.Level > 1)
+    {
+        ulClass = "header__subsubmenu";
+    }
+}
+<ul class="@ulClass">
+    @foreach (var menuItem in Model.Items)
+    {
+        var url = string.IsNullOrEmpty(menuItem.Url) ? "#" : menuItem.Url;
+        string linkClass;
+        string liSubClass;
+        if (menuItem.Children.Any())
+        {
+            linkClass = spanClass + " header__menu-text_dashed";
+            if (Model.Level > 0)
+            {
+                liSubClass = liClass + " header__submenu-item_with-subsubmenu";
+            }
+            else
+            {
+                liSubClass = liClass;
+            }
+        }
+        else
+        {
+            linkClass = spanClass;
+            liSubClass = liClass;
+        }
+        <li class="@liSubClass">
+            <a href="@url" class="@aClass">
+                @if (Model.Level > 0)
+                {
+                    @menuItem.Label
+                }
+                else
+                {
+                    <span class="@linkClass">@menuItem.Label</span>
+                }
+            </a>
+            @if (menuItem.Children.Any())
+            {
+                @Html.Partial("Menu", new MenuLevel {Items = menuItem.Children, Level = Model.Level + 1})
+            }
+        </li>
+    }
+</ul>

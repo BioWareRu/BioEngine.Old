@@ -1,0 +1,8 @@
+﻿@using BioEngine.Site.ViewComponents
+@model BannerViewModel
+@if (Model != null)
+{
+    <div class="sidebar__image">
+        <a href="@Model.AdLink"><img src="@Model.ImageUrl" style="border:0;"></a>
+    </div>
+}

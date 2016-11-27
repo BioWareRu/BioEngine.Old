@@ -1,0 +1,4 @@
+﻿@using BioEngine.Common.Models
+@model List<MenuItem>
+
+@Html.Partial("Menu", new MenuLevel {Items = Model, Level = 0})

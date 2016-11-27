@@ -1,0 +1,60 @@
+﻿@using BioEngine.Common.Models
+@model Poll
+<div class="sidebar__poll">
+    <h3 class="sidebar__poll-title">
+        <span class="upper">ОПРОС</span><br />
+        @Html.Raw(Model.Question)
+    </h3>
+    @if (Model.IsVoted())
+    {
+        var multiplier = 1 / Model.Results.First().Result;
+        foreach (var opt in Model.Results)
+        {
+            if (1 / opt.Result < multiplier)
+            {
+                multiplier = 1 / opt.Result;
+
+            }
+
+        }
+        foreach (var opt in Model.Results)
+        {
+            <div>
+                @opt.Text
+                <div class="sidebar__poll-result-item">
+                    <span class="sidebar__result-number">@(opt.Result * 100)%</span>
+                    <div class="sidebar__poll-bar" style="width: @(opt.Result*100*multiplier)%"></div>
+                </div>
+            </div>
+
+        }
+    }
+    else
+    {
+        @using (Html.BeginForm())
+        {
+            <fieldset class="sidebar__poll-fieldset">
+                @foreach (var opt in Model.Options)
+                {
+                    <label class="sidebar__poll-item">
+                        @if (Model.Multiple == 1)
+                        {
+                            <input class="sidebar__poll-input" type="checkbox" name="vote[@opt.Id]"
+                                   value="@opt.Id" id="opt_@opt.Id" />
+
+                        }
+                        else
+                        {
+                            <input class="sidebar__poll-input" type="radio" name="vote" value="@opt.Id" id="opt_@opt.Id" />
+                        }
+                        @opt.Text
+                    </label>
+
+                }
+            </fieldset>
+            <button class="sidebar__poll-submit" disabled>Голосовать</button>
+        }
+
+
+    }
+</div>

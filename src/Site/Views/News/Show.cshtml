@@ -1,0 +1,8 @@
+﻿@using BioEngine.Site.ViewModels.News
+@using BioEngine.Site.Components
+@model OneNewsViewModel
+@inject UrlManager urlManager
+<div class="article__block">
+    {% include 'b-breadcrumbs.twig' %}
+    @Html.Partial("~/Views/Shared/News/Show.cshtml", new ShowNewsViewModel(Model.News, true, urlManager))
+</div>

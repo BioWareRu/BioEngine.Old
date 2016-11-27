@@ -1,0 +1,126 @@
+﻿@using BioEngine.Site.ViewComponents
+@model PagerModel
+<nav class="pagination">
+    @if (Model.PageCount > 1)
+    {
+        if (Model.CurrentPage > 1)
+        {
+            <a class="pagination__item pagination__item_link" href="@Model.PrevLink()">← Предыдущая</a>
+        }
+        else
+        {
+            <span class="pagination__item pagination__item_disabled">← Предыдущая</span>
+        }
+        if (Model.CurrentPage == 1)
+        {
+            <span class="pagination__item pagination__item_active">1</span>
+        }
+        else
+        {
+            <a class="pagination__item pagination__item_link" href="@Model.FirstLink()">1</a>
+        }
+        if (Model.PageCount > 7)
+        {
+            if (Model.CurrentPage >= 6 && Model.CurrentPage <= Model.PageCount - 5)
+            {
+                <span class="pagination__item">...</span>
+                <a class="pagination__item pagination__item_link"
+                   href="@Model.PageLink(Model.CurrentPage - 2)">@(Model.CurrentPage - 2)</a>
+                <a class="pagination__item pagination__item_link"
+                   href="@Model.PageLink(Model.CurrentPage - 1)">@(Model.CurrentPage - 1)</a>
+                <span class="pagination__item pagination__item_active">@Model.CurrentPage</span>
+                <a class="pagination__item pagination__item_link"
+                   href="@Model.PageLink(Model.CurrentPage + 1)">@(Model.CurrentPage + 1)</a>
+                <a class="pagination__item pagination__item_link"
+                   href="@Model.PageLink(Model.CurrentPage + 2)">@(Model.CurrentPage + 2)</a>
+                <span class="pagination__item">...</span>
+
+            }
+            else
+            {
+                if (Model.CurrentPage > Model.PageCount - 5)
+                {
+                    <span class="pagination__item">...</span>
+                    for (var page = Model.PageCount - 5; page < Model.PageCount; page++)
+                    {
+                        if (page == Model.CurrentPage)
+                        {
+                            <span class="pagination__item pagination__item_active">@page</span>
+                        }
+                        else
+                        {
+                            <a class="pagination__item pagination__item_link"
+                               href="@Model.PageLink(page)">@page</a>
+
+                        }
+                    }
+                }
+                else
+                {
+                    for (var page = 2; page <= 6; page++)
+                    {
+                        if (page == Model.CurrentPage)
+                        {
+                            <span class="pagination__item pagination__item_active">@page</span>
+                        }
+                        else
+                        {
+                            <a class="pagination__item pagination__item_link"
+                               href="@Model.PageLink(page)">@page</a>
+
+                        }
+                    }
+                    <span class="pagination__item">...</span>
+                }
+            }
+        }
+        else
+        {
+            for (var page = 2; page <= Model.PageCount; page++)
+            {
+                if (page < Model.PageCount)
+                {
+                    if (page == Model.CurrentPage)
+                    {
+                        <span class="pagination__item pagination__item_active">@page</span>
+
+                    }
+                    else
+                    {
+                        <a class="pagination__item pagination__item_link"
+                           href="@Model.PageLink(page)">@page</a>
+
+                    }
+
+                }
+
+            }
+        }
+        if (Model.CurrentPage == Model.PageCount)
+        {
+
+            <span class="pagination__item pagination__item_active">@Model.PageCount</span>
+        }
+        else
+        {
+
+            <a class="pagination__item pagination__item_link"
+               href="@Model.LastLink()">@Model.PageCount</a>
+        }
+        if (Model.CurrentPage < Model.PageCount)
+        {
+            <a class="pagination__item pagination__item_link" href="@Model.NextLink()" rel="next">
+                Следующая
+                →
+            </a>
+        }
+        else
+        {
+            <span class="pagination__item pagination__item_disabled">
+                Следующая
+                →
+            </span>
+
+        }
+    }
+</nav>

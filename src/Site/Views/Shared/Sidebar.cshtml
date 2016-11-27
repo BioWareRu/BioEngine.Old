@@ -1,0 +1,14 @@
+﻿@using BioEngine.Site.ViewComponents
+@Html.Partial("~/Views/Shared/UserBlock.cshtml")
+<div class="sidebar__content-wrp">
+    <form action="/search/index.html" class="search">
+        <input class="search__input" type="search" placeholder="Поиск" name="q" />
+        <button class="search__magnifier"></button>
+    </form>
+    @await Component.InvokeAsync(typeof(CounterViewComponent))
+    @await Component.InvokeAsync(typeof(BannerViewComponent))
+    @await Component.InvokeAsync(typeof(BannerViewComponent))
+    @await Component.InvokeAsync(typeof(PollViewComponent))
+    @await Component.InvokeAsync(typeof(BannerViewComponent))
+    @await Component.InvokeAsync(typeof(BannerViewComponent))
+</div>

@@ -1,0 +1,65 @@
+﻿@using BioEngine.Common.Helpers
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using BioEngine.Site.Extensions
+@inject IViewLocalizer Localizer
+@model BioEngine.Site.ViewModels.News.ShowNewsViewModel
+
+<article class="@(!Model.ShowFull?"article-list__item":"article")">
+    <header class="article-list__header">
+        <div class="article-list__title-wrap">
+            <h2 class="article-list__title">
+                @if (Model.ShowFull)
+                {
+                    if (Model.News.Sticky > 0)
+                    {
+                        <text>Важно!</text>
+                    }
+                    @Html.Raw(Model.News.Title)
+                }
+                else
+                {
+                    <a class="article-list__permalink" href="@Model.NewsUrl(Url)">
+                        @if (Model.News.Sticky > 0)
+                        {
+                            <text>Важно!</text>
+                        }
+                        @Html.Raw(Model.News.Title)
+                        @if (Model.News.Pub != 1)
+                        {
+                            <text>(Неопубликовано)</text>
+                        }
+                    </a>
+                }
+
+            </h2>
+            <time class="article-list__date"
+                  datetime="@Model.Date.DateTime.ToString("yyyy-MM-dd hh:mm:ss")">@Model.Date.DateTime.ToString("dd.MM.yyyy hh:mm"),&nbsp;@Model.News.Author.Name</time>
+            </div>
+            <a class="article-list__title-image" href="@Model.News.Parent.NewsUrl"
+               title="@Model.News.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.News.Parent.DisplayTitle">
+            </a>
+        </header>
+
+        <div class="b-text">
+            @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.ShortText))
+            @if (Model.ShowFull)
+            {
+                @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.AddText))
+            }
+        </div>
+
+
+        <footer class="article-list__footer">
+            @if (Model.News.HasMore && !Model.ShowFull)
+            {
+                <a class="article-list__morelink" href="@Model.NewsUrl(Url)">Подробнее</a>
+            }
+
+            <div class="article-list__footer-controls">
+                @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl(Url))
+                <a class="article-list__comments" href="#">@(Localizer.Plural("Comments", Model.News.Comments))</a>
+            </div>
+        </footer>
+    </article>

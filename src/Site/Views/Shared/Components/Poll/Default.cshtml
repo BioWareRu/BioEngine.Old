@@ -31,7 +31,7 @@
     }
     else
     {
-        @using (Html.BeginForm())
+        using (Html.BeginForm())
         {
             <fieldset class="sidebar__poll-fieldset">
                 @foreach (var opt in Model.Options)

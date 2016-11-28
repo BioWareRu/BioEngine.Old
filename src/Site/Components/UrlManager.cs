@@ -1,35 +1,31 @@
 ﻿using BioEngine.Common.Models;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BioEngine.Site.Components
 {
     public class UrlManager
     {
-        private AppSettings Settings;
+        private readonly AppSettings _settings;
 
         public UrlManager(IOptions<AppSettings> options)
         {
-            Settings = options.Value;
+            _settings = options.Value;
         }
 
         public string GetParentIconUrl(Developer developer)
         {
-            return Settings.AssetsDomain
-                 + Settings.DevelopersImagesPath + developer.Icon;
+            return _settings.AssetsDomain
+                   + _settings.DevelopersImagesPath + developer.Icon;
         }
 
         public string GetParentIconUrl(Game game)
         {
-            return Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon;
+            return _settings.AssetsDomain + _settings.GamesImagesPath + "small/" + game.Icon;
         }
 
         public string GetParentIconUrl(Topic topic)
         {
-            return Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon;
+            return _settings.AssetsDomain + _settings.TopicsImagesPath + topic.Icon;
         }
     }
 }

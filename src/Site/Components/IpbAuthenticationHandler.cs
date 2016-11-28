@@ -1,28 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace BioEngine.Site.Components
 {
     public class IpbAuthenticationHandler : AuthenticationHandler<IpbAuthenticationOptions>
     {
-        public IpbAuthenticationHandler()
-        {
-
-        }
-
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            AuthenticationTicket ticket;
-            //some login
-            //for guest
             ClaimsIdentity identity;
 
             var userDesc = await GetIpbResponse();
@@ -33,17 +24,15 @@ namespace BioEngine.Site.Components
                 identity.AddClaim(new Claim("userId", userDesc.MemberId.ToString()));
                 identity.AddClaim(new Claim("avatarUrl", userDesc.AvatarUrl));
                 identity.AddClaim(new Claim("profileUrl", userDesc.ProfileUrl));
-                if(userDesc.IsRenegade)
-                {
+                if (userDesc.IsRenegade)
                     identity.AddClaim(new Claim("renegade", "1"));
-                }
             }
             else
             {
                 identity = new ClaimsIdentity();
                 identity.AddClaim(new Claim(ClaimTypes.Name, "Guest"));
             }
-            ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "ipb");
+            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "ipb");
             return AuthenticateResult.Success(ticket);
         }
 
@@ -51,26 +40,27 @@ namespace BioEngine.Site.Components
         {
             var baseAddress = new Uri("https://forum.bioware.ru");
             var cookieContainer = new CookieContainer();
-            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
-            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+            using (var handler = new HttpClientHandler {CookieContainer = cookieContainer})
             {
-                cookieContainer.Add(baseAddress, new Cookie("CookieName", "cookie_value"));
-                foreach (var cookie in Request.Cookies)
+                using (var client = new HttpClient(handler) {BaseAddress = baseAddress})
                 {
-                    var newCookie = new Cookie(cookie.Key, cookie.Value, "/");
-                    newCookie.Secure = true;
-                    cookieContainer.Add(baseAddress, newCookie);
+                    cookieContainer.Add(baseAddress, new Cookie("CookieName", "cookie_value"));
+                    foreach (var cookie in Request.Cookies)
+                    {
+                        var newCookie = new Cookie(cookie.Key, cookie.Value, "/") {Secure = true};
+                        cookieContainer.Add(baseAddress, newCookie);
+                    }
+                    var result = await client.GetAsync("/api/user.php");
+                    result.EnsureSuccessStatusCode();
+                    var data = await result.Content.ReadAsStringAsync();
+                    var userDesc = JsonConvert.DeserializeObject<IpbResponse>(data);
+                    return userDesc;
                 }
-                var result = await client.GetAsync("/api/user.php");
-                result.EnsureSuccessStatusCode();
-                var data = await result.Content.ReadAsStringAsync();
-                var userDesc = JsonConvert.DeserializeObject<IpbResponse>(data);
-                return userDesc;
             }
         }
-
     }
 
+    [UsedImplicitly]
     public class IpbAuthorizationHandler : AuthorizationHandler<IpbRequestPassed>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IpbRequestPassed requirement)
@@ -82,22 +72,14 @@ namespace BioEngine.Site.Components
 
     public class IpbRequestPassed : IAuthorizationRequirement
     {
-        public IpbRequestPassed()
-        {
-        }
     }
 
     public struct IpbResponse
     {
-        [JsonProperty("member_id")]
-        public int? MemberId;
-        [JsonProperty("member_name")]
-        public string MemberName;
-        [JsonProperty("avatarUrl")]
-        public string AvatarUrl;
-        [JsonProperty("isRenegade")]
-        public bool IsRenegade;
-        [JsonProperty("profile_url")]
-        public string ProfileUrl;
+        [JsonProperty("member_id")] public int? MemberId;
+        [JsonProperty("member_name")] public string MemberName;
+        [JsonProperty("avatarUrl")] public string AvatarUrl;
+        [JsonProperty("isRenegade")] public bool IsRenegade;
+        [JsonProperty("profile_url")] public string ProfileUrl;
     }
 }

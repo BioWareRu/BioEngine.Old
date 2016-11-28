@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Site.Base;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +19,10 @@ namespace BioEngine.Site.Controllers
             var dateEnd = new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59)).ToUnixTimeSeconds();
 
             var news =
-                Context.News.FirstOrDefault(n => n.Pub == 1 && n.Date >= dateStart && n.Date <= dateEnd && n.Url == url);
+                Context.News.FirstOrDefault(
+                    n => (n.Pub == 1) && (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
 
-            if (news == null)
-            {
-                return new ViewResult() {StatusCode = 404};
-            }
-
-            return View(news);
+            return news == null ? new ViewResult {StatusCode = 404} : View(news);
         }
     }
 }

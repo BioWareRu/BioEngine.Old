@@ -1,55 +1,44 @@
-﻿using BioEngine.Common.Models;
+﻿using System.Threading.Tasks;
+using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace BioEngine.Site.ViewComponents
 {
     public class BannerViewComponent : ViewComponent
     {
-        private BannerManager Manager;
-        private AppSettings Settings;
+        private readonly BannerManager _manager;
+        private readonly AppSettings _settings;
 
         public BannerViewComponent(BannerManager manager, IOptions<AppSettings> settings)
         {
-            Manager = manager;
-            Settings = settings.Value;
+            _manager = manager;
+            _settings = settings.Value;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var banner = await Manager.Next();
+            var banner = await _manager.Next();
             if (banner != null)
-            {
-                return View(new BannerViewModel(banner, Settings));
-            }
-            else
-            {
-                return Content(string.Empty);
-            }
+                return View(new BannerViewModel(banner, _settings));
+            return Content(string.Empty);
         }
     }
 
     public class BannerViewModel
     {
-        private Advertisement Banner;
-        private AppSettings Settings;
+        private readonly Advertisement _banner;
+        private readonly AppSettings _settings;
 
         public BannerViewModel(Advertisement banner, AppSettings settings)
         {
-            Banner = banner;
-            Settings = settings;
+            _banner = banner;
+            _settings = settings;
         }
 
-        public string ImageUrl
-        {
-            get
-            {
-                return Settings.IPBUploadsDomain + Banner.Images.Large;
-            }
-        }
+        public string ImageUrl => _settings.IPBUploadsDomain + _banner.Images.Large;
 
-        public string AdLink { get { return Banner.AdLink; } }
+        public string AdLink => _banner.AdLink;
     }
 }

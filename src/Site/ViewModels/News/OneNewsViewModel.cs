@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BioEngine.Site.Helpers;
+﻿using System.Collections.Generic;
 using BioEngine.Common.Models;
+using BioEngine.Site.Helpers;
 
 namespace BioEngine.Site.ViewModels.News
 {

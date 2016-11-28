@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site.ViewComponents
 {
@@ -10,10 +8,7 @@ namespace BioEngine.Site.ViewComponents
     {
         public async Task<IViewComponentResult> InvokeAsync(PagerModel pagerModel)
         {
-            return await Task.Run(() =>
-            {
-                return View(pagerModel);
-            });
+            return await Task.Run(() => View(pagerModel));
         }
     }
 
@@ -26,7 +21,7 @@ namespace BioEngine.Site.ViewComponents
         public PagerModel(int currentPage, int totalCount, Func<int, string> urlGenerator, int itemsPerPage = 10)
         {
             CurrentPage = currentPage;
-            PageCount = (int)Math.Ceiling((double)totalCount / itemsPerPage);
+            PageCount = (int) Math.Ceiling((double) totalCount/itemsPerPage);
             UrlGenerator = urlGenerator;
         }
 

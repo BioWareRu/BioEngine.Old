@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BioEngine.Site.Helpers
 {
     public class ContentHelper
     {
-        private static Regex ImgRegex = new Regex("<img.+?src=[\\\"\'](.+?)[\\\"\'].*?>", RegexOptions.IgnoreCase);
+        private static readonly Regex ImgRegex = new Regex("<img.+?src=[\\\"\'](.+?)[\\\"\'].*?>",
+            RegexOptions.IgnoreCase);
 
-        private static Regex StripTagsRegex = new Regex("<.*?>");
+        private static readonly Regex StripTagsRegex = new Regex("<.*?>");
 
         public static string GetImageUrl(string content)
         {
@@ -29,9 +28,7 @@ namespace BioEngine.Site.Helpers
                     .Split(' ');
             var desc = string.Join(" ", words.Take(lenght).ToList());
             if (words.Length > lenght)
-            {
                 desc += "...";
-            }
 
             return desc;
         }

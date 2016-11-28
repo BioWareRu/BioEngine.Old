@@ -1,14 +1,14 @@
-﻿using BioEngine.Common.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels
 {
     public abstract class BaseViewModel
     {
-        public BaseViewModel(IEnumerable<Settings> settings)
+        private readonly IEnumerable<Settings> _settings;
+
+        protected BaseViewModel(IEnumerable<Settings> settings)
         {
             _settings = settings;
         }
@@ -27,11 +27,9 @@ namespace BioEngine.Site.ViewModels
 
         public string ThemeName { get; set; } = "default";
 
-        private IEnumerable<Settings> _settings;
-
         public string GetSettingValue(string settingName)
         {
-            return _settings.Where(x => x.Name == settingName).FirstOrDefault()?.Value;
+            return _settings.FirstOrDefault(x => x.Name == settingName)?.Value;
         }
     }
 

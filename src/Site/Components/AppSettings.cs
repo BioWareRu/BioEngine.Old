@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BioEngine.Site.Components
+﻿namespace BioEngine.Site.Components
 {
     public class AppSettings
     {

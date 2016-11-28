@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.News
 {
     public class NewsListViewModel : BaseViewModel
     {
-        public NewsListViewModel(IEnumerable<Settings> settings, IEnumerable<Common.Models.News> news, int totalNews, int currentPage) : base(settings)
+        public NewsListViewModel(IEnumerable<Settings> settings, IEnumerable<Common.Models.News> news, int totalNews,
+            int currentPage) : base(settings)
         {
             News = news;
             TotalNews = totalNews;

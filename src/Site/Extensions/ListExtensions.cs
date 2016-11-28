@@ -1,25 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc.Localization;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Huyn.PluralNet;
 using System.Globalization;
+using Huyn.PluralNet;
+using Huyn.PluralNet.Utils;
+using Microsoft.AspNetCore.Mvc.Localization;
 
 namespace BioEngine.Site.Extensions
 {
     public static class ListExtensions
     {
-        private static Random rng = new Random();
+        private static readonly Random Rng = new Random();
 
         public static void Shuffle<T>(this IList<T> list)
         {
-            int n = list.Count;
+            var n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
-                T value = list[k];
+                var k = Rng.Next(n + 1);
+                var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }
@@ -27,7 +26,7 @@ namespace BioEngine.Site.Extensions
 
         public static string Plural(this IViewLocalizer localizer, string key, int number)
         {
-            var provider = Huyn.PluralNet.Utils.PluralHelper.GetPluralChooser(CultureInfo.CurrentCulture);
+            var provider = PluralHelper.GetPluralChooser(CultureInfo.CurrentCulture);
             var pluralType = provider.ComputePlural(number);
             string selectedSentence = null;
             try
@@ -52,11 +51,15 @@ namespace BioEngine.Site.Extensions
                     case PluralTypeEnum.MANY:
                         selectedSentence = localizer.GetString(key + "_Many");
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
             return selectedSentence != null ? string.Format(selectedSentence, number) : "";
-
         }
     }
 }

@@ -8,29 +8,27 @@ namespace BioEngine.Site.ViewComponents
 {
     public class GamesCarouselViewComponent : ViewComponent
     {
-        private static List<GameItem> Games = new List<GameItem>() {
-            new GameItem("sonic","Sonic Chronicles","sonic"),
-            new GameItem("bg","Baldur's Gate","baldurs_gate"),
-            new GameItem("da","Dragon Age: Начало","dragon_age"),
-            new GameItem("tor","Star Wars: The Old Republic","the_old_republic"),
-            new GameItem("da2","Dragon Age II","dragon_age_2"),
-            new GameItem("dai","Dragon Age: Инквизиция","dragon_age_inquisition"),
-            new GameItem("mea","Mass Effect: Andromeda","mass_effect_andromeda"),
-            new GameItem("me3","Mass Effect 3","mass_effect_3"),
-            new GameItem("kotor","Stat Wars: Knights of the Old Republic","kotor"),
-            new GameItem("me","Mass Effect","mass_effect"),
-            new GameItem("nwn","NeverWinter Nights","neverwinter_nights"),
-            new GameItem("me2","Mass Effect 2","mass_effect_2"),
-            new GameItem("nno","NeverWinter Online","neverwinter"),
-            new GameItem("je","Jade Empire","jade_empire"),
+        private static readonly List<GameItem> Games = new List<GameItem>
+        {
+            new GameItem("sonic", "Sonic Chronicles", "sonic"),
+            new GameItem("bg", "Baldur's Gate", "baldurs_gate"),
+            new GameItem("da", "Dragon Age: Начало", "dragon_age"),
+            new GameItem("tor", "Star Wars: The Old Republic", "the_old_republic"),
+            new GameItem("da2", "Dragon Age II", "dragon_age_2"),
+            new GameItem("dai", "Dragon Age: Инквизиция", "dragon_age_inquisition"),
+            new GameItem("mea", "Mass Effect: Andromeda", "mass_effect_andromeda"),
+            new GameItem("me3", "Mass Effect 3", "mass_effect_3"),
+            new GameItem("kotor", "Stat Wars: Knights of the Old Republic", "kotor"),
+            new GameItem("me", "Mass Effect", "mass_effect"),
+            new GameItem("nwn", "NeverWinter Nights", "neverwinter_nights"),
+            new GameItem("me2", "Mass Effect 2", "mass_effect_2"),
+            new GameItem("nno", "NeverWinter Online", "neverwinter"),
+            new GameItem("je", "Jade Empire", "jade_empire")
         };
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return await Task.Run(() =>
-            {
-                return View(Games.AsReadOnly());
-            });
+            return await Task.Run(() => View(Games.AsReadOnly()));
         }
     }
 

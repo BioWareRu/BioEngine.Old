@@ -6,7 +6,7 @@
 <html>
 <head lang="ru">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <link rel='alternate' type='application/rss+xml' title='RSS' href='https://www.bioware.ru/news/rss.xml'>
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
@@ -49,11 +49,11 @@
           id="stylesheet">
 
     <script>
-        window.twttr = (function (d, s, id) {
+        window.twttr = (function(d, s, id) {
             var t = window.twttr || {};
             if (d.getElementById(id)) return t;
             t._e = [];
-            t.ready = function (f) {
+            t.ready = function(f) {
                 t._e.push(f);
             };
             return t;
@@ -61,40 +61,40 @@
     </script>
 </head>
 <body class="body_me3">
-    <header class="header">
-        <div class="header__content">
-            <a href="/" class="header__logo-link">
-                <img src="/img/header__logo.png" alt="logo" />
-            </a>
-            <nav class="header__menu">
-                @await Component.InvokeAsync("Menu", new { key = "index" });
-            </nav>
-        </div>
-    </header>
-    <!--slider-->
-    @(await Component.InvokeAsync<GamesCarouselViewComponent>())
-    <div class="page-layout">
-        <main class="page-layout__content">
-            @RenderBody()
-        </main>
-        <aside class="page-layout__sidebar">
-            @Html.Partial("~/Views/Shared/Sidebar.cshtml")
-        </aside>
+<header class="header">
+    <div class="header__content">
+        <a href="/" class="header__logo-link">
+            <img src="/img/header__logo.png" alt="logo"/>
+        </a>
+        <nav class="header__menu">
+            @await Component.InvokeAsync("Menu", new {key = "index"});
+        </nav>
     </div>
-    <!--footer-->
-    <div class="popup__wrp">
-        <div class="popup">
-            @using (Html.BeginForm("login", "user", FormMethod.Post, new Dictionary<string, object>() { { "class", "popup__login-form" } }))
-            {
-                <input class="popup__text-input" type="text" name="login" placeholder="Логин" required>
-                <input class="popup__text-input" type="password" name="password" placeholder="Пароль" required>
-                <button class="popup__button">Войти</button>
-                <div class="popup__error"></div>
-            }
-        </div>
+</header>
+<!--slider-->
+@(await Component.InvokeAsync<GamesCarouselViewComponent>())
+<div class="page-layout">
+    <main class="page-layout__content">
+        @RenderBody()
+    </main>
+    <aside class="page-layout__sidebar">
+        @Html.Partial("~/Views/Shared/Sidebar.cshtml")
+    </aside>
+</div>
+<!--footer-->
+<div class="popup__wrp">
+    <div class="popup">
+        @using (Html.BeginForm("login", "user", FormMethod.Post, new Dictionary<string, object>() {{"class", "popup__login-form"}}))
+        {
+            <input class="popup__text-input" type="text" name="login" placeholder="Логин" required>
+            <input class="popup__text-input" type="password" name="password" placeholder="Пароль" required>
+            <button class="popup__button">Войти</button>
+            <div class="popup__error"></div>
+        }
     </div>
-    <script src="~/js/script.js"></script>
-    @Html.Raw(Model.GetSettingValue("counters"))
+</div>
+<script src="~/js/script.js"></script>
+@Html.Raw(Model.GetSettingValue("counters"))
 
 </body>
 </html>

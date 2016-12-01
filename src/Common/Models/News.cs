@@ -6,16 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class News : BaseModel
+    public class News : ChildModel
     {
         [Key]
         public int Id { get; set; }
-
-        public int? GameId { get; set; }
-
-        public int? DeveloperId { get; set; }
-
-        public int? TopicId { get; set; }
 
         public string Url { get; set; }
 
@@ -67,40 +61,27 @@ namespace BioEngine.Common.Models
         [ForeignKey("AuthorId")]
         public User Author { get; set; }
 
-        [ForeignKey("GameId")]
-        public Game Game { get; set; }
+        public bool HasMore => !string.IsNullOrEmpty(AddText);
 
-        [ForeignKey("DeveloperId")]
-        public Developer Developer { get; set; }
+        public int? TopicId { get; set; }
 
-        [ForeignKey("TopicId")]
+        [ForeignKey(nameof(TopicId))]
         public Topic Topic { get; set; }
 
-        public ParentModel Parent
+        public override ParentModel Parent
         {
             get
             {
                 if (GameId > 0)
-                {
                     return Game;
-                }
-                else
-                {
-                    if (DeveloperId > 0)
-                    {
-                        return Developer;
-                    }
-                    else if (TopicId > 0)
-                    {
-                        return Topic;
-                    }
-                }
+                if (DeveloperId > 0)
+                    return Developer;
+                if (TopicId > 0)
+                    return Topic;
 
                 throw new Exception("No parent!");
             }
         }
-
-        public bool HasMore => !string.IsNullOrEmpty(AddText);
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {

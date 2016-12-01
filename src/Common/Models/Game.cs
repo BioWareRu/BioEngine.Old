@@ -60,8 +60,12 @@ namespace BioEngine.Common.Models
 
         public string VotedUsers { get; set; }
 
+        [ForeignKey(nameof(DeveloperId))]
+        public Developer Developer { get; set; }
+
         public override string NewsUrl => "#";
         public override string Icon => SmallLogo;
+        public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
 
         public static void ConfigureDB(ModelBuilder modelBuilder)

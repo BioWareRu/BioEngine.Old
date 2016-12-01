@@ -10,6 +10,7 @@ namespace BioEngine.Common.Base
         public abstract string NewsUrl { get; }
 
         public abstract string Icon { get; }
+        public abstract string ParentUrl { get; }
 
         public abstract string DisplayTitle { get; }
     }

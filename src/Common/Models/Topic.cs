@@ -20,6 +20,7 @@ namespace BioEngine.Common.Models
 
         public override string NewsUrl => "#";
         public override string Icon => Logo;
+        public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
 
         public static void ConfigureDB(ModelBuilder modelBuilder)

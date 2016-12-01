@@ -19,7 +19,7 @@
                 }
                 else
                 {
-                    <a class="article-list__permalink" href="@Model.NewsUrl(Url)">
+                    <a class="article-list__permalink" href="@Model.NewsUrl">
                         @if (Model.News.Sticky > 0)
                         {
                             <text>Важно!</text>
@@ -55,11 +55,11 @@
         <footer class="article-list__footer">
             @if (Model.News.HasMore && !Model.ShowFull)
             {
-                <a class="article-list__morelink" href="@Model.NewsUrl(Url)">Подробнее</a>
+                <a class="article-list__morelink" href="@Model.NewsUrl">Подробнее</a>
             }
 
             <div class="article-list__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl(Url))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl)
                 <a class="article-list__comments" href="#">@(Localizer.Plural("Comments", Model.News.Comments))</a>
             </div>
         </footer>

@@ -1,4 +1,5 @@
 ﻿using System;
+using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,13 +20,8 @@ namespace BioEngine.Site.ViewModels.News
 
         public DateTimeOffset Date => DateTimeOffset.FromUnixTimeSeconds(News.Date);
 
-        public string ParentIconUrl => UrlManager.GetParentIconUrl((dynamic) News.Parent);
+        public string ParentIconUrl => UrlManager.News.ParentIconUrl((dynamic) News.Parent);
 
-        public string NewsUrl(IUrlHelper urlHelper)
-        {
-            return urlHelper.Action("Show", "News",
-                new {year = Date.Year, month = Date.Month, day = Date.Day, url = News.Url},
-                urlHelper.ActionContext.HttpContext.Request.Scheme);
-        }
+        public string NewsUrl => UrlManager.News.PublicUrl(News, true);
     }
 }

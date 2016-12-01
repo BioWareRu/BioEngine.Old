@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +52,7 @@ namespace BioEngine.Site
             services.AddSingleton<IAuthorizationHandler, IpbAuthorizationHandler>();
             services.Configure<DBConfiguration>(Configuration.GetSection("Data:Mysql"));
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.Configure<IpbAuthenticationOptions>(o =>
             {
                 o.AutomaticChallenge = true;
@@ -58,7 +60,7 @@ namespace BioEngine.Site
             });
             services.AddDbContext<BWContext>();
             services.AddScoped<BannerManager>();
-            services.AddSingleton<UrlManager>();
+            services.AddScoped<UrlManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

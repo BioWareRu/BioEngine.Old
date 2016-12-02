@@ -3,7 +3,6 @@ using BioEngine.Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
-using MySQL.Data.Entity.Extensions;
 
 namespace BioEngine.Common.DB
 {
@@ -49,7 +48,7 @@ namespace BioEngine.Common.DB
                 Database = _configuration.Database
             };
             //_logger.Information($"PG: {builder.ToString()}");
-            optionsBuilder.UseMySQL(builder.ToString());
+            optionsBuilder.UseMySql(builder.ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

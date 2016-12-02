@@ -21,7 +21,7 @@ namespace BioEngine.Common.Models
         public int AdMaximumValue { get; set; }
         public string AdMaximumUnit { get; set; }
         public string AdAdditionalSettings { get; set; }
-        public int AdHtmlHttpsSet { get; set; }
+        public bool AdHtmlHttpsSet { get; set; }
         public uint? AdMember { get; set; }
 
         public AdvetisementImages Images

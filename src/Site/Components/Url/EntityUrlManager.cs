@@ -1,4 +1,5 @@
-﻿using BioEngine.Common.Base;
+﻿using System;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -23,24 +24,13 @@ namespace BioEngine.Site.Components.Url
             var url = UrlHelper.Action(action, controller, urlParams,
                 absolute ? UrlHelper.ActionContext.HttpContext.Request.Scheme : null);
             url = url.Replace("%2F", "/"); //TODO: Ugly hack because of https://github.com/aspnet/Routing/issues/363
+            if (url.IndexOf(".html", StringComparison.Ordinal) < 0)
+            {
+                url += ".html";
+            }
             return url;
         }
 
-        public string ParentIconUrl(Developer developer)
-        {
-            return Settings.AssetsDomain
-                   + Settings.DevelopersImagesPath + developer.Icon;
-        }
-
-        public string ParentIconUrl(Game game)
-        {
-            return Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon;
-        }
-
-        public string ParentIconUrl(Topic topic)
-        {
-            return Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon;
-        }
 
         protected string ParentUrl(ChildModel child)
         {

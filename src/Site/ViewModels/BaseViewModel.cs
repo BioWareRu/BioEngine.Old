@@ -23,8 +23,6 @@ namespace BioEngine.Site.ViewModels
 
         public List<BreadCrumbsItem> BreadCrumbs { get; private set; } = new List<BreadCrumbsItem>();
 
-        public bool IsDevelopment { get; set; }
-
         public string ThemeName { get; set; } = "default";
 
         public string GetSettingValue(string settingName)
@@ -35,7 +33,13 @@ namespace BioEngine.Site.ViewModels
 
     public struct BreadCrumbsItem
     {
-        public string Title;
-        public string Url;
+        public string Url { get; }
+        public string Title { get; }
+
+        public BreadCrumbsItem(string url, string title)
+        {
+            Url = url;
+            Title = title;
+        }
     }
 }

@@ -82,6 +82,26 @@
     </aside>
 </div>
 <!--footer-->
+<footer class="footer">
+    <div class="footer__content">
+        <a class="footer__logo" href="/">
+            <img class="footer__logo-img" src="/img/footer__logo.png" alt="bioware.ru" />
+        </a>
+
+        <div class="footer__copyright-text">
+            При любом публичном использовании материалов сайта ссылка на <a href="/"
+                                                                            class="link-on-dark">www.bioware.ru</a>
+            обязательна. <br />
+            Полное копирование допускается не иначе как с письменного разрешения администрации.
+        </div>
+        <address class="footer__contacts">
+            2005-@DateTime.Now.Year © <a class="link-on-dark" href="/">www.BioWare.ru</a>
+            <br>
+            <a href="mailto:bioteam@bioware.ru" class="link-on-dark">bioteam@bioware.ru</a>
+        </address>
+    </div>
+</footer>
+
 <div class="popup__wrp">
     <div class="popup">
         @using (Html.BeginForm("login", "user", FormMethod.Post, new Dictionary<string, object>() {{"class", "popup__login-form"}}))

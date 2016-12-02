@@ -34,25 +34,28 @@ namespace BioEngine.Common.Models
             return voted;
         }
 
+        private List<PollResultsEntry> _results;
+
         public List<PollResultsEntry> Results
         {
             get
             {
+                if (_results != null) return _results;
+                _results = new List<PollResultsEntry>();
                 var votes = Votes;
-                var all = 0;
-                foreach (var vote in votes)
-                {
-                    all += vote.Value;
-                }
+                var all = votes.Sum(vote => int.Parse(vote.Value));
 
-                var results = new List<PollResultsEntry>();
                 foreach (var option in Options)
                 {
-                    var optVotes = votes.Where(x => x.Key == "opt_" + option.Id).FirstOrDefault().Value;
-                    results.Add(new PollResultsEntry { Id = option.Id, Text = option.Text, Result = all > 0 ? optVotes / all : 0 });
+                    var optVotes = int.Parse(votes.FirstOrDefault(x => x.Key == "opt_" + option.Id).Value);
+                    _results.Add(new PollResultsEntry
+                    {
+                        Id = option.Id,
+                        Text = option.Text,
+                        Result = all > 0 ? Math.Round(optVotes/(double) all,4) : 0
+                    });
                 }
-
-                return results;
+                return _results;
             }
         }
 
@@ -64,11 +67,11 @@ namespace BioEngine.Common.Models
             }
         }
 
-        public Dictionary<string, int> Votes
+        public Dictionary<string, string> Votes
         {
             get
             {
-                return JsonConvert.DeserializeObject<Dictionary<string, int>>(VotesJson);
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson);
             }
         }
 
@@ -99,6 +102,6 @@ namespace BioEngine.Common.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public float Result { get; set; }
+        public double Result { get; set; }
     }
 }

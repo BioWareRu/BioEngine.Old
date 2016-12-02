@@ -39,16 +39,4 @@ namespace BioEngine.Site.ViewModels.Articles
         public int CurrentPage { get; set; }
         public int TotalArticles { get; set; }
     }
-
-    public struct ChildCat
-    {
-        public ArticleCat Cat { get; }
-        public IReadOnlyCollection<Article> LastArticles { get; }
-
-        public ChildCat(ArticleCat cat, List<Article> lastArticles)
-        {
-            Cat = cat;
-            LastArticles = lastArticles.AsReadOnly();
-        }
-    }
 }

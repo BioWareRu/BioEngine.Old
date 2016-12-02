@@ -92,17 +92,17 @@ namespace BioEngine.Site.Components.Url
 
         public string ParentArticlesUrl(Developer developer)
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ArticlesList(developer.Url));
+            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(developer.Url));
         }
 
         public string ParentArticlesUrl(Game game)
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ArticlesList(game.Url));
+            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(game.Url));
         }
 
         public string ParentArticlesUrl(Topic topic)
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ArticlesList(topic.Url));
+            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(topic.Url));
         }
     }
 }

@@ -67,30 +67,69 @@ namespace BioEngine.Site.Controllers
                     "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
 
-                var lastArticles =
-                    Context.Articles.Where(x => x.CatId == category.Id && x.Pub == 1)
-                        .OrderByDescending(x => x.Id)
-                        .Take(5)
-                        .ToList();
-
                 Context.Entry(category).Collection(x => x.Children).Load();
-                var children = new List<ChildCat>();
-                foreach (var child in category.Children)
-                {
-                    var childLastArticles =
-                        Context.Articles.Where(x => x.CatId == child.Id && x.Pub == 1)
-                            .OrderByDescending(x => x.Id)
-                            .Take(5)
-                            .ToList();
-                    children.Add(new ChildCat(child, childLastArticles));
-                }
+                var children = category.Children.Select(child => new ChildCat(child, GetLastArticles(child))).ToList();
 
-                var viewModel = new ArticleCatViewModel(Settings, category, children, lastArticles, UrlManager);
+                var viewModel = new ArticleCatViewModel(Settings, category, children, GetLastArticles(category),
+                    UrlManager);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("ArticleCat", viewModel);
             }
             throw new NotImplementedException();
+        }
+
+        [HttpGet("/{parentUrl}/articles.html")]
+        public IActionResult ParentArticles(string parentUrl)
+        {
+            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
+            if (parent == null) return StatusCode(404);
+
+            var cats = LoadCatsTree(parent);
+
+            return View("ParentArticles", new ParentArticlesViewModel(Settings, parent, cats, UrlManager));
+        }
+
+        public List<Article> GetLastArticles(ArticleCat cat, int count = 5)
+        {
+            return Context.Articles.Where(x => x.CatId == cat.Id && x.Pub == 1)
+                .OrderByDescending(x => x.Id)
+                .Take(count)
+                .ToList();
+        }
+
+        private List<ChildCat> LoadCatsTree(ParentModel parent)
+        {
+            var rootCatsQuery = Context.ArticleCats.AsQueryable();
+            switch (parent.Type)
+            {
+                case ParentType.Game:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == parent.Id);
+                    break;
+                case ParentType.Developer:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == parent.Id);
+                    break;
+                case ParentType.Topic:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == parent.Id);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            var rootCats = rootCatsQuery.ToList();
+
+            return rootCats.Select(LoadCatChildren).ToList();
+        }
+
+        private ChildCat LoadCatChildren(ArticleCat cat)
+        {
+            var children = new List<ChildCat>();
+            Context.Entry(cat).Collection(x => x.Children).Load();
+            foreach (var child in cat.Children)
+            {
+                children.Add(LoadCatChildren(child));
+            }
+            return new ChildCat(cat, GetLastArticles(cat), children);
         }
 
         private ArticleCat GetCat(ParentModel parent, string catUrl)
@@ -171,11 +210,6 @@ namespace BioEngine.Site.Controllers
                 }
             }
             return null;
-        }
-
-        public IActionResult ArticlesList(string parentUrl)
-        {
-            throw new NotImplementedException();
         }
     }
 }

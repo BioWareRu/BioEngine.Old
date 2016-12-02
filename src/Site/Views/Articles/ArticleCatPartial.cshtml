@@ -1,0 +1,29 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@model BioEngine.Site.ViewModels.Articles.ChildCat
+@inject UrlManager UrlManager
+<div class="files__cat">
+    <ul class="files__list">
+        <li class="files__item">
+            <h2 class="files__title">
+                <a class="files__link" href="@UrlManager.Articles.CatPublicUrl(Model.Cat)">@Model.Cat.Title</a>
+            </h2>
+            <ul class="files__list">
+                @foreach (var article in Model.LastArticles)
+                {
+                    <li class="files__item">
+                        <a class="files__link"
+                           href="@UrlManager.Articles.PublicUrl(article)">
+                            @article.Title
+                        </a><br>
+                        @Html.Raw(article.Announce)
+                    </li>
+                }
+                @foreach (var child in Model.Children)
+                {
+                    @Html.Partial("ArticleCatPartial", child)
+                }
+            </ul>
+        </li>
+    </ul>
+</div>

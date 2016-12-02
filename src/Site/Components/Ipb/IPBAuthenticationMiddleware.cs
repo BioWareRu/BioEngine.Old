@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BioEngine.Site.Components
+namespace BioEngine.Site.Components.Ipb
 {
     [UsedImplicitly]
-    public class IPBAuthenticationMiddleware : AuthenticationMiddleware<IpbAuthenticationOptions>
+    public class IpbAuthenticationMiddleware : AuthenticationMiddleware<IpbAuthenticationOptions>
     {
-        public IPBAuthenticationMiddleware(RequestDelegate next, IOptions<IpbAuthenticationOptions> options,
+        public IpbAuthenticationMiddleware(RequestDelegate next, IOptions<IpbAuthenticationOptions> options,
             ILoggerFactory loggerFactory, UrlEncoder encoder) : base(next, options, loggerFactory, encoder)
         {
         }

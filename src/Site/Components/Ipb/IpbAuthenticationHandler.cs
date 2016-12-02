@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 
-namespace BioEngine.Site.Components
+namespace BioEngine.Site.Components.Ipb
 {
     public class IpbAuthenticationHandler : AuthenticationHandler<IpbAuthenticationOptions>
     {

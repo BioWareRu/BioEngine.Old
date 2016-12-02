@@ -1,4 +1,6 @@
 ﻿@using BioEngine.Site.Components
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.Games.GamePageViewModel
 @inject UrlManager UrlManager
 @{
@@ -6,7 +8,7 @@
     Layout = "~/Views/_Main.cshtml";
 }
 <div class="article__block">
-    {% include 'b-breadcrumbs.twig' %}
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
     <article class="article">
         <header class="article__header">
             <div class="article__title-wrap">
@@ -69,7 +71,7 @@
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@UrlManager.Games.NewsUrl(Model.Game)">Все новости</a>
+                        <a href="@UrlManager.News.ParentNewsUrl(Model.Game)">Все новости</a>
                     </p>
                 </div>
                 <div class="game-info__links">

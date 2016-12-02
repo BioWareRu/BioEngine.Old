@@ -8,18 +8,18 @@ namespace BioEngine.Site.ViewComponents
 {
     public class BannerViewComponent : ViewComponent
     {
-        private readonly BannerManager _manager;
+        private readonly BannerProvider _provider;
         private readonly AppSettings _settings;
 
-        public BannerViewComponent(BannerManager manager, IOptions<AppSettings> settings)
+        public BannerViewComponent(BannerProvider provider, IOptions<AppSettings> settings)
         {
-            _manager = manager;
+            _provider = provider;
             _settings = settings.Value;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var banner = await _manager.Next();
+            var banner = await _provider.Next();
             if (banner != null)
                 return View(new BannerViewModel(banner, _settings));
             return Content(string.Empty);

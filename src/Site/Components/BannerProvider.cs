@@ -10,13 +10,13 @@ using JetBrains.Annotations;
 namespace BioEngine.Site.Components
 {
     [UsedImplicitly]
-    public class BannerManager
+    public class BannerProvider
     {
         //private BWContext DbContext;
 
         private readonly Stack<Advertisement> _banners;
 
-        public BannerManager(BWContext dbContext)
+        public BannerProvider(BWContext dbContext)
         {
             var currentTs = DateTimeOffset.Now.ToUnixTimeSeconds();
             var banners =

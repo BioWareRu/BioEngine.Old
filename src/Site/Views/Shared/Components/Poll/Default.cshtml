@@ -1,4 +1,5 @@
-﻿@using BioEngine.Common.Models
+﻿@using System.Globalization
+@using BioEngine.Common.Models
 @model Poll
 <div class="sidebar__poll">
     <h3 class="sidebar__poll-title">
@@ -22,8 +23,8 @@
             <div>
                 @opt.Text
                 <div class="sidebar__poll-result-item">
-                    <span class="sidebar__result-number">@(opt.Result * 100)%</span>
-                    <div class="sidebar__poll-bar" style="width: @(opt.Result*100*multiplier)%"></div>
+                    <span class="sidebar__result-number">@((opt.Result * 100).ToString(CultureInfo.InvariantCulture))%</span>
+                    <div class="sidebar__poll-bar" style="width: @((opt.Result*100*multiplier).ToString(CultureInfo.InvariantCulture))%"></div>
                 </div>
             </div>
 

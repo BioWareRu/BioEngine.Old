@@ -8,7 +8,7 @@ namespace BioEngine.Common.Models
     public class Game : ParentModel
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         [Required]
         public int DeveloperId { get; set; }
@@ -63,6 +63,7 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(DeveloperId))]
         public Developer Developer { get; set; }
 
+        public override ParentType Type { get; set; } = ParentType.Game;
         public override string NewsUrl => "#";
         public override string Icon => SmallLogo;
         public override string ParentUrl => Url;

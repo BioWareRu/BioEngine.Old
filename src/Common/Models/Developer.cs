@@ -8,7 +8,7 @@ namespace BioEngine.Common.Models
     public class Developer : ParentModel
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Url { get; set; }
 
@@ -37,6 +37,7 @@ namespace BioEngine.Common.Models
 
         public string VotedUsers { get; set; }
 
+        public override ParentType Type { get; set; } = ParentType.Developer;
         public override string NewsUrl => "#";
         public override string Icon => Logo;
         public override string ParentUrl => Url;
@@ -58,6 +59,11 @@ namespace BioEngine.Common.Models
             modelBuilder.Entity<Developer>().Property(x => x.RatePos).HasColumnName("rate_pos");
             modelBuilder.Entity<Developer>().Property(x => x.RateNeg).HasColumnName("rate_neg");
             modelBuilder.Entity<Developer>().Property(x => x.VotedUsers).HasColumnName("voted_users");
+        }
+
+        public static string PublicUrl(Developer develop)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

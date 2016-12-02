@@ -15,6 +15,7 @@ namespace BioEngine.Common.Base
         [ForeignKey(nameof(DeveloperId))]
         public Developer Developer { get; set; }
 
+        [NotMapped]
         public virtual ParentModel Parent
         {
             get
@@ -25,6 +26,22 @@ namespace BioEngine.Common.Base
                     return Developer;
 
                 throw new Exception("No parent!");
+            }
+            set
+            {
+                switch (value.Type)
+                {
+                    case ParentType.Game:
+                        Game = (Game)value;
+                        break;
+                    case ParentType.Developer:
+                        Developer = (Developer)value;
+                        break;
+                    case ParentType.Topic:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
@@ -22,10 +23,14 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(Pid))]
         public ArticleCat ParentCat { get; set; }
 
+        [InverseProperty(nameof(ParentCat))]
+        public List<ArticleCat> Children { get; set; }
+
         public int TopicId { get; set; }
 
         [ForeignKey(nameof(TopicId))]
         public Topic Topic { get; set; }
+
 
         public override ParentModel Parent
         {

@@ -8,7 +8,7 @@ namespace BioEngine.Common.Models
     public class Topic : ParentModel
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Title { get; set; }
 
@@ -18,6 +18,7 @@ namespace BioEngine.Common.Models
 
         public string Desc { get; set; }
 
+        public override ParentType Type { get; set; } = ParentType.Topic;
         public override string NewsUrl => "#";
         public override string Icon => Logo;
         public override string ParentUrl => Url;

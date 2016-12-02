@@ -2,6 +2,8 @@
 using System.IO;
 using BioEngine.Common.DB;
 using BioEngine.Site.Components;
+using BioEngine.Site.Components.Ipb;
+using BioEngine.Site.Components.Url;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -47,7 +49,7 @@ namespace BioEngine.Site
                     config.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization().AddTypedRouting();
 
             services.AddSingleton<IAuthorizationHandler, IpbAuthorizationHandler>();
             services.Configure<DBConfiguration>(Configuration.GetSection("Data:Mysql"));
@@ -59,8 +61,9 @@ namespace BioEngine.Site
                 o.AuthenticationScheme = "ipb";
             });
             services.AddDbContext<BWContext>();
-            services.AddScoped<BannerManager>();
+            services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
+            services.AddScoped<ParentEntityProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,7 +103,7 @@ namespace BioEngine.Site
 
             app.UseStatusCodePages();
 
-            app.UseMiddleware<IPBAuthenticationMiddleware>();
+            app.UseMiddleware<IpbAuthenticationMiddleware>();
 
             app.UseMvc(routes =>
             {

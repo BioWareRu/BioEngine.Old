@@ -22,11 +22,13 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "PluralNet": "1.0.3",
-    "Microsoft.AspNetCore.Authentication": "1.0.0"
+    "Microsoft.AspNetCore.Authentication": "1.1.0",
+    "AspNet.Mvc.TypedRouting": "1.2.0"
   },
 
   "tools": {
-    "Microsoft.AspNetCore.Razor.Tools": "1.0.0-preview2-final"
+    "Microsoft.AspNetCore.Razor.Tools": "1.0.0-preview2-final",
+    "Microsoft.DotNet.Watcher.Tools": "1.1.0-preview4-final"
   },
 
   "frameworks": {
@@ -59,6 +61,6 @@
   },
 
   "scripts": {
-    "prepublish": [ "bower install", "dotnet bundle" ]
+    "prepublish": ["bower install", "dotnet bundle"]
   }
 }

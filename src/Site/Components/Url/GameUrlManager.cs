@@ -41,7 +41,7 @@ namespace BioEngine.Site.Components.Url
 
         public string LogoUrl(Game game)
         {
-            return _settings.AssetsDomain + _settings.GamesImagesPath + "big/" + game.Logo;
+            return Settings.AssetsDomain + Settings.GamesImagesPath + "big/" + game.Logo;
         }
     }
 }

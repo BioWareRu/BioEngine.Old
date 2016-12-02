@@ -39,22 +39,22 @@ namespace BioEngine.Site.Components.Url
         private void Poppulate(File file)
         {
             if (file.Cat == null)
-                _dbContext.Entry(file).Reference(x => x.Cat).Load();
+                DbContext.Entry(file).Reference(x => x.Cat).Load();
             var cat = file.Cat;
             while (cat != null)
             {
                 if (cat.ParentCat == null)
                     if (cat.Pid > 0)
-                        _dbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
                     else
                         break;
                 cat = cat.ParentCat;
             }
 
             if ((file.GameId > 0) && (file.Game == null))
-                _dbContext.Entry(file).Reference(x => x.Game).Load();
+                DbContext.Entry(file).Reference(x => x.Game).Load();
             if ((file.DeveloperId > 0) && (file.Developer == null))
-                _dbContext.Entry(file).Reference(x => x.Developer).Load();
+                DbContext.Entry(file).Reference(x => x.Developer).Load();
         }
     }
 }

@@ -40,7 +40,7 @@ namespace BioEngine.Site.Components.Url
         {
             if (article.Cat == null)
             {
-                _dbContext.Entry(article).Reference(x => x.Cat).Load();
+                DbContext.Entry(article).Reference(x => x.Cat).Load();
             }
             var cat = article.Cat;
             while (cat != null)
@@ -49,7 +49,7 @@ namespace BioEngine.Site.Components.Url
                 {
                     if (cat.Pid > 0)
                     {
-                        _dbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
                     }
                     else
                     {
@@ -61,15 +61,15 @@ namespace BioEngine.Site.Components.Url
 
             if (article.GameId > 0 && article.Game == null)
             {
-                _dbContext.Entry(article).Reference(x => x.Game).Load();
+                DbContext.Entry(article).Reference(x => x.Game).Load();
             }
             if (article.DeveloperId > 0 && article.Developer == null)
             {
-                _dbContext.Entry(article).Reference(x => x.Developer).Load();
+                DbContext.Entry(article).Reference(x => x.Developer).Load();
             }
             if (article.TopicId > 0 && article.Topic == null)
             {
-                _dbContext.Entry(article).Reference(x => x.Topic).Load();
+                DbContext.Entry(article).Reference(x => x.Topic).Load();
             }
         }
     }

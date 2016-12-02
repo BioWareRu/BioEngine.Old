@@ -44,7 +44,7 @@ namespace BioEngine.Site.Components.Url
         private int GetPicPosition(GalleryPic picture)
         {
             return
-                _dbContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
+                DbContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
                     .OrderByDescending(x => x.Id)
                     .Count();
         }
@@ -53,7 +53,7 @@ namespace BioEngine.Site.Components.Url
         {
             if (picture.Cat == null)
             {
-                _dbContext.Entry(picture).Reference(x => x.Cat).Load();
+                DbContext.Entry(picture).Reference(x => x.Cat).Load();
             }
             var cat = picture.Cat;
             while (cat != null)
@@ -62,7 +62,7 @@ namespace BioEngine.Site.Components.Url
                 {
                     if (cat.Pid > 0)
                     {
-                        _dbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
                     }
                     else
                     {
@@ -74,11 +74,11 @@ namespace BioEngine.Site.Components.Url
 
             if (picture.GameId > 0 && picture.Game == null)
             {
-                _dbContext.Entry(picture).Reference(x => x.Game).Load();
+                DbContext.Entry(picture).Reference(x => x.Game).Load();
             }
             if (picture.DeveloperId > 0 && picture.Developer == null)
             {
-                _dbContext.Entry(picture).Reference(x => x.Developer).Load();
+                DbContext.Entry(picture).Reference(x => x.Developer).Load();
             }
         }
     }

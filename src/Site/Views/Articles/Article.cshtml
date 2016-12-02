@@ -1,0 +1,35 @@
+﻿@using System.Globalization
+@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Articles.ArticleViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h1 class="article__title">
+                    @Model.Article.Title
+                </h1>
+                <span class="article__date"> @Model.Article.Author.Name,</span>
+                <time class="article__date" datetime="">@Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)</time>
+            </div>
+        </header>
+
+        <div class="b-text">
+            @Html.Raw(Model.Article.Text)
+        </div>
+
+        <footer class="article__footer">
+            <div class="article__footer-controls">
+                @Html.Partial("~/Views/Shared/Likes.cshtml", UrlManager.Articles.PublicUrl(Model.Article))
+            </div>
+        </footer>
+    </article>
+</div>

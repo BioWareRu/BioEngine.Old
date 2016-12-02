@@ -1,0 +1,74 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Articles.ArticleCatViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">@Model.ArticleCat.Title</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentArticlesUrl"
+               title="@Model.ArticleCat.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.ArticleCat.Parent.DisplayTitle">
+            </a>
+        </header>
+        @if (string.IsNullOrEmpty(Model.ArticleCat.Content))
+        {
+            <div class="files">
+                @foreach (var child in Model.Children)
+                {
+                    <div class="files__cat">
+                        <ul class="files__list">
+                            <li class="files__item">
+                                <h2 class="files__title">
+                                    <a class="files__link" href="@UrlManager.Articles.CatPublicUrl(child.Cat)">@child.Cat.Title</a>
+                                </h2>
+                                <ul class="files__list">
+                                    @foreach (var article in child.LastArticles)
+                                    {
+                                        <li class="files__item">
+                                            <a class="files__link"
+                                               href="@UrlManager.Articles.PublicUrl(article)">
+                                                @article.Title
+                                            </a><br>
+                                            @Html.Raw(article.Announce)
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+
+            </div>
+            <div class="files">
+                <ul class="files__list">
+                    @foreach (var article in Model.LastArticles)
+                    {
+                        <li class="files__item">
+                            <a class="files__link" href="@UrlManager.Articles.PublicUrl(article)">@article.Title</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            @Html.Raw(Model.ArticleCat.Content)
+        }
+
+    </article>
+    @(await Component.InvokeAsync<PagerViewComponent>(new
+      {
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalArticles, page => UrlManager.Articles.CatPublicUrl(Model.ArticleCat, page), 20)
+      }))
+</div>

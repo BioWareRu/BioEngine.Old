@@ -17,8 +17,15 @@
     },
     "Site": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "dotnet watch": {
+      "executablePath": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "commandLineArgs": "watch run --server.urls http://*:5000",
+      "launchUrl": "http://localhost:5000/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

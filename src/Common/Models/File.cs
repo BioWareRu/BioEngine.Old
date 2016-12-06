@@ -40,6 +40,9 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(CatId))]
         public FileCat Cat { get; set; }
 
+        [NotMapped]
+        public double SizeInMb => Math.Round((double) Size/1024/1024, 2);
+
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<File>().ToTable("be_files");

@@ -1,0 +1,35 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Files.ParentFilesViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">Файлы</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentArticlesUrl"
+               title="@Model.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.Parent.DisplayTitle">
+            </a>
+        </header>
+
+        <div class="files">
+            @foreach (var cat in Model.Cats)
+            {
+                @Html.Partial("FileCatPartial", cat)
+            }
+
+        </div>
+
+    </article>
+
+</div>

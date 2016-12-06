@@ -1,0 +1,34 @@
+﻿@using System.Globalization
+@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Files.FileViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+    Context.Response.Headers.Add("Refresh", $"5, url={Model.File.Link}");
+}
+
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentFilesUrl"
+               title="@Model.File.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.File.Parent.DisplayTitle">
+            </a>
+        </header>
+
+        <p>
+            Благодарим вас! Ваша закачка начнётся через несколько секунд. Если это не произошло или вам надоело
+            ждать &ndash; нажмите на <a href="@Model.File.Link">эту ссылку</a>.
+        </p>
+    </article>
+
+</div>

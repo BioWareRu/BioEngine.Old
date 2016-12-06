@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -17,8 +18,18 @@ namespace BioEngine.Site.Components.Url
         public string PublicUrl(File file)
         {
             Poppulate(file);
+            var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Show", "Files",
-                new {parentUrl = ParentUrl(file), catUrl = CatUrl(file), fileUrl = file.Url});
+                new {parentUrl = ParentUrl(file), url});
+            /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
+        }
+
+        public string DownloadUrl(File file)
+        {
+            Poppulate(file);
+            var url = CatUrl(file.Cat) + "/" + file.Url;
+            return GetUrl("Download", "Files",
+                new {parentUrl = ParentUrl(file), url});
             /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
         }
 
@@ -55,6 +66,65 @@ namespace BioEngine.Site.Components.Url
                 DbContext.Entry(file).Reference(x => x.Game).Load();
             if ((file.DeveloperId > 0) && (file.Developer == null))
                 DbContext.Entry(file).Reference(x => x.Developer).Load();
+        }
+
+        public string ParentFilesUrl(Developer developer)
+        {
+            return UrlHelper.Action<FilesController>(x => x.ParentFiles(developer.Url));
+        }
+
+        public string ParentFilesUrl(Game game)
+        {
+            return UrlHelper.Action<FilesController>(x => x.ParentFiles(game.Url));
+        }
+
+        public string ParentFilesUrl(Topic topic)
+        {
+            return UrlHelper.Action<FilesController>(x => x.ParentFiles(topic.Url));
+        }
+
+        public string CatPublicUrl(FileCat cat, int page = 1)
+        {
+            Poppulate(cat);
+            var url = CatUrl(cat) + "/" + cat.Url;
+            if (page > 1)
+            {
+                url += $"/page/{page}";
+            }
+            return GetUrl("Show", "Files",
+                new {parentUrl = ParentUrl(cat), url});
+        }
+
+        private static string CatUrl(FileCat cat)
+        {
+            var urls = new SortedList<int, string>();
+            var i = 0;
+            while (cat != null)
+            {
+                urls.Add(i, cat.Url);
+                i++;
+                cat = cat.ParentCat;
+            }
+            return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
+        }
+
+        private void Poppulate(FileCat cat)
+        {
+            while (cat != null)
+            {
+                if (cat.ParentCat == null)
+                {
+                    if (cat.Pid > 0)
+                    {
+                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                cat = cat.ParentCat;
+            }
         }
     }
 }

@@ -1,0 +1,61 @@
+﻿@using System.Globalization
+@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Files.FileViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentFilesUrl"
+               title="@Model.File.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.File.Parent.DisplayTitle">
+            </a>
+        </header>
+        @if (!string.IsNullOrEmpty(Model.File.YtId))
+        {
+            <div style="text-align: center">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.File.YtId"
+                        frameborder="0"
+                        allowfullscreen>
+                </iframe>
+            </div>
+            <div class="file__desc b-text">
+                @Html.Raw(Model.File.Desc)
+            </div>
+        }
+        else
+        {
+            <dl class="file__desc-list">
+                <dt class="file__desc-title">Скачали</dt>
+                <dd class="file__desc-value">@Model.File.Count</dd>
+            </dl>
+            <dl class="file__desc-list">
+                <dt class="file__desc-title">Дата последнего обновления</dt>
+                <dd class="file__desc-value">@Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture)</dd>
+            </dl>
+            <div class="file__desc b-text">
+                @Html.Raw(Model.File.Desc)
+            </div>
+            <div class="file__download">
+                <a class="file__download-btn" href="@UrlManager.Files.DownloadUrl(Model.File)">
+                    Скачать
+                    <small>(@(Model.File.SizeInMb)Mb)</small>
+                </a>
+            </div>
+        }
+
+
+    </article>
+
+</div>

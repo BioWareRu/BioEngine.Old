@@ -1,6 +1,10 @@
 ﻿@using BioEngine.Site.Extensions
 @using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.BaseViewModel
+@if (string.IsNullOrEmpty(Model.Title))
+{
+    throw new ArgumentNullException(nameof(Model.Title));
+}
 <!DOCTYPE html>
 
 <html>
@@ -85,13 +89,15 @@
 <footer class="footer">
     <div class="footer__content">
         <a class="footer__logo" href="/">
-            <img class="footer__logo-img" src="/img/footer__logo.png" alt="bioware.ru" />
+            <img class="footer__logo-img" src="/img/footer__logo.png" alt="bioware.ru"/>
         </a>
 
         <div class="footer__copyright-text">
             При любом публичном использовании материалов сайта ссылка на <a href="/"
-                                                                            class="link-on-dark">www.bioware.ru</a>
-            обязательна. <br />
+                                                                            class="link-on-dark">
+                www.bioware.ru
+            </a>
+            обязательна. <br/>
             Полное копирование допускается не иначе как с письменного разрешения администрации.
         </div>
         <address class="footer__contacts">

@@ -12,11 +12,11 @@ namespace BioEngine.Site.ViewModels.Articles
         public ArticleCat ArticleCat { get; }
         public UrlManager UrlManager { get; set; }
 
-        public IEnumerable<ChildCat> Children { get; }
+        public IEnumerable<CatsTree<ArticleCat,Article>> Children { get; }
 
         public IEnumerable<Article> LastArticles { get; }
 
-        public ArticleCatViewModel(IEnumerable<Settings> settings, ArticleCat articleCat, IEnumerable<ChildCat> children,
+        public ArticleCatViewModel(IEnumerable<Settings> settings, ArticleCat articleCat, IEnumerable<CatsTree<ArticleCat, Article>> children,
             IEnumerable<Article> lastArticles,
             UrlManager urlManager)
             : base(settings)

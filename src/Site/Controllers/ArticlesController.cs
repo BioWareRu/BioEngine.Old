@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
@@ -68,7 +69,9 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
 
                 Context.Entry(category).Collection(x => x.Children).Load();
-                var children = category.Children.Select(child => new ChildCat(child, GetLastArticles(child))).ToList();
+                var children =
+                    category.Children.Select(child => new CatsTree<ArticleCat, Article>(child, GetLastArticles(child)))
+                        .ToList();
 
                 var viewModel = new ArticleCatViewModel(Settings, category, children, GetLastArticles(category),
                     UrlManager);
@@ -85,12 +88,12 @@ namespace BioEngine.Site.Controllers
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
-            var cats = LoadCatsTree(parent);
+            var cats = LoadCatsTree(parent, Context.ArticleCats, cat => GetLastArticles(cat));
 
             return View("ParentArticles", new ParentArticlesViewModel(Settings, parent, cats, UrlManager));
         }
 
-        public List<Article> GetLastArticles(ArticleCat cat, int count = 5)
+        public List<Article> GetLastArticles(ICat<ArticleCat> cat, int count = 5)
         {
             return Context.Articles.Where(x => x.CatId == cat.Id && x.Pub == 1)
                 .OrderByDescending(x => x.Id)
@@ -98,39 +101,6 @@ namespace BioEngine.Site.Controllers
                 .ToList();
         }
 
-        private List<ChildCat> LoadCatsTree(ParentModel parent)
-        {
-            var rootCatsQuery = Context.ArticleCats.AsQueryable();
-            switch (parent.Type)
-            {
-                case ParentType.Game:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == parent.Id);
-                    break;
-                case ParentType.Developer:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == parent.Id);
-                    break;
-                case ParentType.Topic:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == parent.Id);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            var rootCats = rootCatsQuery.ToList();
-
-            return rootCats.Select(LoadCatChildren).ToList();
-        }
-
-        private ChildCat LoadCatChildren(ArticleCat cat)
-        {
-            var children = new List<ChildCat>();
-            Context.Entry(cat).Collection(x => x.Children).Load();
-            foreach (var child in cat.Children)
-            {
-                children.Add(LoadCatChildren(child));
-            }
-            return new ChildCat(cat, GetLastArticles(cat), children);
-        }
 
         private ArticleCat GetCat(ParentModel parent, string catUrl)
         {

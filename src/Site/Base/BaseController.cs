@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
+using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Site.Base
 {
@@ -70,6 +74,39 @@ namespace BioEngine.Site.Base
             catUrl = null;
             page = 0;
             return false;
+        }
+
+        protected List<CatsTree<TCat, TEntity>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
+            Func<ICat<TCat>, List<TEntity>> getLast)
+            where TCat : ChildModel, ICat<TCat> where TEntity : ChildModel
+        {
+            var rootCatsQuery = dbSet.AsQueryable();
+            switch (parent.Type)
+            {
+                case ParentType.Game:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == parent.Id);
+                    break;
+                case ParentType.Developer:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == parent.Id);
+                    break;
+                case ParentType.Topic:
+                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == parent.Id);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            var rootCats = rootCatsQuery.ToList();
+
+            return rootCats.Select(rootCat => LoadCatChildren(rootCat, getLast)).ToList();
+        }
+
+        private CatsTree<TCat, TEntity> LoadCatChildren<TCat, TEntity>(TCat cat, Func<ICat<TCat>, List<TEntity>> getLast)
+            where TCat : class, ICat<TCat> where TEntity : ChildModel
+        {
+            Context.Entry(cat).Collection(x => x.Children).Load();
+            var children = cat.Children.Select(child => LoadCatChildren(child, getLast)).ToList();
+            return new CatsTree<TCat, TEntity>(cat, getLast(cat), children);
         }
     }
 }

@@ -63,26 +63,6 @@ namespace BioEngine.Common.Models
 
         public bool HasMore => !string.IsNullOrEmpty(AddText);
 
-        public int? TopicId { get; set; }
-
-        [ForeignKey(nameof(TopicId))]
-        public Topic Topic { get; set; }
-
-        public override ParentModel Parent
-        {
-            get
-            {
-                if (GameId > 0)
-                    return Game;
-                if (DeveloperId > 0)
-                    return Developer;
-                if (TopicId > 0)
-                    return Topic;
-
-                throw new Exception("No parent!");
-            }
-        }
-
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<News>().ToTable("be_news");

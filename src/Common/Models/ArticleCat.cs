@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class ArticleCat : ChildModel
+    public class ArticleCat : ChildModel, ICat<ArticleCat>
     {
         [Key]
         public int Id { get; set; }
@@ -25,27 +26,6 @@ namespace BioEngine.Common.Models
 
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
-
-        public int TopicId { get; set; }
-
-        [ForeignKey(nameof(TopicId))]
-        public Topic Topic { get; set; }
-
-
-        public override ParentModel Parent
-        {
-            get
-            {
-                if (GameId > 0)
-                    return Game;
-                if (DeveloperId > 0)
-                    return Developer;
-                if (TopicId > 0)
-                    return Topic;
-
-                throw new Exception("No parent!");
-            }
-        }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {

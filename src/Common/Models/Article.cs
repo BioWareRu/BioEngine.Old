@@ -30,43 +30,6 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(CatId))]
         public ArticleCat Cat { get; set; }
 
-        public int TopicId { get; set; }
-
-        [ForeignKey(nameof(TopicId))]
-        public Topic Topic { get; set; }
-
-        public override ParentModel Parent
-        {
-            get
-            {
-                if (GameId > 0)
-                    return Game;
-                if (DeveloperId > 0)
-                    return Developer;
-                if (TopicId > 0)
-                    return Topic;
-
-                throw new Exception("No parent!");
-            }
-            set
-            {
-                switch (value.Type)
-                {
-                    case ParentType.Game:
-                        Game = (Game) value;
-                        break;
-                    case ParentType.Developer:
-                        Developer = (Developer) value;
-                        break;
-                    case ParentType.Topic:
-                        Topic = (Topic) value;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Article>().ToTable("be_articles");

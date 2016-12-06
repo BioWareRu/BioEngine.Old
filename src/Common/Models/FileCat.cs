@@ -5,14 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class FileCat : ChildModel
+    public class FileCat : ChildModel, ICat<FileCat>
     {
         [Key]
         public int Id { get; set; }
+
         public int Pid { get; set; }
         public string GameOld { get; set; }
         public string Title { get; set; }
@@ -21,6 +23,9 @@ namespace BioEngine.Common.Models
 
         [ForeignKey(nameof(Pid))]
         public FileCat ParentCat { get; set; }
+
+        [InverseProperty(nameof(ParentCat))]
+        public List<FileCat> Children { get; set; }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {

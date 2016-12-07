@@ -1,7 +1,6 @@
 ﻿using System;
-using BioEngine.Common.Base;
 using BioEngine.Common.DB;
-using BioEngine.Common.Models;
+using BioEngine.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site.Components.Url
@@ -32,7 +31,7 @@ namespace BioEngine.Site.Components.Url
         }
 
 
-        protected string ParentUrl(ChildModel child)
+        protected string ParentUrl(IChildModel child)
         {
             return child.Parent.ParentUrl;
         }

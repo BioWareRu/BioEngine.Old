@@ -78,7 +78,7 @@ namespace BioEngine.Site.Base
 
         protected List<CatsTree<TCat, TEntity>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
             Func<ICat<TCat>, List<TEntity>> getLast)
-            where TCat : ChildModel, ICat<TCat> where TEntity : ChildModel
+            where TCat : class, IChildModel, ICat<TCat> where TEntity : IChildModel
         {
             var rootCatsQuery = dbSet.AsQueryable();
             switch (parent.Type)
@@ -102,7 +102,7 @@ namespace BioEngine.Site.Base
         }
 
         private CatsTree<TCat, TEntity> LoadCatChildren<TCat, TEntity>(TCat cat, Func<ICat<TCat>, List<TEntity>> getLast)
-            where TCat : class, ICat<TCat> where TEntity : ChildModel
+            where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
             Context.Entry(cat).Collection(x => x.Children).Load();
             var children = cat.Children.Select(child => LoadCatChildren(child, getLast)).ToList();

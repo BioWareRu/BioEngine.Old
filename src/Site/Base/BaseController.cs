@@ -78,7 +78,7 @@ namespace BioEngine.Site.Base
 
         protected List<CatsTree<TCat, TEntity>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
             Func<ICat<TCat>, List<TEntity>> getLast)
-            where TCat : class, IChildModel, ICat<TCat> where TEntity : IChildModel
+            where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
             var rootCatsQuery = dbSet.AsQueryable();
             switch (parent.Type)

@@ -1,19 +1,14 @@
 ﻿using System;
 using BioEngine.Common.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
 
 namespace BioEngine.Common.DB
 {
     public class BWContext : DbContext
     {
-        private readonly DBConfiguration _configuration;
-
-        public BWContext(DbContextOptions<BWContext> options, IOptions<DBConfiguration> configuration) : base(options)
+        public BWContext(DbContextOptions<BWContext> options) : base(options)
         {
             Id = Guid.NewGuid();
-            _configuration = configuration.Value;
         }
 
         public Guid Id { get; set; }
@@ -36,20 +31,6 @@ namespace BioEngine.Common.DB
         public DbSet<GalleryCat> GalleryCats { get; set; }
 
         public DbSet<Advertisement> Advertiesements { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = _configuration.Host,
-                Port = (uint) _configuration.Port,
-                UserID = _configuration.Username,
-                Password = _configuration.Password,
-                Database = _configuration.Database
-            };
-            //_logger.Information($"PG: {builder.ToString()}");
-            optionsBuilder.UseMySql(builder.ConnectionString);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

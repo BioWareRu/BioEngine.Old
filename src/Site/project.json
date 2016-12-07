@@ -23,7 +23,8 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "PluralNet": "1.0.3",
     "Microsoft.AspNetCore.Authentication": "1.1.0",
-    "AspNet.Mvc.TypedRouting": "1.2.0"
+    "AspNet.Mvc.TypedRouting": "1.2.0",
+    "Pomelo.EntityFrameworkCore.MySql": "1.1.0-*"
   },
 
   "tools": {

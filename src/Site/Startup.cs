@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
 
 namespace BioEngine.Site
 {
@@ -52,7 +54,6 @@ namespace BioEngine.Site
                 .AddDataAnnotationsLocalization().AddTypedRouting();
 
             services.AddSingleton<IAuthorizationHandler, IpbAuthorizationHandler>();
-            services.Configure<DBConfiguration>(Configuration.GetSection("Data:Mysql"));
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.Configure<IpbAuthenticationOptions>(o =>
@@ -60,7 +61,17 @@ namespace BioEngine.Site
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "ipb";
             });
-            services.AddDbContext<BWContext>();
+
+            var mysqlConnBuilder = new MySqlConnectionStringBuilder
+            {
+                Server = Configuration["Data:Mysql:Host"],
+                Port = uint.Parse(Configuration["Data:Mysql:Port"]),
+                UserID = Configuration["Data:Mysql:Username"],
+                Password = Configuration["Data:Mysql:Password"],
+                Database = Configuration["Data:Mysql:Database"]
+            };
+
+            services.AddDbContext<BWContext>(builder => builder.UseMySql(mysqlConnBuilder.ConnectionString));
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();

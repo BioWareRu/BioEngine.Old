@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
@@ -8,11 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class ArticleCat : ChildModel, ICat<ArticleCat>
+    public class ArticleCat : IChildModel, ICat<ArticleCat>
     {
-        [Key]
-        public int Id { get; set; }
-
         public int Pid { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
@@ -24,8 +20,31 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(Pid))]
         public ArticleCat ParentCat { get; set; }
 
+        [Key]
+        public int Id { get; set; }
+
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
+
+        public int? GameId { get; set; }
+        public int? DeveloperId { get; set; }
+        public int? TopicId { get; set; }
+
+        [ForeignKey(nameof(GameId))]
+        public Game Game { get; set; }
+
+        [ForeignKey(nameof(DeveloperId))]
+        public Developer Developer { get; set; }
+
+        [ForeignKey(nameof(TopicId))]
+        public Topic Topic { get; set; }
+
+        [NotMapped]
+        public ParentModel Parent
+        {
+            get { return ParentModel.GetParent(this); }
+            set { ParentModel.SetParent(this, value); }
+        }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {

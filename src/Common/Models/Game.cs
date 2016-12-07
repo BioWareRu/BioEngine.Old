@@ -63,7 +63,7 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(DeveloperId))]
         public Developer Developer { get; set; }
 
-        public override ParentType Type { get; set; } = ParentType.Game;
+        public override ParentType Type { get; } = ParentType.Game;
         public override string NewsUrl => "#";
         public override string Icon => SmallLogo;
         public override string ParentUrl => Url;

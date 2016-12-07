@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,8 @@ namespace BioEngine.Common.Models
 
         public string Desc { get; set; }
 
-        public override ParentType Type { get; set; } = ParentType.Topic;
+        public override ParentType Type { get; } = ParentType.Topic;
+
         public override string NewsUrl => "#";
         public override string Icon => Logo;
         public override string ParentUrl => Url;

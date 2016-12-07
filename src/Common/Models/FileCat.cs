@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class FileCat : ChildModel, ICat<FileCat>
+    public class FileCat : IChildModel, ICat<FileCat>
     {
-        [Key]
-        public int Id { get; set; }
-
         public int Pid { get; set; }
         public string GameOld { get; set; }
         public string Title { get; set; }
@@ -24,8 +18,34 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(Pid))]
         public FileCat ParentCat { get; set; }
 
+        [Key]
+        public int Id { get; set; }
+
         [InverseProperty(nameof(ParentCat))]
         public List<FileCat> Children { get; set; }
+
+
+        public int? GameId { get; set; }
+        public int? DeveloperId { get; set; }
+
+        [NotMapped]
+        public int? TopicId { get; set; }
+
+        [ForeignKey(nameof(GameId))]
+        public Game Game { get; set; }
+
+        [ForeignKey(nameof(DeveloperId))]
+        public Developer Developer { get; set; }
+
+        [NotMapped]
+        public Topic Topic { get; set; }
+
+        [NotMapped]
+        public ParentModel Parent
+        {
+            get { return ParentModel.GetParent(this); }
+            set { ParentModel.SetParent(this, value); }
+        }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {

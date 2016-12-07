@@ -1,15 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
     public class Poll
     {
+        private List<PollResultsEntry> _results;
+
+        private bool voted;
         public int PollId { get; set; }
 
         public string Question { get; set; }
@@ -21,20 +22,6 @@ namespace BioEngine.Common.Models
         public int NumChoises { get; set; }
         public int Multiple { get; set; }
         public int OnOff { get; set; }
-
-        private bool voted;
-
-        public void SetVoted()
-        {
-            voted = true;
-        }
-
-        public bool IsVoted()
-        {
-            return voted;
-        }
-
-        private List<PollResultsEntry> _results;
 
         public List<PollResultsEntry> Results
         {
@@ -52,7 +39,7 @@ namespace BioEngine.Common.Models
                     {
                         Id = option.Id,
                         Text = option.Text,
-                        Result = all > 0 ? Math.Round(optVotes/(double) all,4) : 0
+                        Result = all > 0 ? Math.Round(optVotes/(double) all, 4) : 0
                     });
                 }
                 return _results;
@@ -61,18 +48,22 @@ namespace BioEngine.Common.Models
 
         public List<PollOption> Options
         {
-            get
-            {
-                return JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson);
-            }
+            get { return JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson); }
         }
 
         public Dictionary<string, string> Votes
         {
-            get
-            {
-                return JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson);
-            }
+            get { return JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson); }
+        }
+
+        public void SetVoted()
+        {
+            voted = true;
+        }
+
+        public bool IsVoted()
+        {
+            return voted;
         }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
@@ -94,6 +85,7 @@ namespace BioEngine.Common.Models
     {
         [JsonProperty("id")]
         public int Id { get; set; }
+
         [JsonProperty("text")]
         public string Text { get; set; }
     }

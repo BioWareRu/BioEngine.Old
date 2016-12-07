@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace BioEngine.Common.Models
 
         public string VotedUsers { get; set; }
 
-        public override ParentType Type { get; set; } = ParentType.Developer;
+        public override ParentType Type { get; } = ParentType.Developer;
         public override string NewsUrl => "#";
         public override string Icon => Logo;
         public override string ParentUrl => Url;
@@ -59,11 +60,6 @@ namespace BioEngine.Common.Models
             modelBuilder.Entity<Developer>().Property(x => x.RatePos).HasColumnName("rate_pos");
             modelBuilder.Entity<Developer>().Property(x => x.RateNeg).HasColumnName("rate_neg");
             modelBuilder.Entity<Developer>().Property(x => x.VotedUsers).HasColumnName("voted_users");
-        }
-
-        public static string PublicUrl(Developer develop)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

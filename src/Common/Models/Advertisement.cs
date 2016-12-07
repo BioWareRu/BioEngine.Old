@@ -26,10 +26,7 @@ namespace BioEngine.Common.Models
 
         public AdvetisementImages Images
         {
-            get
-            {
-                return JsonConvert.DeserializeObject<AdvetisementImages>(AdImages);
-            }
+            get { return JsonConvert.DeserializeObject<AdvetisementImages>(AdImages); }
         }
 
         public static void ConfigureDB(ModelBuilder modelBuilder)
@@ -50,7 +47,9 @@ namespace BioEngine.Common.Models
             modelBuilder.Entity<Advertisement>().Property(x => x.AdEnd).HasColumnName("ad_end");
             modelBuilder.Entity<Advertisement>().Property(x => x.AdMaximumValue).HasColumnName("ad_maximum_value");
             modelBuilder.Entity<Advertisement>().Property(x => x.AdMaximumUnit).HasColumnName("ad_maximum_unit");
-            modelBuilder.Entity<Advertisement>().Property(x => x.AdAdditionalSettings).HasColumnName("ad_additional_settings");
+            modelBuilder.Entity<Advertisement>()
+                .Property(x => x.AdAdditionalSettings)
+                .HasColumnName("ad_additional_settings");
             modelBuilder.Entity<Advertisement>().Property(x => x.AdHtmlHttpsSet).HasColumnName("ad_html_https_set");
             modelBuilder.Entity<Advertisement>().Property(x => x.AdMember).HasColumnName("ad_member");
         }
@@ -58,10 +57,6 @@ namespace BioEngine.Common.Models
 
     public struct AdvetisementImages
     {
-        public string Large
-        {
-            get; set;
-        }
-
+        public string Large { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class FileCat : IChildModel, ICat<FileCat>
+    public class FileCat : ICat<FileCat>
     {
         public int Pid { get; set; }
         public string GameOld { get; set; }

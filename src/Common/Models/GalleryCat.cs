@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
@@ -6,12 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
-    public class GalleryCat : IChildModel
+    public class GalleryCat : ICat<GalleryCat>
     {
         public const int PicsOnPage = 24;
-
-        [Key]
-        public int Id { get; set; }
 
         public int Pid { get; set; }
         public string GameOld { get; set; }
@@ -21,6 +19,12 @@ namespace BioEngine.Common.Models
 
         [ForeignKey(nameof(Pid))]
         public GalleryCat ParentCat { get; set; }
+
+        [Key]
+        public int Id { get; set; }
+
+        [InverseProperty(nameof(ParentCat))]
+        public List<GalleryCat> Children { get; set; }
 
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }

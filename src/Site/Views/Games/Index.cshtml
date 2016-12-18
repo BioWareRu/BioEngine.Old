@@ -107,7 +107,7 @@
                         @foreach (var picture in Model.LastPics)
                         {
                             <a href="@UrlManager.Gallery.PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
-                                <img src="{{ pic.getThumbUrl(115,115) }}"
+                                <img src="@Model.UrlManager.Gallery.ThumbUrl(picture, 115, 115)"
                                      alt=""/>
                             </a>
                         }

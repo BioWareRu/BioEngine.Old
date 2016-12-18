@@ -110,7 +110,7 @@
 
 <div class="popup__wrp">
     <div class="popup">
-        @using (Html.BeginForm("login", "user", FormMethod.Post, new Dictionary<string, object>() {{"class", "popup__login-form"}}))
+        @using (Html.BeginForm("Login", "User", FormMethod.Post, new Dictionary<string, object>() {{"class", "popup__login-form"}}))
         {
             <input class="popup__text-input" type="text" name="login" placeholder="Логин" required>
             <input class="popup__text-input" type="password" name="password" placeholder="Пароль" required>

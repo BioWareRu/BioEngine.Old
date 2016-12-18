@@ -29,7 +29,7 @@ namespace BioEngine.Common.Models
             get { return JsonConvert.DeserializeObject<AdvetisementImages>(AdImages); }
         }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Advertisement>().ToTable("be_core_advertisements");
             modelBuilder.Entity<Advertisement>().HasKey(nameof(AdId));

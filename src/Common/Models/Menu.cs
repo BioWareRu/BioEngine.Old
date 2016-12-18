@@ -21,7 +21,7 @@ namespace BioEngine.Common.Models
         [Required]
         public int Date { get; set; }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Menu>().ToTable("be_menu");
             modelBuilder.Entity<Menu>().Property(x => x.Id).HasColumnName("id");

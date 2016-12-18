@@ -16,7 +16,7 @@ namespace BioEngine.Common.Models
         public string PasswordSalt { get; set; }
         public string PhotoUrl { get; set; }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("be_core_members");
             modelBuilder.Entity<User>().Property(x => x.Id).HasColumnName("member_id");

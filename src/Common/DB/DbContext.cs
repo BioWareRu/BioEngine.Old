@@ -1,17 +1,15 @@
-﻿using System;
-using BioEngine.Common.Models;
+﻿using BioEngine.Common.Models;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.DB
 {
+    [UsedImplicitly]
     public class BWContext : DbContext
     {
         public BWContext(DbContextOptions<BWContext> options) : base(options)
         {
-            Id = Guid.NewGuid();
         }
-
-        public Guid Id { get; set; }
 
         public DbSet<News> News { get; set; }
         public DbSet<User> Users { get; set; }
@@ -34,23 +32,23 @@ namespace BioEngine.Common.DB
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Models.News.ConfigureDB(modelBuilder);
-            User.ConfigureDB(modelBuilder);
-            Developer.ConfigureDB(modelBuilder);
-            Game.ConfigureDB(modelBuilder);
-            Topic.ConfigureDB(modelBuilder);
-            Menu.ConfigureDB(modelBuilder);
-            Models.Settings.ConfigureDB(modelBuilder);
-            Block.ConfigureDB(modelBuilder);
-            Advertisement.ConfigureDB(modelBuilder);
-            Poll.ConfigureDB(modelBuilder);
-            PollWho.ConfigureDB(modelBuilder);
-            Article.ConfigureDB(modelBuilder);
-            ArticleCat.ConfigureDB(modelBuilder);
-            File.ConfigureDB(modelBuilder);
-            FileCat.ConfigureDB(modelBuilder);
-            GalleryPic.ConfigureDB(modelBuilder);
-            GalleryCat.ConfigureDB(modelBuilder);
+            Models.News.ConfigureDb(modelBuilder);
+            User.ConfigureDb(modelBuilder);
+            Developer.ConfigureDb(modelBuilder);
+            Game.ConfigureDb(modelBuilder);
+            Topic.ConfigureDb(modelBuilder);
+            Menu.ConfigureDb(modelBuilder);
+            Models.Settings.ConfigureDb(modelBuilder);
+            Block.ConfigureDb(modelBuilder);
+            Advertisement.ConfigureDb(modelBuilder);
+            Poll.ConfigureDb(modelBuilder);
+            PollWho.ConfigureDb(modelBuilder);
+            Article.ConfigureDb(modelBuilder);
+            ArticleCat.ConfigureDb(modelBuilder);
+            File.ConfigureDb(modelBuilder);
+            FileCat.ConfigureDb(modelBuilder);
+            GalleryPic.ConfigureDb(modelBuilder);
+            GalleryCat.ConfigureDb(modelBuilder);
         }
     }
 }

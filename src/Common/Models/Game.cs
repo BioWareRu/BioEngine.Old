@@ -69,7 +69,7 @@ namespace BioEngine.Common.Models
         public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Game>().ToTable("be_games");
             modelBuilder.Entity<Game>().Property(x => x.Id).HasColumnName("id");

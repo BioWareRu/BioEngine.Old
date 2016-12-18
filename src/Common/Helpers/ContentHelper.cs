@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BioEngine.Common.Helpers
+﻿namespace BioEngine.Common.Helpers
 {
     public static class ContentHelper
     {

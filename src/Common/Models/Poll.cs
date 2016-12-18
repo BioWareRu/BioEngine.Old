@@ -10,7 +10,7 @@ namespace BioEngine.Common.Models
     {
         private List<PollResultsEntry> _results;
 
-        private bool voted;
+        private bool _voted;
         public int PollId { get; set; }
 
         public string Question { get; set; }
@@ -58,15 +58,15 @@ namespace BioEngine.Common.Models
 
         public void SetVoted()
         {
-            voted = true;
+            _voted = true;
         }
 
         public bool IsVoted()
         {
-            return voted;
+            return _voted;
         }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Poll>().ToTable("be_poll");
             modelBuilder.Entity<Poll>().HasKey(nameof(PollId));

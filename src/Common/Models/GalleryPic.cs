@@ -75,7 +75,7 @@ namespace BioEngine.Common.Models
             }
         }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<GalleryPic>().ToTable("be_gallery");
             modelBuilder.Entity<GalleryPic>().Property(x => x.Id).HasColumnName("id");

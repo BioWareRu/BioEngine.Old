@@ -48,7 +48,7 @@ namespace BioEngine.Common.Models
             set { ParentModel.SetParent(this, value); }
         }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<GalleryCat>().ToTable("be_gallery_cats");
             modelBuilder.Entity<GalleryCat>().Property(x => x.Id).HasColumnName("id");

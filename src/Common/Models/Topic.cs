@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 using BioEngine.Common.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +24,7 @@ namespace BioEngine.Common.Models
         public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Topic>().ToTable("be_nuke_topics");
             modelBuilder.Entity<Topic>().Property(x => x.Id).HasColumnName("id");

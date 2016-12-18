@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BioEngine.Common.Base;
+﻿using BioEngine.Common.Base;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Common.Interfaces

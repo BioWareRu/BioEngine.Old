@@ -85,7 +85,7 @@ namespace BioEngine.Common.Models
             set { ParentModel.SetParent(this, value); }
         }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<News>().ToTable("be_news");
             modelBuilder.Entity<News>().Property(x => x.Id).HasColumnName("id");

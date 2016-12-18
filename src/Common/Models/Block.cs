@@ -15,7 +15,7 @@ namespace BioEngine.Common.Models
         [Required]
         public int Active { get; set; }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Block>().ToTable("be_blocks");
             modelBuilder.Entity<Block>().Property(x => x.Index).HasColumnName("index");

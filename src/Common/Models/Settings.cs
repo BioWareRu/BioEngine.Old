@@ -19,7 +19,7 @@ namespace BioEngine.Common.Models
 
         public string Value { get; set; }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Settings>().ToTable("be_settings");
             modelBuilder.Entity<Settings>().Property(x => x.Id).HasColumnName("id");

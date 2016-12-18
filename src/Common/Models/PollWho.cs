@@ -13,7 +13,7 @@ namespace BioEngine.Common.Models
         public string Ip { get; set; }
         public string SessionId { get; set; }
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PollWho>().ToTable("be_poll_who");
             modelBuilder.Entity<PollWho>().HasKey(nameof(PollWhoId));

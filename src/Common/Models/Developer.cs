@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 using BioEngine.Common.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +42,7 @@ namespace BioEngine.Common.Models
         public override string ParentUrl => Url;
         public override string DisplayTitle => Name;
 
-        public static void ConfigureDB(ModelBuilder modelBuilder)
+        public static void ConfigureDb(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Developer>().ToTable("be_developers");
             modelBuilder.Entity<Developer>().Property(x => x.Id).HasColumnName("id");

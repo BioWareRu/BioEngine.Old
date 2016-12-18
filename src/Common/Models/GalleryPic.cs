@@ -1,6 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
+using BioEngine.Common.Helpers;
 using BioEngine.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +51,30 @@ namespace BioEngine.Common.Models
             set { ParentModel.SetParent(this, value); }
         }
 
+        private List<GalleryPicFile> _files;
+
+        public List<GalleryPicFile> Files
+        {
+            get
+            {
+                if (_files == null)
+                {
+                    _files = new List<GalleryPicFile>();
+                    var files = PhpHelper.Deserialize(FilesJson) as ArrayList;
+                    if (files != null)
+                    {
+                        foreach (Hashtable file in files)
+                        {
+                            var picFile = new GalleryPicFile(file["name"].ToString(),
+                                long.Parse(file["size"].ToString()), file["res"].ToString());
+                            _files.Add(picFile);
+                        }
+                    }
+                }
+                return _files;
+            }
+        }
+
         public static void ConfigureDB(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<GalleryPic>().ToTable("be_gallery");
@@ -62,6 +89,20 @@ namespace BioEngine.Common.Models
             modelBuilder.Entity<GalleryPic>().Property(x => x.Count).HasColumnName("count");
             modelBuilder.Entity<GalleryPic>().Property(x => x.Pub).HasColumnName("pub");
             modelBuilder.Entity<GalleryPic>().Property(x => x.Date).HasColumnName("date");
+        }
+    }
+
+    public struct GalleryPicFile
+    {
+        public string Name;
+        public long Size;
+        public string Resolution;
+
+        public GalleryPicFile(string name, long size, string resolution)
+        {
+            Name = name;
+            Size = size;
+            Resolution = resolution;
         }
     }
 }

@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
+using JetBrains.Annotations;
 
 namespace BioEngine.Site.Components
 {
+    [UsedImplicitly]
     public class ParentEntityProvider
     {
-        private List<Game> Games { get; }
-        private List<Developer> Developers { get; }
-        private List<Topic> Topics { get; }
-
         public ParentEntityProvider(BWContext dbContext)
         {
             Games = dbContext.Games.ToList();
             Developers = dbContext.Developers.ToList();
             Topics = dbContext.Topics.ToList();
         }
+
+        private List<Game> Games { get; }
+        private List<Developer> Developers { get; }
+        private List<Topic> Topics { get; }
 
         public ParentModel GetParenyByUrl(string url)
         {

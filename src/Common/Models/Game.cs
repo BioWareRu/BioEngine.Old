@@ -64,8 +64,6 @@ namespace BioEngine.Common.Models
         public Developer Developer { get; set; }
 
         public override ParentType Type { get; } = ParentType.Game;
-        public override string NewsUrl => "#";
-        public override string Icon => SmallLogo;
         public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
 

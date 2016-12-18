@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BioEngine.Common.Base;
 using BioEngine.Common.Models;
 
@@ -9,6 +6,9 @@ namespace BioEngine.Site.ViewModels.Gallery
 {
     public class ParentGalleryViewModel : BaseViewModel
     {
+        public readonly List<CatsTree<GalleryCat, GalleryPic>> Cats;
+        public readonly ParentModel Parent;
+
         public ParentGalleryViewModel(BaseViewModelConfig config, ParentModel parent,
             List<CatsTree<GalleryCat, GalleryPic>> cats) : base(config)
         {
@@ -18,10 +18,7 @@ namespace BioEngine.Site.ViewModels.Gallery
             Title = $"{Parent.DisplayTitle} - Галерея";
         }
 
-        public List<CatsTree<GalleryCat, GalleryPic>> Cats;
-        public ParentModel Parent;
-
-        public string ParentGalleryUrl => UrlManager.Gallery.ParentGalleryUrl((dynamic)Parent);
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic)Parent);
+        public string ParentGalleryUrl => UrlManager.Gallery.ParentGalleryUrl((dynamic) Parent);
+        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) Parent);
     }
 }

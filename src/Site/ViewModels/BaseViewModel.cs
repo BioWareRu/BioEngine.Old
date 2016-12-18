@@ -4,14 +4,13 @@ using System.Linq;
 using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
-using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.ViewModels
 {
     public abstract class BaseViewModel
     {
-        protected readonly IEnumerable<Settings> Settings;
         protected readonly AppSettings AppSettings;
+        protected readonly IEnumerable<Settings> Settings;
         public readonly UrlManager UrlManager;
 
         protected BaseViewModel(BaseViewModelConfig config)

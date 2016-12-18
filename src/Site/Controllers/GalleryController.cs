@@ -9,7 +9,6 @@ using BioEngine.Site.Base;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
-using BioEngine.Site.ViewModels.Files;
 using BioEngine.Site.ViewModels.Gallery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -91,9 +90,7 @@ namespace BioEngine.Site.Controllers
             }
             var cat = catQuery.FirstOrDefault();
             if (cat != null)
-            {
                 cat.Parent = parent;
-            }
             return cat;
         }
 

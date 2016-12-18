@@ -1,6 +1,5 @@
 ﻿@using System.Threading.Tasks
 @using BioEngine.Site.ViewModels.News
-@using BioEngine.Site.Components
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
 
@@ -18,7 +17,7 @@
     }
 
     @(await Component.InvokeAsync<PagerViewComponent>(new
-{
-    pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (page) => Url.Action("Index", "News", new { page }), 20)
-}))
+      {
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (page) => Url.Action("Index", "News", new {page}), 20)
+      }))
 </div>

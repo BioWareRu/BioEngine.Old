@@ -37,8 +37,6 @@ namespace BioEngine.Common.Models
         public string VotedUsers { get; set; }
 
         public override ParentType Type { get; } = ParentType.Developer;
-        public override string NewsUrl => "#";
-        public override string Icon => Logo;
         public override string ParentUrl => Url;
         public override string DisplayTitle => Name;
 

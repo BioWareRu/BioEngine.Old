@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -29,9 +28,7 @@ namespace BioEngine.Site.Components.Url
             Poppulate(cat);
             var url = CatUrl(cat);
             if (page > 1)
-            {
                 url += $"/page/{page}";
-            }
             return GetUrl("Cat", "Gallery",
                 new {parentUrl = ParentUrl(cat), url});
         }
@@ -41,16 +38,10 @@ namespace BioEngine.Site.Components.Url
             while (cat != null)
             {
                 if (cat.ParentCat == null)
-                {
                     if (cat.Pid > 0)
-                    {
                         DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
-                    }
                     else
-                    {
                         break;
-                    }
-                }
                 cat = cat.ParentCat;
             }
         }
@@ -79,34 +70,22 @@ namespace BioEngine.Site.Components.Url
         private void Poppulate(GalleryPic picture)
         {
             if (picture.Cat == null)
-            {
                 DbContext.Entry(picture).Reference(x => x.Cat).Load();
-            }
             var cat = picture.Cat;
             while (cat != null)
             {
                 if (cat.ParentCat == null)
-                {
                     if (cat.Pid > 0)
-                    {
                         DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
-                    }
                     else
-                    {
                         break;
-                    }
-                }
                 cat = cat.ParentCat;
             }
 
             if (picture.GameId > 0 && picture.Game == null)
-            {
                 DbContext.Entry(picture).Reference(x => x.Game).Load();
-            }
             if (picture.DeveloperId > 0 && picture.Developer == null)
-            {
                 DbContext.Entry(picture).Reference(x => x.Developer).Load();
-            }
         }
 
         public string ParentGalleryUrl(Developer developer)

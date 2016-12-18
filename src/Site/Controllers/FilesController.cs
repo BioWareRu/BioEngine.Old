@@ -129,7 +129,8 @@ namespace BioEngine.Site.Controllers
                     category.Children.Select(child => new CatsTree<FileCat, File>(child, GetLastFiles(child)))
                         .ToList();
 
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, GetLastFiles(category));
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, GetLastFiles(category), page,
+                    Context.Files.Count(x => x.CatId == category.Id));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -62,9 +61,9 @@ namespace BioEngine.Site.Components.Url
                 cat = cat.ParentCat;
             }
 
-            if ((file.GameId > 0) && (file.Game == null))
+            if (file.GameId > 0 && file.Game == null)
                 DbContext.Entry(file).Reference(x => x.Game).Load();
-            if ((file.DeveloperId > 0) && (file.Developer == null))
+            if (file.DeveloperId > 0 && file.Developer == null)
                 DbContext.Entry(file).Reference(x => x.Developer).Load();
         }
 
@@ -88,9 +87,7 @@ namespace BioEngine.Site.Components.Url
             Poppulate(cat);
             var url = CatUrl(cat) + "/" + cat.Url;
             if (page > 1)
-            {
                 url += $"/page/{page}";
-            }
             return GetUrl("Show", "Files",
                 new {parentUrl = ParentUrl(cat), url});
         }
@@ -113,16 +110,10 @@ namespace BioEngine.Site.Components.Url
             while (cat != null)
             {
                 if (cat.ParentCat == null)
-                {
                     if (cat.Pid > 0)
-                    {
                         DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
-                    }
                     else
-                    {
                         break;
-                    }
-                }
                 cat = cat.ParentCat;
             }
         }

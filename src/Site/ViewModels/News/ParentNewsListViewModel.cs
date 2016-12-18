@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BioEngine.Common.Base;
-using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.News
 {
@@ -17,7 +16,7 @@ namespace BioEngine.Site.ViewModels.News
             Title = parent.DisplayTitle + " - Новости";
         }
 
-        public ParentModel Parent { get; set; }
+        public ParentModel Parent { get; }
         public IEnumerable<Common.Models.News> News { get; }
 
         public int TotalNews { get; }

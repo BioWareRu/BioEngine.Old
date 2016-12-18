@@ -1,8 +1,8 @@
 ﻿@using BioEngine.Site.ViewComponents
 @Html.Partial("~/Views/Shared/UserBlock.cshtml")
 <div class="sidebar__content-wrp">
-    <form action="/search/index.html" class="search">
-        <input class="search__input" type="search" placeholder="Поиск" name="q" />
+    <form action="@Url.Action("Search", "Search")" class="search">
+        <input class="search__input" type="search" placeholder="Поиск" name="q"/>
         <button class="search__magnifier"></button>
     </form>
     @await Component.InvokeAsync(typeof(CounterViewComponent))

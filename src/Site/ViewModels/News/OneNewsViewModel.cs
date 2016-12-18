@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using BioEngine.Common.Models;
-using BioEngine.Site.Helpers;
+﻿using BioEngine.Site.Helpers;
 
 namespace BioEngine.Site.ViewModels.News
 {

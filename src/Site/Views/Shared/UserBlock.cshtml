@@ -6,10 +6,16 @@
 @if (User.Identity.IsAuthenticated)
 {
     <div class="auth auth_sign-in">
-        <a href="#"><span class="auth__userpic" style="background-image: url('@(Settings.Value.IPBUploadsDomain+User.Claims.FirstOrDefault(x=>x.Type=="avatarUrl").Value)"></span></a>
-        <a class="auth__username @if (User.HasClaim(x => x.Type == "renegade")) { <text>auth__username-renegate</text>} "
-           href="@(Settings.Value.IPBDomain+User.Claims.FirstOrDefault(x=>x.Type=="profileUrl").Value)">@User.Identity.Name</a>
-        <a class="auth__exit" href="/site/logout.html">Выход</a>
+        <a href="#">
+            <span class="auth__userpic" style="background-image: url('@(Settings.Value.IPBUploadsDomain + User.Claims.FirstOrDefault(x => x.Type == "avatarUrl").Value)"></span>
+        </a>
+        <a class="auth__username @if (User.HasClaim(x => x.Type == "renegade"))
+                                 {
+                                     <text>auth__username-renegate</text>
+                                 } "
+           href="@(Settings.Value.IPBDomain + User.Claims.FirstOrDefault(x => x.Type == "profileUrl").Value)">
+            @User.Identity.Name</a>
+        <a class="auth__exit" href="@Url.Action("Logout", "User")">Выход</a>
     </div>
 }
 else

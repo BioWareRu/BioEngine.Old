@@ -1,8 +1,5 @@
 ﻿using System;
-using BioEngine.Common.Models;
-using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site.ViewModels.News
 {

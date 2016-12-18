@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BioEngine.Common.Base;
 using BioEngine.Common.Models;
-using BioEngine.Site.Components.Url;
 
 namespace BioEngine.Site.ViewModels.Files
 {

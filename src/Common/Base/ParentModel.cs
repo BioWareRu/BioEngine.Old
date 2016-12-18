@@ -1,6 +1,7 @@
 ﻿using System;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
+using JetBrains.Annotations;
 
 namespace BioEngine.Common.Base
 {
@@ -8,13 +9,16 @@ namespace BioEngine.Common.Base
     {
         public abstract int Id { get; set; }
 
+        [UsedImplicitly]
         public virtual ParentType Type { get; }
 
-        public virtual string NewsUrl { get; }
-
+        [UsedImplicitly]
         public virtual string Icon { get; }
+
+        [UsedImplicitly]
         public virtual string ParentUrl { get; }
 
+        [UsedImplicitly]
         public virtual string DisplayTitle { get; }
 
         public static ParentModel GetParent(IChildModel child)

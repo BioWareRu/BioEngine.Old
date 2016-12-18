@@ -1,11 +1,10 @@
-﻿@using System.Globalization
-@using System.Threading.Tasks
+﻿@using System.Threading.Tasks
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.Files.FileViewModel
 @inject UrlManager UrlManager
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = Model.Title;
     Layout = "~/Views/_Main.cshtml";
     Context.Response.Headers.Add("Refresh", $"5, url={Model.File.Link}");
 }

@@ -12,13 +12,15 @@ using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Articles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class ArticlesController : BaseController
     {
-        public ArticlesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager)
-            : base(context, parentEntityProvider, urlManager)
+        public ArticlesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+            IOptions<AppSettings> appSettingsOptions)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
         }
 
@@ -45,7 +47,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.ParentArticlesUrl((dynamic) article.Parent),
                     "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(article.Parent), article.Parent.DisplayTitle));
-                var viewModel = new ArticleViewModel(Settings, article);
+                var viewModel = new ArticleViewModel(ViewModelConfig, article);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("Article", viewModel);
@@ -73,8 +75,7 @@ namespace BioEngine.Site.Controllers
                     category.Children.Select(child => new CatsTree<ArticleCat, Article>(child, GetLastArticles(child)))
                         .ToList();
 
-                var viewModel = new ArticleCatViewModel(Settings, category, children, GetLastArticles(category),
-                    UrlManager);
+                var viewModel = new ArticleCatViewModel(ViewModelConfig, category, children, GetLastArticles(category));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("ArticleCat", viewModel);
@@ -90,7 +91,7 @@ namespace BioEngine.Site.Controllers
 
             var cats = LoadCatsTree(parent, Context.ArticleCats, cat => GetLastArticles(cat));
 
-            return View("ParentArticles", new ParentArticlesViewModel(Settings, parent, cats, UrlManager));
+            return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats));
         }
 
         public List<Article> GetLastArticles(ICat<ArticleCat> cat, int count = 5)

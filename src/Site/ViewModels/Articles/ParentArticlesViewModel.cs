@@ -9,15 +9,12 @@ namespace BioEngine.Site.ViewModels.Articles
     {
         public List<CatsTree<ArticleCat, Article>> Cats;
         public ParentModel Parent;
-        private UrlManager UrlManager;
 
-        public ParentArticlesViewModel(IEnumerable<Settings> settings, ParentModel parent,
-            List<CatsTree<ArticleCat, Article>> cats,
-            UrlManager urlManager) : base(settings)
+        public ParentArticlesViewModel(BaseViewModelConfig config, ParentModel parent,
+            List<CatsTree<ArticleCat, Article>> cats) : base(config)
         {
             Parent = parent;
             Cats = cats;
-            UrlManager = urlManager;
             BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(Parent), Parent.DisplayTitle));
             Title = $"{Parent.DisplayTitle} - Статьи";
         }

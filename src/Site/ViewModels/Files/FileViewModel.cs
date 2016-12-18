@@ -10,12 +10,10 @@ namespace BioEngine.Site.ViewModels.Files
     public class FileViewModel : BaseViewModel
     {
         public File File { get; }
-        public UrlManager UrlManager { get; set; }
 
-        public FileViewModel(IEnumerable<Settings> settings, File file, UrlManager urlManager) : base(settings)
+        public FileViewModel(BaseViewModelConfig config, File file) : base(config)
         {
             File = file;
-            UrlManager = urlManager;
             var title = file.Title;
             if (file.Cat != null)
             {

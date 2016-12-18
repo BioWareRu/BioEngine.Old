@@ -10,7 +10,7 @@ namespace BioEngine.Site.ViewModels.Articles
     {
         public Article Article { get; }
 
-        public ArticleViewModel(IEnumerable<Settings> settings, Article article) : base(settings)
+        public ArticleViewModel(BaseViewModelConfig config, Article article) : base(config)
         {
             Article = article;
             var title = article.Title;

@@ -6,7 +6,7 @@ namespace BioEngine.Site.ViewModels.News
 {
     public class OneNewsViewModel : BaseViewModel
     {
-        public OneNewsViewModel(Common.Models.News news, IEnumerable<Settings> settings) : base(settings)
+        public OneNewsViewModel(BaseViewModelConfig config, Common.Models.News news) : base(config)
         {
             News = news;
             Title = news.Title;

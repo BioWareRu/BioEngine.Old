@@ -12,13 +12,15 @@ using BioEngine.Common.Models;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Files;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class FilesController : BaseController
     {
-        public FilesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager)
-            : base(context, parentEntityProvider, urlManager)
+        public FilesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+            IOptions<AppSettings> appSettingsOptions)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
         }
 
@@ -30,7 +32,7 @@ namespace BioEngine.Site.Controllers
 
             var cats = LoadCatsTree(parent, Context.FileCats, cat => GetLastFiles(cat));
 
-            return View("ParentFiles", new ParentFilesViewModel(Settings, parent, cats, UrlManager));
+            return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
         }
 
         public List<File> GetLastFiles(ICat<FileCat> cat, int count = 5)
@@ -64,10 +66,10 @@ namespace BioEngine.Site.Controllers
                     cat = cat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic)file.Parent),
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
                     "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
-                var viewModel = new FileViewModel(Settings, file, UrlManager);
+                var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileDownload", viewModel);
@@ -99,7 +101,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
                     "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
-                var viewModel = new FileViewModel(Settings, file, UrlManager);
+                var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("File", viewModel);
@@ -127,8 +129,7 @@ namespace BioEngine.Site.Controllers
                     category.Children.Select(child => new CatsTree<FileCat, File>(child, GetLastFiles(child)))
                         .ToList();
 
-                var viewModel = new FileCatViewModel(Settings, category, children, GetLastFiles(category),
-                    UrlManager);
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, GetLastFiles(category));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);

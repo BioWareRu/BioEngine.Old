@@ -6,13 +6,15 @@ using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels.Games;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class GamesController : BaseController
     {
-        public GamesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager)
-            : base(context, parentEntityProvider, urlManager)
+        public GamesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+            IOptions<AppSettings> appSettingsOptions)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
         }
 
@@ -42,7 +44,7 @@ namespace BioEngine.Site.Controllers
                     .Take(5)
                     .ToList();
 
-            var view = new GamePageViewModel(Settings, game, lastNews, lastArticles, lastFiles, lastPics);
+            var view = new GamePageViewModel(ViewModelConfig, game, lastNews, lastArticles, lastFiles, lastPics);
             return View(view);
         }
     }

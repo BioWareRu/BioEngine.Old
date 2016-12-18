@@ -6,9 +6,9 @@ namespace BioEngine.Site.ViewModels.News
 {
     public class ParentNewsListViewModel : BaseViewModel
     {
-        public ParentNewsListViewModel(IEnumerable<Settings> settings, ParentModel parent,
+        public ParentNewsListViewModel(BaseViewModelConfig config, ParentModel parent,
             IEnumerable<Common.Models.News> news, int totalNews,
-            int currentPage) : base(settings)
+            int currentPage) : base(config)
         {
             Parent = parent;
             News = news;

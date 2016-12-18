@@ -11,6 +11,7 @@ using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Base
 {
@@ -20,13 +21,16 @@ namespace BioEngine.Site.Base
         private readonly List<Settings> _settings;
         protected readonly BWContext Context;
         protected readonly ParentEntityProvider ParentEntityProvider;
+        protected readonly BaseViewModelConfig ViewModelConfig;
 
-        protected BaseController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager)
+        protected BaseController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+            IOptions<AppSettings> appSettingsOptions)
         {
             UrlManager = urlManager;
             Context = context;
             ParentEntityProvider = parentEntityProvider;
             _settings = context.Settings.ToList();
+            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings);
         }
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();

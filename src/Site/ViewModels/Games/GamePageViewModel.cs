@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Games
 {
     public class GamePageViewModel : BaseViewModel
     {
-        public GamePageViewModel(IEnumerable<Settings> settings, Game game, IEnumerable<Common.Models.News> lastNews,
+        public GamePageViewModel(BaseViewModelConfig config, Game game, IEnumerable<Common.Models.News> lastNews,
             IEnumerable<Article> lastArticles, IEnumerable<File> lastFiles, IEnumerable<GalleryPic> lastPics)
-            : base(settings)
+            : base(config)
         {
             Game = game;
             LastNews = lastNews;
@@ -15,7 +16,7 @@ namespace BioEngine.Site.ViewModels.Games
             LastFiles = lastFiles;
             LastPics = lastPics;
             Title = Game.Title;
-            ImageUrl = game.Icon;
+            ImageUrl = new Uri(game.Icon);
             Description = game.Desc;
         }
 

@@ -9,15 +9,12 @@ namespace BioEngine.Site.ViewModels.Files
     {
         public List<CatsTree<FileCat, File>> Cats;
         public ParentModel Parent;
-        private UrlManager UrlManager;
 
-        public ParentFilesViewModel(IEnumerable<Settings> settings, ParentModel parent,
-            List<CatsTree<FileCat, File>> cats,
-            UrlManager urlManager) : base(settings)
+        public ParentFilesViewModel(BaseViewModelConfig config, ParentModel parent,
+            List<CatsTree<FileCat, File>> cats) : base(config)
         {
             Parent = parent;
             Cats = cats;
-            UrlManager = urlManager;
             BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(Parent), Parent.DisplayTitle));
             Title = $"{Parent.DisplayTitle} - Файлы";
         }

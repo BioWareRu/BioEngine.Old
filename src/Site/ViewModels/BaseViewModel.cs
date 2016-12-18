@@ -1,23 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BioEngine.Common.Models;
+using BioEngine.Site.Components;
+using BioEngine.Site.Components.Url;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.ViewModels
 {
     public abstract class BaseViewModel
     {
-        private readonly IEnumerable<Settings> _settings;
+        protected readonly IEnumerable<Settings> Settings;
+        protected readonly AppSettings AppSettings;
+        protected readonly UrlManager UrlManager;
 
-        protected BaseViewModel(IEnumerable<Settings> settings)
+        protected BaseViewModel(BaseViewModelConfig config)
         {
-            _settings = settings;
+            Settings = config.Settings;
+            AppSettings = config.AppSettings;
+            UrlManager = config.UrlManager;
+            SiteTitle = Title = AppSettings.Title;
+            ImageUrl = new Uri(AppSettings.SocialLogo);
         }
 
         public string SiteTitle { get; set; }
 
         public string Title { get; set; }
 
-        public string ImageUrl { get; protected set; }
+        public Uri ImageUrl { get; protected set; }
 
         public string Description { get; protected set; }
 
@@ -27,7 +37,21 @@ namespace BioEngine.Site.ViewModels
 
         public string GetSettingValue(string settingName)
         {
-            return _settings.FirstOrDefault(x => x.Name == settingName)?.Value;
+            return Settings.FirstOrDefault(x => x.Name == settingName)?.Value;
+        }
+    }
+
+    public struct BaseViewModelConfig
+    {
+        public readonly UrlManager UrlManager;
+        public readonly AppSettings AppSettings;
+        public readonly List<Settings> Settings;
+
+        public BaseViewModelConfig(UrlManager urlManager, AppSettings appSettings, List<Settings> settings)
+        {
+            UrlManager = urlManager;
+            AppSettings = appSettings;
+            Settings = settings;
         }
     }
 

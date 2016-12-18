@@ -10,19 +10,17 @@ namespace BioEngine.Site.ViewModels.Files
     public class FileCatViewModel : BaseViewModel
     {
         public FileCat FileCat { get; }
-        public UrlManager UrlManager { get; set; }
 
         public IEnumerable<CatsTree<FileCat, File>> Children { get; }
 
         public IEnumerable<File> LastFiles { get; }
 
-        public FileCatViewModel(IEnumerable<Settings> settings, FileCat fileCat, IEnumerable<CatsTree<FileCat, File>> children,
-            IEnumerable<File> lastFiles,
-            UrlManager urlManager)
-            : base(settings)
+        public FileCatViewModel(BaseViewModelConfig config, FileCat fileCat,
+            IEnumerable<CatsTree<FileCat, File>> children,
+            IEnumerable<File> lastFiles)
+            : base(config)
         {
             FileCat = fileCat;
-            UrlManager = urlManager;
             Children = children;
             LastFiles = lastFiles;
             var title = fileCat.Title;

@@ -10,5 +10,8 @@
         public string GamesImagesPath { get; set; }
         public string DevelopersImagesPath { get; set; }
         public string TopicsImagesPath { get; set; }
+        public string Title { get; set; }
+        public string SiteDomain { get; set; }
+        public string SocialLogo { get; set; }
     }
 }

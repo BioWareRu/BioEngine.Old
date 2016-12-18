@@ -4,6 +4,7 @@ using BioEngine.Common.DB;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Ipb;
 using BioEngine.Site.Components.Url;
+using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -75,6 +76,7 @@ namespace BioEngine.Site
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();
+            services.AddScoped<IChannelProvider, RssProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
@@ -7,16 +9,36 @@ using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.News;
+using cloudscribe.Syndication.Models.Rss;
+using cloudscribe.Syndication.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class NewsController : BaseController
     {
-        public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager)
-            : base(context, parentEntityProvider, urlManager)
+        private readonly IChannelProviderResolver _channelResolver;
+        private IEnumerable<IChannelProvider> _channelProviders;
+        private IXmlFormatter _xmlFormatter;
+
+        public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+            IOptions<AppSettings> appSettingsOptions,
+            IChannelProviderResolver channelResolver = null, IEnumerable<IChannelProvider> channelProviders = null,
+            IXmlFormatter xmlFormatter = null
+        )
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
+            _channelProviders = channelProviders ?? new List<IChannelProvider>();
+            var list = channelProviders as List<IChannelProvider>;
+            if (list?.Count == 0)
+            {
+                list.Add(new NullChannelProvider());
+            }
+
+            _channelResolver = channelResolver ?? new DefaultChannelProviderResolver();
+            _xmlFormatter = xmlFormatter ?? new DefaultXmlFormatter();
         }
 
         [HttpGet("/")]
@@ -39,12 +61,12 @@ namespace BioEngine.Site.Controllers
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
-                    .Skip((page - 1)*20)
+                    .Skip((page - 1) * 20)
                     .Take(20)
                     .ToList();
             var totalNews = Context.News.Count();
 
-            return View(new NewsListViewModel(Settings, news, totalNews, page) {Title = "Новости"});
+            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page) {Title = "Новости"});
         }
 
         [HttpGet("/{parentUrl}/news.html")]
@@ -77,12 +99,12 @@ namespace BioEngine.Site.Controllers
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Game)
-                .Skip((page - 1)*20)
+                .Skip((page - 1) * 20)
                 .Take(20)
                 .ToList();
 
             return View("ParentNews",
-                new ParentNewsListViewModel(Settings, game, news, totalNews, page));
+                new ParentNewsListViewModel(ViewModelConfig, game, news, totalNews, page));
         }
 
         private IActionResult ParentNewsList(Developer developer, int page = 1)
@@ -93,12 +115,12 @@ namespace BioEngine.Site.Controllers
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Developer)
-                .Skip((page - 1)*20)
+                .Skip((page - 1) * 20)
                 .Take(20)
                 .ToList();
 
             return View("ParentNews",
-                new ParentNewsListViewModel(Settings, developer, news, totalNews, page));
+                new ParentNewsListViewModel(ViewModelConfig, developer, news, totalNews, page));
         }
 
         private IActionResult ParentNewsList(Topic topic, int page = 1)
@@ -109,12 +131,12 @@ namespace BioEngine.Site.Controllers
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Topic)
-                .Skip((page - 1)*20)
+                .Skip((page - 1) * 20)
                 .Take(20)
                 .ToList();
 
             return View("ParentNews",
-                new ParentNewsListViewModel(Settings, topic, news, totalNews, page));
+                new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
         [Route("/{year}/{month}/{day}/{url}.html")]
@@ -134,12 +156,36 @@ namespace BioEngine.Site.Controllers
 
             if (news == null) return StatusCode(404);
 
-            var viewModel = new OneNewsViewModel(news, Settings);
+            var viewModel = new OneNewsViewModel(ViewModelConfig, news);
 
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.ParentNewsUrl((dynamic) news.Parent),
                 news.Parent.DisplayTitle));
             return View(viewModel);
+        }
+
+        [HttpGet("/rss.xml")]
+        public async Task<IActionResult> Rss()
+        {
+            var currentChannelProvider = _channelResolver.GetCurrentChannelProvider(_channelProviders);
+
+            if (currentChannelProvider == null)
+            {
+                Response.StatusCode = 404;
+                return new EmptyResult();
+            }
+
+            var currentChannel = await currentChannelProvider.GetChannel();
+
+            if (currentChannel == null)
+            {
+                Response.StatusCode = 404;
+                return new EmptyResult();
+            }
+
+            var xml = _xmlFormatter.BuildXml(currentChannel);
+
+            return new XmlResult(xml);
         }
     }
 }

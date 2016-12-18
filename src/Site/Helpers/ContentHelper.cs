@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace BioEngine.Site.Helpers
@@ -11,10 +12,15 @@ namespace BioEngine.Site.Helpers
 
         private static readonly Regex StripTagsRegex = new Regex("<.*?>");
 
-        public static string GetImageUrl(string content)
+        public static Uri GetImageUrl(string content)
         {
+            Uri uri = null;
             var result = ImgRegex.Match(content);
-            return result.Success ? result.Groups[1].Value : null;
+            if (result.Success)
+            {
+                uri = new Uri(result.Groups[1].Value);
+            }
+            return uri;
         }
 
         public static string GetDescription(string content, int lenght = 20)
@@ -31,6 +37,26 @@ namespace BioEngine.Site.Helpers
                 desc += "...";
 
             return desc;
+        }
+
+        public static bool GetSizeAndMime(Uri imgUrl, out long size, out string mimeType)
+        {
+            var request = WebRequest.Create(imgUrl);
+            var response = request.GetResponseAsync().Result;
+            var success =
+                !(!response.Headers.AllKeys.Contains("Content-Length") ||
+                  !response.Headers.AllKeys.Contains("Content-Type"));
+            if (!success)
+            {
+                size = 0;
+                mimeType = string.Empty;
+            }
+            else
+            {
+                size = long.Parse(response.Headers["Content-Length"]);
+                mimeType = response.Headers["Content-Type"];
+            }
+            return success;
         }
     }
 }

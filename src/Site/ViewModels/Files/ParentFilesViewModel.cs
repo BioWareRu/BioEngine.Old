@@ -19,7 +19,7 @@ namespace BioEngine.Site.ViewModels.Files
             Title = $"{Parent.DisplayTitle} - Файлы";
         }
 
-        public string ParentArticlesUrl => UrlManager.Files.ParentFilesUrl((dynamic) Parent);
+        public string ParentFilesUrl => UrlManager.Files.ParentFilesUrl((dynamic) Parent);
         public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) Parent);
     }
 }

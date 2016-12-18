@@ -35,7 +35,7 @@ namespace BioEngine.Site.Controllers
             return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
         }
 
-        public List<File> GetLastFiles(ICat<FileCat> cat, int count = 5)
+        private List<File> GetLastFiles(ICat<FileCat> cat, int count = 5)
         {
             return Context.Files.Where(x => x.CatId == cat.Id)
                 .OrderByDescending(x => x.Id)

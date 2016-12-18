@@ -12,7 +12,7 @@ namespace BioEngine.Site.ViewModels
     {
         protected readonly IEnumerable<Settings> Settings;
         protected readonly AppSettings AppSettings;
-        protected readonly UrlManager UrlManager;
+        public readonly UrlManager UrlManager;
 
         protected BaseViewModel(BaseViewModelConfig config)
         {

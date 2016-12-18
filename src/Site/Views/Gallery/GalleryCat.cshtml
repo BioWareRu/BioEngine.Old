@@ -1,0 +1,44 @@
+﻿@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Gallery.GalleryCatViewModel
+
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">@Model.GalleryCat.Title</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentGalleryUrl"
+               title="@Model.GalleryCat.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.GalleryCat.Parent.DisplayTitle">
+            </a>
+        </header>
+        <div id="nanoGallery">
+            @foreach (var pic in Model.Pictures)
+            {
+                var desc = "";
+                for (var i = 0; i < pic.Files.Count; i++)
+                {
+                    var file = pic.Files[i];
+                    desc += $"&nbsp;<a target='_blank' href='{Model.UrlManager.Gallery.FullUrl(pic, i)}'>{file.Resolution}</a>";
+                }
+                <a data-ngthumb="@Model.UrlManager.Gallery.ThumbUrl(pic, 180, 140)"
+                   data-ngID="@pic.Id"
+                   href="@Model.UrlManager.Gallery.FullUrl(pic)"
+                   data-ngdesc="@Html.Raw(desc)">
+                </a>
+            }
+        </div>
+    </article>
+    @(await Component.InvokeAsync<PagerViewComponent>(new
+      {
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalPictures, page => Model.UrlManager.Gallery.CatPublicUrl(Model.GalleryCat, page), 24)
+      }))
+</div>

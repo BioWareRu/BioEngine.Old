@@ -1,0 +1,65 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@model BioEngine.Site.ViewModels.Gallery.ParentGalleryViewModel
+@inject UrlManager UrlManager
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h2 class="article__title">Галерея</h2>
+            </div>
+            <a class="article-list__title-image" href="@Model.ParentGalleryUrl"
+               title="@Model.Parent.DisplayTitle">
+                <img src="@Model.ParentIconUrl"
+                     alt="@Model.Parent.DisplayTitle">
+            </a>
+        </header>
+
+        <div class="files">
+            @foreach (var cat in Model.Cats)
+            {
+                <div class="files__cat">
+                    <ul class="files__list">
+                        <li class="files__item">
+                            <h2 class="files__title">
+                                <a class="files__link" href="@Model.UrlManager.Gallery.CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
+                            </h2>
+                            <div>
+                                @foreach (var pic in cat.LastEntities)
+                                {
+                                    <a href="@UrlManager.Gallery.PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
+                                        <img src="@UrlManager.Gallery.ThumbUrl(pic, 115, 115)"
+                                             alt=""/>
+                                    </a>
+                                }
+                            </div>
+                            <ul class="files__list">
+                                @foreach (var childCat in cat.Children)
+                                {
+                                    <li class="files__item">
+                                        <h3 class="files__title">
+                                            <a class="files__link"
+                                               href="@Model.UrlManager.Gallery.CatPublicUrl(childCat.Cat)">
+                                                >@childCat.Cat.Title
+                                            </a>
+                                        </h3>
+                                    </li>
+                                }
+
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+
+    </article>
+
+</div>

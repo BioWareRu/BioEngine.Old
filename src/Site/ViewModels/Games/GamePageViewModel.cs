@@ -16,7 +16,7 @@ namespace BioEngine.Site.ViewModels.Games
             LastFiles = lastFiles;
             LastPics = lastPics;
             Title = Game.Title;
-            ImageUrl = new Uri(game.Icon);
+            ImageUrl = new Uri(UrlManager.ParentIconUrl(game));
             Description = game.Desc;
         }
 

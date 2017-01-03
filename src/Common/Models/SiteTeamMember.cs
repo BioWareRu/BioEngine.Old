@@ -5,7 +5,7 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_site_team")]
-    public class SiteTeam : BaseModel
+    public class SiteTeamMember : BaseModel
     {
         [Key]
         [Column("id")]

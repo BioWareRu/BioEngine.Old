@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BioEngine.Common.DB;
+using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +15,13 @@ namespace BioEngine.Site.Components.Ipb
 {
     public class IpbAuthenticationHandler : AuthenticationHandler<IpbAuthenticationOptions>
     {
+        private readonly BWContext _bwContext;
+
+        public IpbAuthenticationHandler(BWContext bwContext)
+        {
+            _bwContext = bwContext;
+        }
+
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             ClaimsIdentity identity;
@@ -19,21 +29,41 @@ namespace BioEngine.Site.Components.Ipb
             var userDesc = await GetIpbResponse();
             if (userDesc.MemberId != null)
             {
-                identity = new ClaimsIdentity("ipb");
-                identity.AddClaim(new Claim(ClaimTypes.Name, userDesc.MemberName));
-                identity.AddClaim(new Claim("userId", userDesc.MemberId.ToString()));
-                identity.AddClaim(new Claim("avatarUrl", userDesc.AvatarUrl));
-                identity.AddClaim(new Claim("profileUrl", userDesc.ProfileUrl));
-                if (userDesc.IsRenegade)
-                    identity.AddClaim(new Claim("renegade", "1"));
+                var user = _bwContext.Users.FirstOrDefault(x => x.Id == userDesc.MemberId);
+                if (user != null)
+                {
+                    identity = new ClaimsIdentity("ipb");
+                    identity.AddClaim(new Claim(ClaimTypes.Name, userDesc.MemberName));
+                    identity.AddClaim(new Claim("userId", userDesc.MemberId.ToString()));
+                    identity.AddClaim(new Claim("avatarUrl", userDesc.AvatarUrl));
+                    identity.AddClaim(new Claim("profileUrl", userDesc.ProfileUrl));
+                    if (userDesc.IsRenegade)
+                        identity.AddClaim(new Claim("renegade", "1"));
+                    if (user.GroupId == 4)
+                    {
+                        identity.AddClaim(new Claim("admin", "1"));
+                    }
+
+                    var siteTeam = _bwContext.SiteTeam.FirstOrDefault(x => x.MemberId == user.Id && x.Active == 1);
+                    if (siteTeam != null)
+                    {
+                        identity.AddClaim(new Claim("siteTeam", "1"));
+                    }
+                    foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
+                    {
+                        if (user.HasRight(userRight, siteTeam))
+                        {
+                            identity.AddClaim(new Claim(userRight.ToString(), "1"));
+                        }
+                    }
+                    var userTicket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "ipb");
+                    return AuthenticateResult.Success(userTicket);
+                }
             }
-            else
-            {
-                identity = new ClaimsIdentity();
-                identity.AddClaim(new Claim(ClaimTypes.Name, "Guest"));
-            }
-            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "ipb");
-            return AuthenticateResult.Success(ticket);
+            identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(ClaimTypes.Name, "Guest"));
+            var guestTicket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "ipb");
+            return AuthenticateResult.Success(guestTicket);
         }
 
         private async Task<IpbResponse> GetIpbResponse()

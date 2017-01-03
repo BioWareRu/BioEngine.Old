@@ -147,12 +147,39 @@ namespace BioEngine.Site.Controllers
             var dateEnd =
                 new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59, DateTimeKind.Utc)).ToUnixTimeSeconds();
 
-            var news =
+            var newsQuery =
                 Context.News.Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
-                    .Include(x => x.Topic).FirstOrDefault(
-                        n => (n.Pub == 1) && (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
+                    .Include(x => x.Topic).Where(n => (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
+
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.HasClaim(x => x.Type == "siteTeam"))
+                {
+                    if (!User.HasClaim(x => x.Type == UserRights.PubNews.ToString()))
+                    {
+                        newsQuery =
+                            newsQuery.Where(
+                                x =>
+                                    x.Pub == 1 |
+                                    x.AuthorId == int.Parse(User.Claims.Where(c => c.Type == "userId").ToString()));
+                    }
+                }
+                else
+                {
+                    if (!User.HasClaim(x => x.Type == "admin"))
+                    {
+                        newsQuery = newsQuery.Where(x => x.Pub == 1);
+                    }
+                }
+            }
+            else
+            {
+                newsQuery = newsQuery.Where(x => x.Pub == 1);
+            }
+
+            var news = newsQuery.FirstOrDefault();
 
             if (news == null) return StatusCode(404);
 

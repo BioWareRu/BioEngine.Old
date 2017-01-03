@@ -212,7 +212,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         public Regex Regex { get; }
         public bool UrlOnly { get; }
 
-        public Func<Match, bool, BWContext, UrlManager, string> Replace;
+        public readonly Func<Match, bool, BWContext, UrlManager, string> Replace;
 
         public ContentPlaceholder(Regex regex, bool urlOnly,
             Func<Match, bool, BWContext, UrlManager, string> replaceFunc)

@@ -27,6 +27,7 @@ namespace BioEngine.Common.DB
         public DbSet<FileCat> FileCats { get; set; }
         public DbSet<GalleryPic> GalleryPics { get; set; }
         public DbSet<GalleryCat> GalleryCats { get; set; }
+        public DbSet<SiteTeamMember> SiteTeam { get; set; }
 
         public DbSet<Advertisement> Advertiesements { get; set; }
 

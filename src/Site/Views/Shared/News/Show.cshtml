@@ -1,12 +1,16 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
-@using BioEngine.Common.Helpers
+@using BioEngine.Common.DB
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.Helpers
 @using BioEngine.Site.Extensions
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
+@inject UrlManager UrlManager
+@inject BWContext DbContext
 @model BioEngine.Site.ViewModels.News.ShowNewsViewModel
 
-<article class="@(!Model.ShowFull?"article-list__item":"article")">
+<article class="@(!Model.ShowFull ? "article-list__item" : "article")">
     <header class="article-list__header">
         <div class="article-list__title-wrap">
             <h2 class="article-list__title">
@@ -36,33 +40,33 @@
             </h2>
             <time class="article-list__date"
                   datetime="@Model.Date.DateTime.ToString("yyyy-MM-dd hh:mm:ss")">
-                @Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss",CultureInfo.InvariantCulture),&nbsp;@Model.News.Author.Name</time>
-            </div>
-            <a class="article-list__title-image" href="@Model.ParentNewsUrl"
-               title="@Model.News.Parent.DisplayTitle">
-                <img src="@Model.ParentIconUrl"
-                     alt="@Model.News.Parent.DisplayTitle">
-            </a>
-        </header>
-
-        <div class="b-text">
-            @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.ShortText))
-            @if (Model.ShowFull)
-            {
-                @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.AddText))
-            }
+                @Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),&nbsp;@Model.News.Author.Name</time>
         </div>
+        <a class="article-list__title-image" href="@Model.ParentNewsUrl"
+           title="@Model.News.Parent.DisplayTitle">
+            <img src="@Model.ParentIconUrl"
+                 alt="@Model.News.Parent.DisplayTitle">
+        </a>
+    </header>
+
+    <div class="b-text">
+        @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.ShortText, DbContext, UrlManager))
+        @if (Model.ShowFull)
+        {
+            @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.AddText, DbContext, UrlManager))
+        }
+    </div>
 
 
-        <footer class="article-list__footer">
-            @if (Model.News.HasMore && !Model.ShowFull)
-            {
-                <a class="article-list__morelink" href="@Model.NewsUrl">Подробнее</a>
-            }
+    <footer class="article-list__footer">
+        @if (Model.News.HasMore && !Model.ShowFull)
+        {
+            <a class="article-list__morelink" href="@Model.NewsUrl">Подробнее</a>
+        }
 
-            <div class="article-list__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl)
-                <a class="article-list__comments" href="@Model.CommentsUrl">@(Localizer.Plural("Comments", Model.News.Comments))</a>
-            </div>
-        </footer>
-    </article>
+        <div class="article-list__footer-controls">
+            @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl)
+            <a class="article-list__comments" href="@Model.CommentsUrl">@(Localizer.Plural("Comments", Model.News.Comments))</a>
+        </div>
+    </footer>
+</article>

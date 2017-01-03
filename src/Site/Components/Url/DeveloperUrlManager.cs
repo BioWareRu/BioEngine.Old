@@ -11,9 +11,9 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public string PublicUrl(Developer developer)
+        public string PublicUrl(Developer developer, bool absolute = false)
         {
-            return "#";
+            return GetUrl("NewsList", "News", new {parentUrl = developer.Url}, absolute);
         }
     }
 }

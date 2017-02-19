@@ -42,29 +42,29 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return NewsList();
+            return await NewsList();
         }
 
         [HttpGet("/page/{page}.html")]
-        public IActionResult Index(int page)
+        public async Task<IActionResult> Index(int page)
         {
-            return NewsList(page);
+            return await NewsList(page);
         }
 
-        private IActionResult NewsList(int page = 1)
+        private async Task<IActionResult> NewsList(int page = 1)
         {
             var news =
-                Context.News.Where(x => x.Pub == 1).OrderByDescending(x => x.Date)
+                await Context.News.Where(x => x.Pub == 1).OrderByDescending(x => x.Date)
                     .Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
                     .Skip((page - 1) * 20)
                     .Take(20)
-                    .ToList();
-            var totalNews = Context.News.Count();
+                    .ToListAsync();
+            var totalNews = await Context.News.CountAsync();
 
             return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page) {Title = "Новости"});
         }
@@ -91,56 +91,56 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        private IActionResult ParentNewsList(Game game, int page = 1)
+        private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
         {
             var query = Context.News.Where(x => x.Pub == 1 && x.GameId == game.Id).AsQueryable();
-            var totalNews = query.Count();
-            var news = query
+            var totalNews = await query.CountAsync();
+            var news = await query
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Game)
                 .Skip((page - 1) * 20)
                 .Take(20)
-                .ToList();
+                .ToListAsync();
 
             return View("ParentNews",
                 new ParentNewsListViewModel(ViewModelConfig, game, news, totalNews, page));
         }
 
-        private IActionResult ParentNewsList(Developer developer, int page = 1)
+        private async Task<IActionResult> ParentNewsList(Developer developer, int page = 1)
         {
             var query = Context.News.Where(x => x.Pub == 1 && x.DeveloperId == developer.Id).AsQueryable();
-            var totalNews = query.Count();
-            var news = query
+            var totalNews = await query.CountAsync();
+            var news = await query
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Developer)
                 .Skip((page - 1) * 20)
                 .Take(20)
-                .ToList();
+                .ToListAsync();
 
             return View("ParentNews",
                 new ParentNewsListViewModel(ViewModelConfig, developer, news, totalNews, page));
         }
 
-        private IActionResult ParentNewsList(Topic topic, int page = 1)
+        private async Task<IActionResult> ParentNewsList(Topic topic, int page = 1)
         {
             var query = Context.News.Where(x => x.Pub == 1 && x.TopicId == topic.Id).AsQueryable();
-            var totalNews = query.Count();
-            var news = query
+            var totalNews = await query.CountAsync();
+            var news = await query
                 .OrderByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Topic)
                 .Skip((page - 1) * 20)
                 .Take(20)
-                .ToList();
+                .ToListAsync();
 
             return View("ParentNews",
                 new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
         [Route("/{year}/{month}/{day}/{url}.html")]
-        public IActionResult Show(int year, int month, int day, string url)
+        public async Task<IActionResult> Show(int year, int month, int day, string url)
         {
             var dateStart =
                 new DateTimeOffset(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc)).ToUnixTimeSeconds();
@@ -179,7 +179,7 @@ namespace BioEngine.Site.Controllers
                 newsQuery = newsQuery.Where(x => x.Pub == 1);
             }
 
-            var news = newsQuery.FirstOrDefault();
+            var news = await newsQuery.FirstOrDefaultAsync();
 
             if (news == null) return StatusCode(404);
 

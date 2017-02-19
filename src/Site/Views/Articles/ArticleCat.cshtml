@@ -30,14 +30,14 @@
                         <ul class="files__list">
                             <li class="files__item">
                                 <h2 class="files__title">
-                                    <a class="files__link" href="@UrlManager.Articles.CatPublicUrl(child.Cat)">@child.Cat.Title</a>
+                                    <a class="files__link" href="@await UrlManager.Articles.CatPublicUrl(child.Cat)">@child.Cat.Title</a>
                                 </h2>
                                 <ul class="files__list">
                                     @foreach (var article in child.LastEntities)
                                     {
                                         <li class="files__item">
                                             <a class="files__link"
-                                               href="@UrlManager.Articles.PublicUrl(article)">
+                                               href="@await UrlManager.Articles.PublicUrl(article)">
                                                 @article.Title
                                             </a><br>
                                             @Html.Raw(article.Announce)
@@ -55,7 +55,7 @@
                     @foreach (var article in Model.LastArticles)
                     {
                         <li class="files__item">
-                            <a class="files__link" href="@UrlManager.Articles.PublicUrl(article)">@article.Title</a>
+                            <a class="files__link" href="@await UrlManager.Articles.PublicUrl(article)">@article.Title</a>
                         </li>
                     }
                 </ul>

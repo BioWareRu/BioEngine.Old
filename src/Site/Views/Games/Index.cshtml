@@ -78,7 +78,7 @@
                     @foreach (var file in Model.LastFiles)
                     {
                         <p>
-                            <a href="@UrlManager.Files.PublicUrl(file)">@file.Title</a>
+                            <a href="@await UrlManager.Files.PublicUrl(file)">@file.Title</a>
                         </p>
                     }
                     <p class="game-info__all">
@@ -93,7 +93,7 @@
                     @foreach (var article in Model.LastArticles)
                     {
                         <p>
-                            <a href="@UrlManager.Articles.PublicUrl(article)">@article.Title</a>
+                            <a href="@await UrlManager.Articles.PublicUrl(article)">@article.Title</a>
                         </p>
                     }
                     <p class="game-info__all">
@@ -105,8 +105,8 @@
                     <div>
                         @foreach (var picture in Model.LastPics)
                         {
-                            <a href="@UrlManager.Gallery.PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
-                                <img src="@Model.UrlManager.Gallery.ThumbUrl(picture, 115, 115)"
+                            <a href="@await UrlManager.Gallery.PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
+                                <img src="@await Model.UrlManager.Gallery.ThumbUrl(picture, 115, 115)"
                                      alt=""/>
                             </a>
                         }

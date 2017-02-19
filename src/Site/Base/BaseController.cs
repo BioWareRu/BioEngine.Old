@@ -12,6 +12,7 @@ using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace BioEngine.Site.Base
 {
@@ -80,8 +81,8 @@ namespace BioEngine.Site.Base
             return false;
         }
 
-        protected List<CatsTree<TCat, TEntity>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
-            Func<ICat<TCat>, List<TEntity>> getLast)
+        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
+            Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
             var rootCatsQuery = dbSet.AsQueryable();
@@ -100,17 +101,25 @@ namespace BioEngine.Site.Base
                     throw new ArgumentOutOfRangeException();
             }
 
-            var rootCats = rootCatsQuery.ToList();
-
-            return rootCats.Select(rootCat => LoadCatChildren(rootCat, getLast)).ToList();
+            var rootCats = await rootCatsQuery.ToListAsync();
+            var catsTree = new List<CatsTree<TCat, TEntity>>();
+            foreach(var rootCat in rootCats)
+            {
+                catsTree.Add(await LoadCatChildren(rootCat, getLast));
+            }
+            return catsTree;
         }
 
-        private CatsTree<TCat, TEntity> LoadCatChildren<TCat, TEntity>(TCat cat, Func<ICat<TCat>, List<TEntity>> getLast)
+        private async Task<CatsTree<TCat, TEntity>> LoadCatChildren<TCat, TEntity>(TCat cat, Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
-            Context.Entry(cat).Collection(x => x.Children).Load();
-            var children = cat.Children.Select(child => LoadCatChildren(child, getLast)).ToList();
-            return new CatsTree<TCat, TEntity>(cat, getLast(cat), children);
+            await Context.Entry(cat).Collection(x => x.Children).LoadAsync();
+            var children = new List<CatsTree<TCat, TEntity>>();
+            foreach(var child in cat.Children)
+            {
+                children.Add(await LoadCatChildren(child, getLast));
+            }
+            return new CatsTree<TCat, TEntity>(cat, await getLast(cat), children);
         }
     }
 }

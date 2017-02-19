@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Site.Components.Url
 {
@@ -15,17 +17,17 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public string PublicUrl(GalleryPic picture)
+        public async Task<string> PublicUrl(GalleryPic picture)
         {
-            Poppulate(picture);
-            var position = GetPicPosition(picture);
+            await Poppulate(picture);
+            var position = await GetPicPosition(picture);
             var page = (int) Math.Ceiling((double) position / GalleryCat.PicsOnPage);
-            return CatPublicUrl(picture.Cat, page);
+            return await CatPublicUrl(picture.Cat, page);
         }
 
-        public string CatPublicUrl(GalleryCat cat, int page = 1)
+        public async Task<string> CatPublicUrl(GalleryCat cat, int page = 1)
         {
-            Poppulate(cat);
+            await Poppulate(cat);
             var url = CatUrl(cat);
             if (page > 1)
                 url += $"/page/{page}";
@@ -33,13 +35,13 @@ namespace BioEngine.Site.Components.Url
                 new {parentUrl = ParentUrl(cat), url});
         }
 
-        private void Poppulate(GalleryCat cat)
+        private async Task Poppulate(GalleryCat cat)
         {
             while (cat != null)
             {
                 if (cat.ParentCat == null)
                     if (cat.Pid > 0)
-                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        await DbContext.Entry(cat).Reference(x => x.ParentCat).LoadAsync();
                     else
                         break;
                 cat = cat.ParentCat;
@@ -59,33 +61,33 @@ namespace BioEngine.Site.Components.Url
             return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
         }
 
-        private int GetPicPosition(GalleryPic picture)
+        private async Task<int> GetPicPosition(GalleryPic picture)
         {
             return
-                DbContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
+                await DbContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
                     .OrderByDescending(x => x.Id)
-                    .Count();
+                    .CountAsync();
         }
 
-        private void Poppulate(GalleryPic picture)
+        private async Task Poppulate(GalleryPic picture)
         {
             if (picture.Cat == null)
-                DbContext.Entry(picture).Reference(x => x.Cat).Load();
+                await DbContext.Entry(picture).Reference(x => x.Cat).LoadAsync();
             var cat = picture.Cat;
             while (cat != null)
             {
                 if (cat.ParentCat == null)
                     if (cat.Pid > 0)
-                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        await DbContext.Entry(cat).Reference(x => x.ParentCat).LoadAsync();
                     else
                         break;
                 cat = cat.ParentCat;
             }
 
             if (picture.GameId > 0 && picture.Game == null)
-                DbContext.Entry(picture).Reference(x => x.Game).Load();
+                await DbContext.Entry(picture).Reference(x => x.Game).LoadAsync();
             if (picture.DeveloperId > 0 && picture.Developer == null)
-                DbContext.Entry(picture).Reference(x => x.Developer).Load();
+                await DbContext.Entry(picture).Reference(x => x.Developer).LoadAsync();
         }
 
         public string ParentGalleryUrl(Developer developer)
@@ -103,16 +105,16 @@ namespace BioEngine.Site.Components.Url
             return UrlHelper.Action<GalleryController>(x => x.ParentGallery(topic.Url));
         }
 
-        public string ThumbUrl(GalleryPic picture, int weight = 100, int height = 0, int index = 0)
+        public async Task<string> ThumbUrl(GalleryPic picture, int weight = 100, int height = 0, int index = 0)
         {
-            Poppulate(picture);
+            await Poppulate(picture);
             return
                 $"{Settings.SiteDomain}/gallery/thumb/{picture.Id}/{weight}/{height}";
         }
 
-        public string FullUrl(GalleryPic picture, int index = 0)
+        public async Task<string> FullUrl(GalleryPic picture, int index = 0)
         {
-            Poppulate(picture);
+            await Poppulate(picture);
             var file = picture.Files[index];
             return
                 $"{Settings.ImagesDomain}/{ParentUrl(picture)}/{CatUrl(picture.Cat)}/{file.Name}";

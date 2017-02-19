@@ -29,13 +29,13 @@
                     <ul class="files__list">
                         <li class="files__item">
                             <h2 class="files__title">
-                                <a class="files__link" href="@Model.UrlManager.Gallery.CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
+                                <a class="files__link" href="@await Model.UrlManager.Gallery.CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
                             </h2>
                             <div>
                                 @foreach (var pic in cat.LastEntities)
                                 {
-                                    <a href="@UrlManager.Gallery.PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
-                                        <img src="@UrlManager.Gallery.ThumbUrl(pic, 115, 115)"
+                                    <a href="@await UrlManager.Gallery.PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
+                                        <img src="@await UrlManager.Gallery.ThumbUrl(pic, 115, 115)"
                                              alt=""/>
                                     </a>
                                 }
@@ -46,7 +46,7 @@
                                     <li class="files__item">
                                         <h3 class="files__title">
                                             <a class="files__link"
-                                               href="@Model.UrlManager.Gallery.CatPublicUrl(childCat.Cat)">
+                                               href="@await Model.UrlManager.Gallery.CatPublicUrl(childCat.Cat)">
                                                 >@childCat.Cat.Title
                                             </a>
                                         </h3>

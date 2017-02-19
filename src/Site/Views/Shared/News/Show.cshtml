@@ -50,10 +50,10 @@
     </header>
 
     <div class="b-text">
-        @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.ShortText, DbContext, UrlManager))
+        @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.ShortText, DbContext, UrlManager))
         @if (Model.ShowFull)
         {
-            @Html.Raw(ContentHelper.ReplacePlaceholders(Model.News.AddText, DbContext, UrlManager))
+            @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.AddText, DbContext, UrlManager))
         }
     </div>
 

@@ -47,7 +47,7 @@
                 @Html.Raw(Model.File.Desc)
             </div>
             <div class="file__download">
-                <a class="file__download-btn" href="@UrlManager.Files.DownloadUrl(Model.File)">
+                <a class="file__download-btn" href="@await UrlManager.Files.DownloadUrl(Model.File)">
                     Скачать
                     <small>(@(Model.File.SizeInMb)Mb)</small>
                 </a>

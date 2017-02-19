@@ -7,6 +7,7 @@ using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.ViewModels;
@@ -25,47 +26,47 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/files.html")]
-        public IActionResult ParentFiles(string parentUrl)
+        public async Task<IActionResult> ParentFiles(string parentUrl)
         {
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
-            var cats = LoadCatsTree(parent, Context.FileCats, cat => GetLastFiles(cat));
+            var cats = await LoadCatsTree(parent, Context.FileCats, async cat => await GetLastFiles(cat));
 
             return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
         }
 
-        private List<File> GetLastFiles(ICat<FileCat> cat, int count = 5)
+        private async Task<List<File>> GetLastFiles(ICat<FileCat> cat, int count = 5)
         {
-            return Context.Files.Where(x => x.CatId == cat.Id)
+            return await Context.Files.Where(x => x.CatId == cat.Id)
                 .OrderByDescending(x => x.Id)
                 .Take(count)
-                .ToList();
+                .ToListAsync();
         }
 
         [HttpGet("/{parentUrl}/download/{*url}")]
-        public IActionResult Download(string parentUrl, string url)
+        public async Task<IActionResult> Download(string parentUrl, string url)
         {
             string catUrl;
             string fileUrl;
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out fileUrl);
 
-            var file = GetFile(parent, catUrl, fileUrl);
+            var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)
             {
                 file.Count++;
                 Context.Update(file);
-                Context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
 
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = file.Cat.ParentCat;
                 while (cat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(cat), cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
                     cat = cat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
                     "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
@@ -79,7 +80,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/files/{*url}")]
-        public IActionResult Show(string parentUrl, string url)
+        public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find file
             string catUrl;
@@ -87,17 +88,17 @@ namespace BioEngine.Site.Controllers
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out fileUrl);
 
-            var file = GetFile(parent, catUrl, fileUrl);
+            var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = file.Cat.ParentCat;
                 while (cat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(cat), cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
                     cat = cat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
                     "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
@@ -110,27 +111,32 @@ namespace BioEngine.Site.Controllers
             //not file... search for cat
             int page;
             ParseCatchAll(url, out catUrl, out page);
-            var category = GetCat(parent, catUrl);
+            var category = await GetCat(parent, catUrl);
             if (category != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) category.Parent),
                     "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(
+                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
 
-                Context.Entry(category).Collection(x => x.Children).Load();
-                var children =
-                    category.Children.Select(child => new CatsTree<FileCat, File>(child, GetLastFiles(child)))
-                        .ToList();
+                await Context.Entry(category).Collection(x => x.Children).LoadAsync();
 
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, GetLastFiles(category), page,
-                    Context.Files.Count(x => x.CatId == category.Id));
+                var children = new List<CatsTree<FileCat, File>>();
+                foreach (var child in category.Children)
+                {
+                    children.Add(new CatsTree<FileCat, File>(child, await GetLastFiles(child)));
+                }
+
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, await GetLastFiles(category),
+                    page,
+                    await Context.Files.CountAsync(x => x.CatId == category.Id));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);
@@ -138,7 +144,7 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        private FileCat GetCat(ParentModel parent, string catUrl)
+        private async Task<FileCat> GetCat(ParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 
@@ -157,7 +163,7 @@ namespace BioEngine.Site.Controllers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            var cat = catQuery.FirstOrDefault();
+            var cat = await catQuery.FirstOrDefaultAsync();
             if (cat != null)
             {
                 cat.Parent = parent;
@@ -165,7 +171,7 @@ namespace BioEngine.Site.Controllers
             return cat;
         }
 
-        private File GetFile(ParentModel parent, string catUrl, string articleUrl)
+        private async Task<File> GetFile(ParentModel parent, string catUrl, string articleUrl)
         {
             if (!string.IsNullOrEmpty(catUrl) && !string.IsNullOrEmpty(articleUrl))
             {
@@ -191,7 +197,7 @@ namespace BioEngine.Site.Controllers
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var files = query.ToList();
+                var files = await query.ToListAsync();
                 if (files.Any())
                 {
                     File file = null;

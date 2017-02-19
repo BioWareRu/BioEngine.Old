@@ -13,6 +13,7 @@ using BioEngine.Site.ViewModels.Articles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace BioEngine.Site.Controllers
 {
@@ -25,7 +26,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/articles/{*url}")]
-        public IActionResult Show(string parentUrl, string url)
+        public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find article
             string catUrl;
@@ -33,17 +34,17 @@ namespace BioEngine.Site.Controllers
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out articleUrl);
 
-            var article = GetArticle(parent, catUrl, articleUrl);
+            var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = article.Cat.ParentCat;
                 while (cat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.CatPublicUrl(cat), cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(cat), cat.Title));
                     cat = cat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.CatPublicUrl(article.Cat), article.Cat.Title));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat), article.Cat.Title));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.ParentArticlesUrl((dynamic) article.Parent),
                     "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(article.Parent), article.Parent.DisplayTitle));
@@ -56,26 +57,30 @@ namespace BioEngine.Site.Controllers
             //not article... search for cat
             int page;
             ParseCatchAll(url, out catUrl, out page);
-            var category = GetCat(parent, catUrl);
+            var category = await GetCat(parent, catUrl);
             if (category != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.ParentArticlesUrl((dynamic) category.Parent),
                     "Статьи"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(
+                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
 
-                Context.Entry(category).Collection(x => x.Children).Load();
-                var children =
-                    category.Children.Select(child => new CatsTree<ArticleCat, Article>(child, GetLastArticles(child)))
-                        .ToList();
+                await Context.Entry(category).Collection(x => x.Children).LoadAsync();
+                var children = new List<CatsTree<ArticleCat, Article>>();
+                foreach (var child in category.Children)
+                {
+                    children.Add(new CatsTree<ArticleCat, Article>(child, await GetLastArticles(child)));
+                }
 
-                var viewModel = new ArticleCatViewModel(ViewModelConfig, category, children, GetLastArticles(category));
+                var viewModel = new ArticleCatViewModel(ViewModelConfig, category, children,
+                    await GetLastArticles(category));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("ArticleCat", viewModel);
@@ -84,26 +89,27 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/articles.html")]
-        public IActionResult ParentArticles(string parentUrl)
+        public async Task<IActionResult> ParentArticles(string parentUrl)
         {
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
-            var cats = LoadCatsTree(parent, Context.ArticleCats, cat => GetLastArticles(cat));
+            var cats = await LoadCatsTree(parent, Context.ArticleCats,
+                async (cat) => await GetLastArticles(cat));
 
             return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats));
         }
 
-        public List<Article> GetLastArticles(ICat<ArticleCat> cat, int count = 5)
+        public async Task<List<Article>> GetLastArticles(ICat<ArticleCat> cat, int count = 5)
         {
-            return Context.Articles.Where(x => x.CatId == cat.Id && x.Pub == 1)
+            return await Context.Articles.Where(x => x.CatId == cat.Id && x.Pub == 1)
                 .OrderByDescending(x => x.Id)
                 .Take(count)
-                .ToList();
+                .ToListAsync();
         }
 
 
-        private ArticleCat GetCat(ParentModel parent, string catUrl)
+        private async Task<ArticleCat> GetCat(ParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 
@@ -122,7 +128,7 @@ namespace BioEngine.Site.Controllers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            var cat = catQuery.FirstOrDefault();
+            var cat = await catQuery.FirstOrDefaultAsync();
             if (cat != null)
             {
                 cat.Parent = parent;
@@ -130,7 +136,7 @@ namespace BioEngine.Site.Controllers
             return cat;
         }
 
-        private Article GetArticle(ParentModel parent, string catUrl, string articleUrl)
+        private async Task<Article> GetArticle(ParentModel parent, string catUrl, string articleUrl)
         {
             if (!string.IsNullOrEmpty(catUrl) && !string.IsNullOrEmpty(articleUrl))
             {
@@ -156,7 +162,7 @@ namespace BioEngine.Site.Controllers
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var articles = query.ToList();
+                var articles = await query.ToListAsync();
                 if (articles.Any())
                 {
                     Article article = null;

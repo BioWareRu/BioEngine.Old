@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -9,6 +8,7 @@ using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BioEngine.Site.Components.Ipb
@@ -29,7 +29,7 @@ namespace BioEngine.Site.Components.Ipb
             var userDesc = await GetIpbResponse();
             if (userDesc.MemberId != null)
             {
-                var user = _bwContext.Users.FirstOrDefault(x => x.Id == userDesc.MemberId);
+                var user = await _bwContext.Users.FirstOrDefaultAsync(x => x.Id == userDesc.MemberId);
                 if (user != null)
                 {
                     identity = new ClaimsIdentity("ipb");
@@ -44,7 +44,7 @@ namespace BioEngine.Site.Components.Ipb
                         identity.AddClaim(new Claim("admin", "1"));
                     }
 
-                    var siteTeam = _bwContext.SiteTeam.FirstOrDefault(x => x.MemberId == user.Id && x.Active == 1);
+                    var siteTeam = await _bwContext.SiteTeam.FirstOrDefaultAsync(x => x.MemberId == user.Id && x.Active == 1);
                     if (siteTeam != null)
                     {
                         identity.AddClaim(new Claim("siteTeam", "1"));

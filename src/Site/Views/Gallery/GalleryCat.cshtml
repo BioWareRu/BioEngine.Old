@@ -26,11 +26,11 @@
                 for (var i = 0; i < pic.Files.Count; i++)
                 {
                     var file = pic.Files[i];
-                    desc += $"&nbsp;<a target='_blank' href='{Model.UrlManager.Gallery.FullUrl(pic, i)}'>{file.Resolution}</a>";
+                    desc += $"&nbsp;<a target='_blank' href='{await Model.UrlManager.Gallery.FullUrl(pic, i)}'>{file.Resolution}</a>";
                 }
-                <a data-ngthumb="@Model.UrlManager.Gallery.ThumbUrl(pic, 180, 140)"
+                <a data-ngthumb="@await Model.UrlManager.Gallery.ThumbUrl(pic, 180, 140)"
                    data-ngID="@pic.Id"
-                   href="@Model.UrlManager.Gallery.FullUrl(pic)"
+                   href="@await Model.UrlManager.Gallery.FullUrl(pic)"
                    data-ngdesc="@Html.Raw(desc)">
                 </a>
             }

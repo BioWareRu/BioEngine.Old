@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
@@ -11,6 +12,7 @@ using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Gallery;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
@@ -25,33 +27,37 @@ namespace BioEngine.Site.Controllers
 
 
         [HttpGet("/{parentUrl}/gallery/{*url}")]
-        public IActionResult Cat(string parentUrl, string url)
+        public async Task<IActionResult> Cat(string parentUrl, string url)
         {
             string catUrl;
             int page;
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out page);
-            var category = GetCat(parent, catUrl);
+            var category = await GetCat(parent, catUrl);
             if (category != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Gallery.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Gallery.ParentGalleryUrl((dynamic) category.Parent),
                     "Галерея"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(
+                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
 
-                Context.Entry(category).Collection(x => x.Children).Load();
-                var children =
-                    category.Children.Select(child => new CatsTree<GalleryCat, GalleryPic>(child, GetPics(child, 5)))
-                        .ToList();
+                await Context.Entry(category).Collection(x => x.Children).LoadAsync();
+
+                var children = new List<CatsTree<GalleryCat, GalleryPic>>();
+                foreach (var child in category.Children)
+                {
+                    children.Add(new CatsTree<GalleryCat, GalleryPic>(child, await GetPics(child, 5)));
+                }
 
                 var viewModel = new GalleryCatViewModel(ViewModelConfig, category, children,
-                    GetPics(category, page: page), Context.GalleryPics.Count(x => x.CatId == category.Id),
+                    await GetPics(category, page: page), await Context.GalleryPics.CountAsync(x => x.CatId == category.Id),
                     page);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -60,16 +66,16 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        private List<GalleryPic> GetPics(ICat<GalleryCat> cat, int count = 24, int page = 0)
+        private async Task<List<GalleryPic>> GetPics(ICat<GalleryCat> cat, int count = 24, int page = 0)
         {
-            return Context.GalleryPics.Where(x => x.CatId == cat.Id)
+            return await Context.GalleryPics.Where(x => x.CatId == cat.Id)
                 .OrderByDescending(x => x.Id)
                 .Skip((page - 1) * count)
                 .Take(count)
-                .ToList();
+                .ToListAsync();
         }
 
-        private GalleryCat GetCat(ParentModel parent, string catUrl)
+        private async Task<GalleryCat> GetCat(ParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 
@@ -88,19 +94,19 @@ namespace BioEngine.Site.Controllers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            var cat = catQuery.FirstOrDefault();
+            var cat = await catQuery.FirstOrDefaultAsync();
             if (cat != null)
                 cat.Parent = parent;
             return cat;
         }
 
         [HttpGet("/{parentUrl}/gallery.html")]
-        public IActionResult ParentGallery(string parentUrl)
+        public async Task<IActionResult> ParentGallery(string parentUrl)
         {
             var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
-            var cats = LoadCatsTree(parent, Context.GalleryCats, cat => GetPics(cat, 5));
+            var cats = await LoadCatsTree(parent, Context.GalleryCats, async cat => await GetPics(cat, 5));
 
             return View("ParentGallery", new ParentGalleryViewModel(ViewModelConfig, parent, cats));
         }

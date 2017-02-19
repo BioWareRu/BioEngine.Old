@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
@@ -20,29 +21,29 @@ namespace BioEngine.Site.Controllers
 
 
         [HttpGet("/{gameUrl:regex(^[[a-z0-9_]]+$)}.html")]
-        public IActionResult Index(string gameUrl)
+        public async Task<IActionResult> Index(string gameUrl)
         {
-            var game = Context.Games.Include(x => x.Developer).FirstOrDefault(x => x.Url == gameUrl);
+            var game = await Context.Games.Include(x => x.Developer).FirstOrDefaultAsync(x => x.Url == gameUrl);
             if (game == null)
                 return new NotFoundResult();
 
             var lastNews =
-                Context.News.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
+                await Context.News.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
                     .OrderByDescending(x => x.Id)
                     .Take(5)
-                    .ToList();
+                    .ToListAsync();
             var lastArticles =
-                Context.Articles.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
+                await Context.Articles.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
                     .OrderByDescending(x => x.Id)
                     .Take(5)
-                    .ToList();
+                    .ToListAsync();
             var lastFiles =
-                Context.Files.Where(x => x.GameId == game.Id).OrderByDescending(x => x.Id).Take(5).ToList();
+                await Context.Files.Where(x => x.GameId == game.Id).OrderByDescending(x => x.Id).Take(5).ToListAsync();
             var lastPics =
-                Context.GalleryPics.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
+                await Context.GalleryPics.Where(x => (x.GameId == game.Id) && (x.Pub == 1))
                     .OrderByDescending(x => x.Id)
                     .Take(5)
-                    .ToList();
+                    .ToListAsync();
 
             var view = new GamePageViewModel(ViewModelConfig, game, lastNews, lastArticles, lastFiles, lastPics);
             return View(view);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -14,18 +15,18 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public string PublicUrl(File file)
+        public async Task<string> PublicUrl(File file)
         {
-            Poppulate(file);
+            await Poppulate(file);
             var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Show", "Files",
                 new {parentUrl = ParentUrl(file), url});
             /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
         }
 
-        public string DownloadUrl(File file)
+        public async Task<string> DownloadUrl(File file)
         {
-            Poppulate(file);
+            await Poppulate(file);
             var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Download", "Files",
                 new {parentUrl = ParentUrl(file), url});
@@ -46,25 +47,25 @@ namespace BioEngine.Site.Components.Url
             return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
         }
 
-        private void Poppulate(File file)
+        private async Task Poppulate(File file)
         {
             if (file.Cat == null)
-                DbContext.Entry(file).Reference(x => x.Cat).Load();
+                await DbContext.Entry(file).Reference(x => x.Cat).LoadAsync();
             var cat = file.Cat;
             while (cat != null)
             {
                 if (cat.ParentCat == null)
                     if (cat.Pid > 0)
-                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        await DbContext.Entry(cat).Reference(x => x.ParentCat).LoadAsync();
                     else
                         break;
                 cat = cat.ParentCat;
             }
 
             if (file.GameId > 0 && file.Game == null)
-                DbContext.Entry(file).Reference(x => x.Game).Load();
+                await DbContext.Entry(file).Reference(x => x.Game).LoadAsync();
             if (file.DeveloperId > 0 && file.Developer == null)
-                DbContext.Entry(file).Reference(x => x.Developer).Load();
+                await DbContext.Entry(file).Reference(x => x.Developer).LoadAsync();
         }
 
         public string ParentFilesUrl(Developer developer)
@@ -82,9 +83,9 @@ namespace BioEngine.Site.Components.Url
             return UrlHelper.Action<FilesController>(x => x.ParentFiles(topic.Url));
         }
 
-        public string CatPublicUrl(FileCat cat, int page = 1)
+        public async Task<string> CatPublicUrl(FileCat cat, int page = 1)
         {
-            Poppulate(cat);
+            await Poppulate(cat);
             var url = CatUrl(cat) + "/" + cat.Url;
             if (page > 1)
                 url += $"/page/{page}";
@@ -105,13 +106,13 @@ namespace BioEngine.Site.Components.Url
             return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
         }
 
-        private void Poppulate(FileCat cat)
+        private async Task Poppulate(FileCat cat)
         {
             while (cat != null)
             {
                 if (cat.ParentCat == null)
                     if (cat.Pid > 0)
-                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        await DbContext.Entry(cat).Reference(x => x.ParentCat).LoadAsync();
                     else
                         break;
                 cat = cat.ParentCat;

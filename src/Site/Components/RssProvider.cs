@@ -29,7 +29,7 @@ namespace BioEngine.Site.Components
 
         public Task<RssChannel> GetChannel(CancellationToken cancellationToken = new CancellationToken())
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 var channel = new RssChannel
                 {
@@ -45,12 +45,12 @@ namespace BioEngine.Site.Components
                 };
 
                 var latestNews =
-                    _dbContext.News.OrderByDescending(x => x.Sticky)
+                    await _dbContext.News.OrderByDescending(x => x.Sticky)
                         .ThenByDescending(x => x.Id)
                         .Where(x => x.Pub == 1)
                         .Include(x => x.Author)
                         .Take(20)
-                        .ToList();
+                        .ToListAsync(cancellationToken);
                 var mostRecentPubDate = DateTime.MinValue;
                 var items = new List<RssItem>();
                 foreach (var news in latestNews)

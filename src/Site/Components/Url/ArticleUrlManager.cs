@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -14,9 +15,9 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public string PublicUrl(Article article)
+        public async Task<string> PublicUrl(Article article)
         {
-            Poppulate(article);
+            await Poppulate(article);
             var url = CatUrl(article.Cat) + "/" + article.Url;
             return GetUrl("Show", "Articles",
                 new {parentUrl = ParentUrl(article), url});
@@ -36,30 +37,30 @@ namespace BioEngine.Site.Components.Url
             return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
         }
 
-        private void Poppulate(Article article)
+        private async Task Poppulate(Article article)
         {
             if (article.Cat == null)
             {
-                DbContext.Entry(article).Reference(x => x.Cat).Load();
+                await DbContext.Entry(article).Reference(x => x.Cat).LoadAsync();
             }
             var cat = article.Cat;
-            Poppulate(cat);
+            await Poppulate(cat);
 
             if (article.GameId > 0 && article.Game == null)
             {
-                DbContext.Entry(article).Reference(x => x.Game).Load();
+                await DbContext.Entry(article).Reference(x => x.Game).LoadAsync();
             }
             if (article.DeveloperId > 0 && article.Developer == null)
             {
-                DbContext.Entry(article).Reference(x => x.Developer).Load();
+                await DbContext.Entry(article).Reference(x => x.Developer).LoadAsync();
             }
             if (article.TopicId > 0 && article.Topic == null)
             {
-                DbContext.Entry(article).Reference(x => x.Topic).Load();
+                await DbContext.Entry(article).Reference(x => x.Topic).LoadAsync();
             }
         }
 
-        private void Poppulate(ArticleCat cat)
+        private async Task Poppulate(ArticleCat cat)
         {
             while (cat != null)
             {
@@ -67,7 +68,7 @@ namespace BioEngine.Site.Components.Url
                 {
                     if (cat.Pid > 0)
                     {
-                        DbContext.Entry(cat).Reference(x => x.ParentCat).Load();
+                        await DbContext.Entry(cat).Reference(x => x.ParentCat).LoadAsync();
                     }
                     else
                     {
@@ -78,9 +79,9 @@ namespace BioEngine.Site.Components.Url
             }
         }
 
-        public string CatPublicUrl(ArticleCat cat, int page = 1)
+        public async Task<string> CatPublicUrl(ArticleCat cat, int page = 1)
         {
-            Poppulate(cat);
+            await Poppulate(cat);
             var url = CatUrl(cat) + "/" + cat.Url;
             if (page > 1)
             {

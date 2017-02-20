@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
+    [Table("be_nuke_topics")]
     public class Topic : ParentModel
     {
         [Key]
@@ -22,15 +23,5 @@ namespace BioEngine.Common.Models
         public override string Icon => Logo;
         public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
-
-        public static void ConfigureDb(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Topic>().ToTable("be_nuke_topics");
-            modelBuilder.Entity<Topic>().Property(x => x.Id).HasColumnName("id");
-            modelBuilder.Entity<Topic>().Property(x => x.Url).HasColumnName("url");
-            modelBuilder.Entity<Topic>().Property(x => x.Title).HasColumnName("title");
-            modelBuilder.Entity<Topic>().Property(x => x.Logo).HasColumnName("logo");
-            modelBuilder.Entity<Topic>().Property(x => x.Desc).HasColumnName("desc");
-        }
     }
 }

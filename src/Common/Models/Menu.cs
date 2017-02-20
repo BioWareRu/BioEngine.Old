@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
+    [Table("be_menu")]
     public class Menu : BaseModel
     {
         [Key]
@@ -20,16 +21,6 @@ namespace BioEngine.Common.Models
 
         [Required]
         public int Date { get; set; }
-
-        public static void ConfigureDb(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Menu>().ToTable("be_menu");
-            modelBuilder.Entity<Menu>().Property(x => x.Id).HasColumnName("id");
-            modelBuilder.Entity<Menu>().Property(x => x.Key).HasColumnName("key");
-            modelBuilder.Entity<Menu>().Property(x => x.Title).HasColumnName("title");
-            modelBuilder.Entity<Menu>().Property(x => x.Code).HasColumnName("code");
-            modelBuilder.Entity<Menu>().Property(x => x.Date).HasColumnName("date");
-        }
 
         public List<MenuItem> GetMenu()
         {

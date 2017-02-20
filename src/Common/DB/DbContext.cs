@@ -1,4 +1,5 @@
-﻿using BioEngine.Common.Models;
+﻿using System.Linq;
+using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,23 +34,25 @@ namespace BioEngine.Common.DB
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Models.News.ConfigureDb(modelBuilder);
-            User.ConfigureDb(modelBuilder);
-            Developer.ConfigureDb(modelBuilder);
-            Game.ConfigureDb(modelBuilder);
-            Topic.ConfigureDb(modelBuilder);
-            Menu.ConfigureDb(modelBuilder);
-            Models.Settings.ConfigureDb(modelBuilder);
-            Block.ConfigureDb(modelBuilder);
-            Advertisement.ConfigureDb(modelBuilder);
-            Poll.ConfigureDb(modelBuilder);
-            PollWho.ConfigureDb(modelBuilder);
-            Article.ConfigureDb(modelBuilder);
-            ArticleCat.ConfigureDb(modelBuilder);
-            File.ConfigureDb(modelBuilder);
-            FileCat.ConfigureDb(modelBuilder);
-            GalleryPic.ConfigureDb(modelBuilder);
-            GalleryCat.ConfigureDb(modelBuilder);
+            modelBuilder.SetSimpleUnderscoreTableNameConvention();
+        }
+    }
+
+    public static class ModelBuilderExtensions
+    {
+        public static void SetSimpleUnderscoreTableNameConvention(this ModelBuilder modelBuilder)
+        {
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var mutableProperty in entity.GetProperties())
+                {
+                    if (mutableProperty.FindAnnotation("Relational:ColumnName") != null) continue;
+                    mutableProperty.Relational().ColumnName = string
+                        .Concat(mutableProperty.Name.Select(
+                            (x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString()))
+                        .ToLower();
+                }
+            }
         }
     }
 }

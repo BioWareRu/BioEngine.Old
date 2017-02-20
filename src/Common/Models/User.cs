@@ -1,32 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
+    [Table("be_core_members")]
     public class User : BaseModel
     {
         [Key]
+        [Column("member_id")]
         public int Id { get; set; }
 
         public string Name { get; set; }
+        [Column("member_group_id")]
         public int GroupId { get; set; }
-        public string EMail { get; set; }
-        public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
-        public string PhotoUrl { get; set; }
-
-        public static void ConfigureDb(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>().ToTable("be_core_members");
-            modelBuilder.Entity<User>().Property(x => x.Id).HasColumnName("member_id");
-            modelBuilder.Entity<User>().Property(x => x.Name).HasColumnName("name");
-            modelBuilder.Entity<User>().Property(x => x.GroupId).HasColumnName("member_group_id");
-            modelBuilder.Entity<User>().Property(x => x.EMail).HasColumnName("email");
-            modelBuilder.Entity<User>().Property(x => x.PasswordHash).HasColumnName("members_pass_hash");
-            modelBuilder.Entity<User>().Property(x => x.PasswordSalt).HasColumnName("members_pass_salt");
-            modelBuilder.Entity<User>().Property(x => x.PhotoUrl).HasColumnName("pp_thumb_photo");
-        }
 
         public bool IsAdmin => GroupId == 4;
 

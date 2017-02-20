@@ -1,26 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
+    [Table("be_poll")]
     public class Poll
     {
         private List<PollResultsEntry> _results;
 
         private bool _voted;
+
+        [Key]
         public int PollId { get; set; }
 
         public string Question { get; set; }
+
+        [Column("startdate")]
         public int StartDate { get; set; }
 
+        [Column("options")]
         public string OptionsJson { get; set; }
+
+        [Column("votes")]
         public string VotesJson { get; set; }
 
-        public int NumChoises { get; set; }
+        public int NumChoices { get; set; }
         public int Multiple { get; set; }
+
+        [Column("onoff")]
         public int OnOff { get; set; }
 
         public List<PollResultsEntry> Results
@@ -39,7 +50,7 @@ namespace BioEngine.Common.Models
                     {
                         Id = option.Id,
                         Text = option.Text,
-                        Result = all > 0 ? Math.Round(optVotes/(double) all, 4) : 0
+                        Result = all > 0 ? Math.Round(optVotes / (double) all, 4) : 0
                     });
                 }
                 return _results;
@@ -64,20 +75,6 @@ namespace BioEngine.Common.Models
         public bool IsVoted()
         {
             return _voted;
-        }
-
-        public static void ConfigureDb(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Poll>().ToTable("be_poll");
-            modelBuilder.Entity<Poll>().HasKey(nameof(PollId));
-            modelBuilder.Entity<Poll>().Property(x => x.PollId).HasColumnName("poll_id");
-            modelBuilder.Entity<Poll>().Property(x => x.Question).HasColumnName("question");
-            modelBuilder.Entity<Poll>().Property(x => x.StartDate).HasColumnName("startdate");
-            modelBuilder.Entity<Poll>().Property(x => x.OptionsJson).HasColumnName("options");
-            modelBuilder.Entity<Poll>().Property(x => x.VotesJson).HasColumnName("votes");
-            modelBuilder.Entity<Poll>().Property(x => x.NumChoises).HasColumnName("num_choices");
-            modelBuilder.Entity<Poll>().Property(x => x.Multiple).HasColumnName("multiple");
-            modelBuilder.Entity<Poll>().Property(x => x.OnOff).HasColumnName("onoff");
         }
     }
 

@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Common.Models
 {
+    [Table("be_news")]
     public class News : IChildModel
     {
         [Key]
@@ -26,9 +26,11 @@ namespace BioEngine.Common.Models
         [Required]
         public int AuthorId { get; set; }
 
+        [Column("tid")]
         public int ForumTopicId { get; set; }
 
         [Required]
+        [Column("pid")]
         public int ForumPostId { get; set; }
 
         [Required]
@@ -42,6 +44,7 @@ namespace BioEngine.Common.Models
         [Required]
         public int Pub { get; set; }
 
+        [Column("addgames")]
         public string AddGames { get; set; }
 
         [Required]
@@ -58,7 +61,7 @@ namespace BioEngine.Common.Models
         [Required]
         public long TwitterId { get; set; }
 
-        [ForeignKey("AuthorId")]
+        [ForeignKey(nameof(AuthorId))]
         public User Author { get; set; }
 
         public bool HasMore => !string.IsNullOrEmpty(AddText);
@@ -66,7 +69,6 @@ namespace BioEngine.Common.Models
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }
 
-        [NotMapped]
         public int? TopicId { get; set; }
 
         [ForeignKey(nameof(GameId))]
@@ -83,34 +85,6 @@ namespace BioEngine.Common.Models
         {
             get { return ParentModel.GetParent(this); }
             set { ParentModel.SetParent(this, value); }
-        }
-
-        public static void ConfigureDb(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<News>().ToTable("be_news");
-            modelBuilder.Entity<News>().Property(x => x.Id).HasColumnName("id");
-            modelBuilder.Entity<News>().Property(x => x.GameId).HasColumnName("game_id");
-            modelBuilder.Entity<News>().Property(x => x.DeveloperId).HasColumnName("developer_id");
-            modelBuilder.Entity<News>().Property(x => x.TopicId).HasColumnName("topic_id");
-            modelBuilder.Entity<News>().Property(x => x.Url).HasColumnName("url");
-            modelBuilder.Entity<News>().Property(x => x.Source).HasColumnName("source");
-            modelBuilder.Entity<News>().Property(x => x.GameOld).HasColumnName("game_old");
-            modelBuilder.Entity<News>().Property(x => x.Title).HasColumnName("title");
-            modelBuilder.Entity<News>().Property(x => x.ShortText).HasColumnName("short_text");
-            modelBuilder.Entity<News>().Property(x => x.AddText).HasColumnName("add_text");
-            modelBuilder.Entity<News>().Property(x => x.AuthorId).HasColumnName("author_id");
-            modelBuilder.Entity<News>().Property(x => x.ForumTopicId).HasColumnName("tid");
-            modelBuilder.Entity<News>().Property(x => x.ForumPostId).HasColumnName("pid");
-            modelBuilder.Entity<News>().Property(x => x.Sticky).HasColumnName("sticky");
-            modelBuilder.Entity<News>().Property(x => x.Date).HasColumnName("date");
-            modelBuilder.Entity<News>().Property(x => x.LastChangeDate).HasColumnName("last_change_date");
-            modelBuilder.Entity<News>().Property(x => x.Pub).HasColumnName("pub");
-            modelBuilder.Entity<News>().Property(x => x.AddGames).HasColumnName("addgames");
-            modelBuilder.Entity<News>().Property(x => x.RatePos).HasColumnName("rate_pos");
-            modelBuilder.Entity<News>().Property(x => x.RateNeg).HasColumnName("rate_neg");
-            modelBuilder.Entity<News>().Property(x => x.VotedUsers).HasColumnName("voted_users");
-            modelBuilder.Entity<News>().Property(x => x.Comments).HasColumnName("comments");
-            modelBuilder.Entity<News>().Property(x => x.TwitterId).HasColumnName("twitter_id");
         }
     }
 }

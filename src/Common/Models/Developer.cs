@@ -40,5 +40,6 @@ namespace BioEngine.Common.Models
         public override ParentType Type { get; } = ParentType.Developer;
         public override string ParentUrl => Url;
         public override string DisplayTitle => Name;
+        public override string Icon => Logo;
     }
 }

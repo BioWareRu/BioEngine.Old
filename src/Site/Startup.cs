@@ -29,7 +29,7 @@ namespace BioEngine.Site
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"config.{env.EnvironmentName}.json", true)
+                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }

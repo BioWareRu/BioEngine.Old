@@ -31,7 +31,7 @@ namespace BioEngine.Site.Controllers
         {
             string catUrl;
             int page;
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out page);
             var category = await GetCat(parent, catUrl);
             if (category != null)
@@ -103,7 +103,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/gallery.html")]
         public async Task<IActionResult> ParentGallery(string parentUrl)
         {
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
             var cats = await LoadCatsTree(parent, Context.GalleryCats, async cat => await GetPics(cat, 5));

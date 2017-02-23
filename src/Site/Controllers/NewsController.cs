@@ -19,26 +19,10 @@ namespace BioEngine.Site.Controllers
 {
     public class NewsController : BaseController
     {
-        private readonly IChannelProviderResolver _channelResolver;
-        private IEnumerable<IChannelProvider> _channelProviders;
-        private IXmlFormatter _xmlFormatter;
-
         public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions,
-            IChannelProviderResolver channelResolver = null, IEnumerable<IChannelProvider> channelProviders = null,
-            IXmlFormatter xmlFormatter = null
-        )
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions
+        ) : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
-            _channelProviders = channelProviders ?? new List<IChannelProvider>();
-            var list = channelProviders as List<IChannelProvider>;
-            if (list?.Count == 0)
-            {
-                list.Add(new NullChannelProvider());
-            }
-
-            _channelResolver = channelResolver ?? new DefaultChannelProviderResolver();
-            _xmlFormatter = xmlFormatter ?? new DefaultXmlFormatter();
         }
 
         [HttpGet("/")]
@@ -56,7 +40,8 @@ namespace BioEngine.Site.Controllers
         private async Task<IActionResult> NewsList(int page = 1)
         {
             var news =
-                await Context.News.Where(x => x.Pub == 1).OrderByDescending(x => x.Date)
+                await Context.News.Where(x => x.Pub == 1)
+                    .OrderByDescending(x => x.Date)
                     .Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
@@ -70,25 +55,17 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/news.html")]
-        public IActionResult NewsList(string parentUrl)
+        public async Task<IActionResult> NewsList(string parentUrl)
         {
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
-            if (parent != null)
-            {
-                return ParentNewsList((dynamic) parent);
-            }
-            return StatusCode(404);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            return parent != null ? ParentNewsList((dynamic) parent) : StatusCode(404);
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
-        public IActionResult NewsList(string parentUrl, int page)
+        public async Task<IActionResult> NewsList(string parentUrl, int page)
         {
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
-            if (parent != null)
-            {
-                return ParentNewsList((dynamic) parent, page);
-            }
-            return StatusCode(404);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            return parent != null ? ParentNewsList((dynamic) parent, page) : StatusCode(404);
         }
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
@@ -151,7 +128,8 @@ namespace BioEngine.Site.Controllers
                 Context.News.Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
-                    .Include(x => x.Topic).Where(n => (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
+                    .Include(x => x.Topic)
+                    .Where(n => (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
 
             if (User.Identity.IsAuthenticated)
             {
@@ -192,9 +170,21 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/rss.xml")]
-        public async Task<IActionResult> Rss()
+        public async Task<IActionResult> Rss([FromServices] IChannelProviderResolver channelResolver = null,
+            [FromServices] IEnumerable<IChannelProvider> channelProviders = null,
+            [FromServices] IXmlFormatter xmlFormatter = null)
         {
-            var currentChannelProvider = _channelResolver.GetCurrentChannelProvider(_channelProviders);
+            channelProviders = channelProviders ?? new List<IChannelProvider>();
+            var list = channelProviders as List<IChannelProvider>;
+            if (list?.Count == 0)
+            {
+                list.Add(new NullChannelProvider());
+            }
+
+            channelResolver = channelResolver ?? new DefaultChannelProviderResolver();
+            xmlFormatter = xmlFormatter ?? new DefaultXmlFormatter();
+
+            var currentChannelProvider = channelResolver.GetCurrentChannelProvider(channelProviders);
 
             if (currentChannelProvider == null)
             {
@@ -210,7 +200,7 @@ namespace BioEngine.Site.Controllers
                 return new EmptyResult();
             }
 
-            var xml = _xmlFormatter.BuildXml(currentChannel);
+            var xml = xmlFormatter.BuildXml(currentChannel);
 
             return new XmlResult(xml);
         }

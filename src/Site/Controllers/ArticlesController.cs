@@ -31,7 +31,7 @@ namespace BioEngine.Site.Controllers
             //so... let's try to find article
             string catUrl;
             string articleUrl;
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             ParseCatchAll(url, out catUrl, out articleUrl);
 
             var article = await GetArticle(parent, catUrl, articleUrl);
@@ -91,7 +91,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/articles.html")]
         public async Task<IActionResult> ParentArticles(string parentUrl)
         {
-            var parent = ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             if (parent == null) return StatusCode(404);
 
             var cats = await LoadCatsTree(parent, Context.ArticleCats,

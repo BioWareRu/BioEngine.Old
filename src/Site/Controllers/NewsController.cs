@@ -170,9 +170,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/rss.xml")]
-        public async Task<IActionResult> Rss([FromServices] IChannelProviderResolver channelResolver = null,
-            [FromServices] IEnumerable<IChannelProvider> channelProviders = null,
-            [FromServices] IXmlFormatter xmlFormatter = null)
+        public async Task<IActionResult> Rss([FromServices] IEnumerable<IChannelProvider> channelProviders = null)
         {
             channelProviders = channelProviders ?? new List<IChannelProvider>();
             var list = channelProviders as List<IChannelProvider>;
@@ -181,8 +179,8 @@ namespace BioEngine.Site.Controllers
                 list.Add(new NullChannelProvider());
             }
 
-            channelResolver = channelResolver ?? new DefaultChannelProviderResolver();
-            xmlFormatter = xmlFormatter ?? new DefaultXmlFormatter();
+            var channelResolver = new DefaultChannelProviderResolver();
+            var xmlFormatter = new DefaultXmlFormatter();
 
             var currentChannelProvider = channelResolver.GetCurrentChannelProvider(channelProviders);
 

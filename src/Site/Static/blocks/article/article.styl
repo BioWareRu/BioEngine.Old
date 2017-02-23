@@ -1,0 +1,51 @@
+.article__block
+  margin-right 250px
+  box-shadow 0 0 10px 0 $linkColor
+  background-color $newsColorLight
+  color $fontColor
+.article
+  padding 0 1.875rem 2.2rem
+  clearfix()
+.article__header
+  display flex
+  justify-content space-between
+  margin-bottom 30px
+.article__title-wrap
+  flex-shrink 1
+.article__title
+  font-weight bold
+  font-size 1.5em
+  line-height 1.4
+  margin 0 0 5px
+.article__date
+  font-size .9em
+  font-style italic
+  color $newsColorDate
+.article__title-image
+  align-self flex-start
+  flex-shrink 0
+  margin-left 30px
+  img
+    display block
+.article__footer
+  margin-top 30px
+.article__footer-controls
+  margin-top 20px
+.article__share
+  float right
+  height 26px
+  margin-top -5px
+.article__comments
+  color $fontColor
+  text-decoration underline
+  line-height 26px
+  &:hover
+    color $linkColorHover
+  &:before
+    content ''
+    display inline-block
+    background url("/img/article-list__balloon.png") 0 0 no-repeat
+    width 19px
+    height 19px
+    margin-right 7px
+    margin-bottom -4px

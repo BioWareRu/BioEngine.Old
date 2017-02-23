@@ -1,0 +1,73 @@
+.article__block {
+  margin-right: 250px;
+  box-shadow: 0 0 10px 0 #1298b9;
+  background-color: #ebebeb;
+  color: #000;
+}
+.article {
+  padding: 0 1.875rem 2.2rem;
+  zoom: 1;
+}
+.article:before,
+.article:after {
+  content: " ";
+  display: table;
+}
+.article:after {
+  clear: both;
+}
+.article__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.article__title-wrap {
+  flex-shrink: 1;
+}
+.article__title {
+  font-weight: bold;
+  font-size: 1.5em;
+  line-height: 1.4;
+  margin: 0 0 5px;
+}
+.article__date {
+  font-size: 0.9em;
+  font-style: italic;
+  color: #666;
+}
+.article__title-image {
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin-left: 30px;
+}
+.article__title-image img {
+  display: block;
+}
+.article__footer {
+  margin-top: 30px;
+}
+.article__footer-controls {
+  margin-top: 20px;
+}
+.article__share {
+  float: right;
+  height: 26px;
+  margin-top: -5px;
+}
+.article__comments {
+  color: #000;
+  text-decoration: underline;
+  line-height: 26px;
+}
+.article__comments:hover {
+  color: #1fc1e9;
+}
+.article__comments:before {
+  content: '';
+  display: inline-block;
+  background: url("/img/article-list__balloon.png") 0 0 no-repeat;
+  width: 19px;
+  height: 19px;
+  margin-right: 7px;
+  margin-bottom: -4px;
+}

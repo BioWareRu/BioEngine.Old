@@ -1,0 +1,84 @@
+.auth
+  background-color $authBlock
+  padding $sidebarInnerGap
+  border-radius $sidebarRadius
+  color $onDarkTextColor
+  clearfix()
+.auth__login, .auth__reg
+  display block
+  font-size 16px
+  color $onDarkTextColor
+  margin-bottom 3px
+  text-decoration none
+  line-height 1
+  background none
+  border none
+  cursor pointer
+  padding 5px 0
+  &:before
+    content ''
+    display inline-block
+    margin-right 10px
+    width 15px
+    height 17px
+    background url("/img/auth__icons.png") 0 0 no-repeat
+.auth__login:before
+  background-position 0 -18px
+.auth__text
+  border-bottom 1px solid rgba($onDarkTextColor, 0.5)
+.auth__userpic
+  display none
+  width 50px
+  height 50px
+  background-size cover
+  background-position 50% 50%
+  background-repeat no-repeat
+  box-sizing border-box
+  border 3px solid $dividerColor
+  border-radius 3px
+  float left
+.auth__username, .auth__exit
+  display none
+.auth_sign-in
+  clearfix()
+  .auth__login, .auth__reg
+    display none
+  .auth__userpic
+    display inline-block
+    float left
+    margin-right 10px
+  .auth__username
+    color white
+    text-decoration none
+    font-size 16px
+    display block
+    word-break break-all
+    &:hover
+      text-decoration underline
+    &:before
+      content ''
+      display inline-block
+      background url("/img/auth_user-icon-blue.svg") 50% 50% no-repeat
+      width 16px
+      height 16px
+      background-size contain
+      margin 0 5px -2px 3px
+    &.auth__username-renegate
+      &:before
+        background url("/img/auth_user-icon-red.svg") 50% 50% no-repeat
+  .auth__exit
+    color white
+    text-decoration none
+    font-size 16px
+    display block
+    margin-top 10px
+    &:hover
+      text-decoration underline
+    &:before
+      content ''
+      display inline-block
+      background url("/img/auth__exit-icon.png") 50% 50% no-repeat
+      width 16px
+      height 16px
+      background-size contain
+      margin 0 5px -2px 3px

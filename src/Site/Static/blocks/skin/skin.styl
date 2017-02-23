@@ -1,0 +1,45 @@
+.skin
+  clearfix()
+  padding $sidebarInnerGap
+  margin-bottom 30px
+  border-radius $sidebarRadius
+  background $sidebarColor
+.skin__item
+  float left
+  width 32px
+  height 32px
+  padding 0
+  margin-right 7px
+  background none
+  border none
+  cursor pointer
+  outline solid 1px #000
+  &:hover
+  &:focus
+    outline solid 4px #000
+.skin__item_active
+  outline solid 4px #888
+.skin__item_default
+  background #ebebeb
+.skin__item_dark
+  background #2e43b5
+.skin__item_help
+  position relative
+  background #fff
+  &:before
+  &:after
+    content ''
+    position absolute
+    width 50%
+    height 50%
+    background #000
+  &:before
+    top 0
+    left 0
+  &:after
+    top 50%
+    left 50%
+.skin__item_pony
+  background #e012a7
+.skin__item_soft
+  background #ece0ba

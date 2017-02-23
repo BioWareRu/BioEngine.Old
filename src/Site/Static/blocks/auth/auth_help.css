@@ -1,0 +1,120 @@
+.auth {
+  background-color: #111;
+  padding: 15px;
+  border-radius: 5px;
+  color: #fff;
+  zoom: 1;
+}
+.auth:before,
+.auth:after {
+  content: " ";
+  display: table;
+}
+.auth:after {
+  clear: both;
+}
+.auth__login,
+.auth__reg {
+  display: block;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 3px;
+  text-decoration: none;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 0;
+}
+.auth__login:before,
+.auth__reg:before {
+  content: '';
+  display: inline-block;
+  margin-right: 10px;
+  width: 15px;
+  height: 17px;
+  background: url("/img/auth__icons.png") 0 0 no-repeat;
+}
+.auth__login:before {
+  background-position: 0 -18px;
+}
+.auth__text {
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+.auth__userpic {
+  display: none;
+  width: 50px;
+  height: 50px;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  border: 3px solid #7d7d7d;
+  border-radius: 3px;
+  float: left;
+}
+.auth__username,
+.auth__exit {
+  display: none;
+}
+.auth_sign-in {
+  zoom: 1;
+}
+.auth_sign-in:before,
+.auth_sign-in:after {
+  content: " ";
+  display: table;
+}
+.auth_sign-in:after {
+  clear: both;
+}
+.auth_sign-in .auth__login,
+.auth_sign-in .auth__reg {
+  display: none;
+}
+.auth_sign-in .auth__userpic {
+  display: inline-block;
+  float: left;
+  margin-right: 10px;
+}
+.auth_sign-in .auth__username {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  word-break: break-all;
+}
+.auth_sign-in .auth__username:hover {
+  text-decoration: underline;
+}
+.auth_sign-in .auth__username:before {
+  content: '';
+  display: inline-block;
+  background: url("/img/auth_user-icon-blue.svg") 50% 50% no-repeat;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  margin: 0 5px -2px 3px;
+}
+.auth_sign-in .auth__username.auth__username-renegate:before {
+  background: url("/img/auth_user-icon-red.svg") 50% 50% no-repeat;
+}
+.auth_sign-in .auth__exit {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  margin-top: 10px;
+}
+.auth_sign-in .auth__exit:hover {
+  text-decoration: underline;
+}
+.auth_sign-in .auth__exit:before {
+  content: '';
+  display: inline-block;
+  background: url("/img/auth__exit-icon.png") 50% 50% no-repeat;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  margin: 0 5px -2px 3px;
+}

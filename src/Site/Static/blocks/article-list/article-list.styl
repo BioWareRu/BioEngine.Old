@@ -1,0 +1,67 @@
+.article-list
+  margin-right 250px
+  background-color $newsColorLight
+  box-shadow 0 0 10px 0 $linkColor
+.article-list__item
+  padding 2.2rem 1.875rem
+  border-bottom 4px solid $dividerColor
+  &:last-of-type
+    border none
+.article-list__header
+  display flex
+  justify-content space-between
+  margin-bottom 30px
+.article-list__title-wrap
+  flex-shrink 1
+.article-list__title
+  font-weight bold
+  font-size 1.5em
+  line-height 1.4
+  margin 0 0 5px
+.article-list__permalink
+  color inherit
+  text-decoration underline
+  &:hover
+    color $linkColorHover
+.article-list__date
+  font-size .9em
+  font-style italic
+  color $newsColorDate
+.article-list__title-image
+  align-self flex-start
+  flex-shrink 0
+  margin-left 30px
+  img
+    display block
+.article-list__news-illustration
+  width 100%
+.article-list__footer
+  margin-top 30px
+.article-list__morelink
+  display inline-block
+  padding 10px 25px
+  background-color $linkColor
+  color $accentColorHover
+  text-decoration none
+  &:hover
+    background-color $linkColorHover
+.article-list__footer-controls
+  margin-top 20px
+.article-list__share
+  float right
+  height 26px
+  margin-top -5px
+.article-list__comments
+  color $fontColor
+  text-decoration underline
+  line-height 26px
+  &:hover
+    color $linkColorHover
+  &:before
+    content ''
+    display inline-block
+    background url("/img/article-list__balloon.png") 0 0 no-repeat
+    width 19px
+    height 19px
+    margin-right 7px
+    margin-bottom -4px

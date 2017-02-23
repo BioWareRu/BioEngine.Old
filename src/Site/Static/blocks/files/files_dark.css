@@ -1,0 +1,39 @@
+@media (min-width: 1250px) {
+  .files {
+    columns: 2;
+  }
+}
+.files_index {
+  columns: 2;
+}
+@media (min-width: 1250px) {
+  .files_index {
+    columns: 3;
+  }
+}
+.files__cat {
+  margin: 0 0 30px -20px;
+  break-inside: avoid;
+}
+.files__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+.files__item {
+  margin-bottom: 10px;
+}
+.files__title {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 1.3em;
+}
+.files__link {
+  color: #1298b9;
+}
+.files__link:hover {
+  color: #1fc1e9;
+}
+.files__link:visited {
+  color: #3c7f8f;
+}

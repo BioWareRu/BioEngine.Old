@@ -1,0 +1,42 @@
+.b-text {
+  word-wrap: break-word;
+}
+.b-text p {
+  margin: 1em 0;
+  font-size: 1em;
+  line-height: 1.2;
+}
+.b-text img {
+  max-width: 100%;
+}
+.b-text a {
+  color: #1298b9;
+  text-decoration: underline;
+}
+.b-text a:visited {
+  color: #3c7f8f;
+}
+.b-text a:hover {
+  color: #1fc1e9;
+}
+.b-text i {
+  font-style: italic;
+}
+.b-text b {
+  font-weight: bold;
+}
+.b-text h2,
+.b-text h3 {
+  font-weight: bold;
+  line-height: 1.4;
+}
+.b-text h2 {
+  font-size: 1.5em;
+}
+.b-text h3 {
+  font-size: 1.2em;
+}
+.b-text .embed-twit {
+  width: 500px;
+  margin: 0 auto;
+}

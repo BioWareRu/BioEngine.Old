@@ -1,0 +1,15 @@
+.gallery__block {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.gallery__item {
+  width: 190px;
+  height: 150px;
+  margin: 0 10px 10px 0;
+  background-color: rgba(42,37,86,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

@@ -1,0 +1,33 @@
+.file__desc-list {
+  margin: 0;
+}
+.file__desc-title {
+  display: inline-block;
+}
+.file__desc-title:after {
+  content: ': ';
+}
+.file__desc-value {
+  display: inline-block;
+  margin: 0;
+}
+.file__desc {
+  margin: 20px 0;
+}
+.file__download {
+  margin: 20px 0 30px;
+}
+.file__download-btn {
+  display: inline-block;
+  padding: 1em 2em;
+  font-size: 1.2em;
+  color: #fff;
+  background: #009926;
+  text-decoration: none;
+}
+.file__download-btn:hover {
+  background: #00bd2f;
+}
+.file__download-btn:active {
+  background: #009926;
+}

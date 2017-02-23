@@ -1,0 +1,4 @@
+User-agent: *
+Host: https://www.bioware.ru
+Sitemap:  https://www.bioware.ru/sitemap.xml
+Sitemap:  https://www.bioware.ru/forum/sitemap.xml

@@ -1,0 +1,91 @@
+.header
+  background-color rgba(0,0,0,0.1)
+.header__content
+  width 90%
+  max-width 1240px
+  min-width 980px
+  padding 30px 0 30px
+  margin 0 auto
+.header__logo-link
+  margin-left -4px
+  position relative
+.header__menu-list
+  margin 0
+  padding 0
+.header__menu
+  display inline-block
+  vertical-align top
+  margin-left 100px
+  position relative
+  z-index 10
+.header__menu-item
+  display inline-block
+  vertical-align top
+  margin-right 5px
+  position relative
+.header__menu-link
+  font-size 1.125em
+  color $accentColor
+  display inline-block
+  padding 13px
+  text-decoration none
+  &:hover
+    color $accentColorHover
+.header__menu-link_dotted
+  border-bottom-style dotted
+.header__menu-text
+  border-bottom 1px solid
+  line-height 1
+.header__menu-text_dashed
+  border-bottom-style dashed
+.header__submenu
+  position absolute
+  top 100%
+  left 0
+  background $submenuBGColor
+  margin 0
+  padding 0
+  display none
+.header__submenu-item
+  display block
+  position relative
+.header__submenu-item_with-subsubmenu
+  &:after
+    content ''
+    display inline-block
+    box-sizing border-box
+    border 6px solid transparent
+    border-left 6px solid rgba(255,255,255,0.5)
+    width 12px
+    height 12px
+    position absolute
+    top 50%
+    margin-top -6px
+    right 0px
+.header__submenu-link
+  padding 10px 20px
+  border-bottom 1px solid rgba(0,0,0,0.85)
+  border-top 1px solid rgba(255,255,255,0.3)
+  color $accentColor
+  text-decoration none
+  display block
+  min-width 180px
+  max-width 250px
+  box-sizing border-box
+  &:hover
+    color $accentColorHover
+    background-color rgba($accentColor, 0.3)
+.header__menu-item_open
+  & .header__menu-link
+    color $accentColorHover
+.header__subsubmenu
+  display none
+  position absolute
+  top 0
+  left 100%
+  padding 0
+  background $submenuBGColor
+  border-left 1px solid rgba(255,255,255,0.3)
+.header__submenu-item:hover
+  .header__subsubmenu
+    display block

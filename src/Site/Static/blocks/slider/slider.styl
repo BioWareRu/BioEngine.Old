@@ -1,0 +1,55 @@
+.slider
+  position: relative
+  box-sizing border-box
+  width 100%
+  height 94px
+  padding 0 60px;
+  background rgba(255, 255, 255, .1)
+  border-bottom solid 4px $dividerColor
+.slider__control
+  position absolute
+  top 0
+  width 60px
+  height 90px
+  cursor pointer
+  background none
+  border none
+  outline none
+  &:after
+    content ''
+    position absolute
+    top 32px
+    left 22px
+    width 16px
+    height 25px
+    background url(/img/slider__controls.png) 0 0 no-repeat
+.slider__control_left
+  left 0
+  &:hover:after
+    background-position 0 -25px
+.slider__control_right
+  right 0
+  &:after
+    background-position -16px 0
+  &:hover:after
+    background-position -16px -25px
+.slider__list
+  height 94px
+  overflow hidden
+.slider__list-item
+  position relative
+  float left
+  width 145px
+  height 94px
+  text-indent -9999px
+  &:hover
+    background rgba($accentColor, .4)
+    .slider__image
+      background-position 50% 100%
+.slider__image
+  display block
+  height 30px
+  margin-top 30px
+  background-repeat no-repeat
+  background-position 50% 0
+  transform translate3d(0, 0, 0);

@@ -1,0 +1,9 @@
+﻿*
+!.gitignore
+!android-*
+!apple-*
+!browserconfig.cml
+!favicon*
+!manifest.json
+!mstile-*
+!robots.txt

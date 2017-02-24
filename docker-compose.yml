@@ -1,6 +1,6 @@
 version: "2"
 services:
-  mysql:
-    image: mariadb:latest
-    ports:
-      - 3306:3306
+    mysql:
+        image: mariadb:latest
+    elasticsearch:
+        image: elasticsearch:alpine

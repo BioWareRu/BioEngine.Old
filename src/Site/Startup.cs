@@ -1,9 +1,12 @@
 ﻿using System.Globalization;
 using System.IO;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Search;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Ipb;
 using BioEngine.Site.Components.Url;
+using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +55,8 @@ namespace BioEngine.Site
                     config.Filters.Add(new AuthorizeFilter(policy));
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-                .AddDataAnnotationsLocalization().AddTypedRouting();
+                .AddDataAnnotationsLocalization()
+                .AddTypedRouting();
 
             services.AddSingleton<IAuthorizationHandler, IpbAuthorizationHandler>();
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
@@ -76,7 +80,9 @@ namespace BioEngine.Site
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();
+            services.AddScoped<ContentHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
+            services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

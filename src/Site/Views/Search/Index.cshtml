@@ -13,6 +13,12 @@
         <button class="search__magnifier"></button>
     </form>
     <div class="search-page__content">
+        @if (Model.Blocks.Count == 0)
+        {
+            <p>
+                Ничего не найдено
+            </p>
+        }
         @foreach (var block in Model.Blocks)
         {
             <div class="search-page__cat">

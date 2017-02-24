@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Articles
@@ -8,12 +9,17 @@ namespace BioEngine.Site.ViewModels.Articles
         public ArticleViewModel(BaseViewModelConfig config, Article article) : base(config)
         {
             Article = article;
-            var title = article.Title;
-            if (article.Cat != null)
-                title += " - " + article.Cat.Title;
-            if (article.Parent != null)
-                title += " - " + article.Parent.DisplayTitle;
-            Title = title;
+        }
+
+        public override async Task<string> Title()
+        {
+            var title = Article.Title;
+            var parent = await ParentEntityProvider.GetModelParent(Article);
+            if (Article.Cat != null)
+                title += " - " + Article.Cat.Title;
+            if (parent != null)
+                title += " - " + parent.DisplayTitle;
+            return title;
         }
 
         public Article Article { get; }

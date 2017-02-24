@@ -5,7 +5,7 @@
 @model OneNewsViewModel
 @inject UrlManager UrlManager
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 <div class="article__block">

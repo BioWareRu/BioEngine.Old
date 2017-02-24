@@ -40,13 +40,12 @@ namespace BioEngine.Site.Controllers
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.CatPublicUrl(parentCat),
+                        parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Gallery.ParentGalleryUrl((dynamic) category.Parent),
-                    "Галерея"));
-                breadcrumbs.Add(
-                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.ParentGalleryUrl((dynamic) parent), "Галерея"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
 
@@ -57,7 +56,8 @@ namespace BioEngine.Site.Controllers
                 }
 
                 var viewModel = new GalleryCatViewModel(ViewModelConfig, category, children,
-                    await GetPics(category, page: page), await Context.GalleryPics.CountAsync(x => x.CatId == category.Id),
+                    await GetPics(category, page: page),
+                    await Context.GalleryPics.CountAsync(x => x.CatId == category.Id),
                     page);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -66,7 +66,7 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        private async Task<List<GalleryPic>> GetPics(ICat<GalleryCat> cat, int count = 24, int page = 0)
+        private async Task<List<GalleryPic>> GetPics(ICat<GalleryCat> cat, int count = 24, int page = 1)
         {
             return await Context.GalleryPics.Where(x => x.CatId == cat.Id)
                 .OrderByDescending(x => x.Id)
@@ -95,8 +95,6 @@ namespace BioEngine.Site.Controllers
                     throw new ArgumentOutOfRangeException();
             }
             var cat = await catQuery.FirstOrDefaultAsync();
-            if (cat != null)
-                cat.Parent = parent;
             return cat;
         }
 

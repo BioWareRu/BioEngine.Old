@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Files
@@ -15,21 +16,24 @@ namespace BioEngine.Site.ViewModels.Files
             LastFiles = lastFiles;
             CurrentPage = currentPage;
             TotalFiles = totalFiles;
-            var title = fileCat.Title;
-            title += " - Файлы";
-            if (fileCat.Parent != null)
-                title += " - " + fileCat.Parent.DisplayTitle;
-            Title = title;
         }
 
         public FileCat FileCat { get; }
+
+        public override async Task<string> Title()
+        {
+            var title = FileCat.Title;
+            title += " - Файлы";
+            var parent = await ParentEntityProvider.GetModelParent(FileCat);
+            if (parent != null)
+                title += " - " + parent.DisplayTitle;
+            return title;
+        }
 
         public IEnumerable<CatsTree<FileCat, File>> Children { get; }
 
         public IEnumerable<File> LastFiles { get; }
 
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) FileCat.Parent);
-        public string ParentFilesUrl => UrlManager.Files.ParentFilesUrl((dynamic) FileCat.Parent);
         public int CurrentPage { get; }
         public int TotalFiles { get; }
     }

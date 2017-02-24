@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +12,15 @@ namespace BioEngine.Site.Components.Url
         protected readonly BWContext DbContext;
         protected readonly AppSettings Settings;
         protected readonly IUrlHelper UrlHelper;
+        protected readonly ParentEntityProvider ParentEntityProvider;
 
-        protected EntityUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
+        protected EntityUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
         {
             Settings = settings;
             DbContext = dbContext;
             UrlHelper = urlHelper;
+            ParentEntityProvider = parentEntityProvider;
         }
 
         protected string GetUrl(string action, string controller, object urlParams, bool absolute = false)
@@ -31,9 +36,9 @@ namespace BioEngine.Site.Components.Url
         }
 
 
-        protected string ParentUrl(IChildModel child)
+        protected async Task<string> ParentUrl(IChildModel child)
         {
-            return child.Parent.ParentUrl;
+            return (await ParentEntityProvider.GetModelParent(child)).ParentUrl;
         }
     }
 }

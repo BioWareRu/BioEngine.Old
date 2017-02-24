@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -10,8 +11,9 @@ namespace BioEngine.Site.Components.Url
 {
     public class FileUrlManager : EntityUrlManager
     {
-        public FileUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
-            : base(settings, dbContext, urlHelper)
+        public FileUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
+            : base(settings, dbContext, urlHelper, parentEntityProvider)
         {
         }
 
@@ -20,7 +22,7 @@ namespace BioEngine.Site.Components.Url
             await Poppulate(file);
             var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Show", "Files",
-                new {parentUrl = ParentUrl(file), url});
+                new {parentUrl = await ParentUrl(file), url});
             /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
         }
 
@@ -29,7 +31,7 @@ namespace BioEngine.Site.Components.Url
             await Poppulate(file);
             var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Download", "Files",
-                new {parentUrl = ParentUrl(file), url});
+                new {parentUrl = await ParentUrl(file), url});
             /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
         }
 
@@ -68,19 +70,21 @@ namespace BioEngine.Site.Components.Url
                 await DbContext.Entry(file).Reference(x => x.Developer).LoadAsync();
         }
 
-        public string ParentFilesUrl(Developer developer)
+        public async Task<string> ParentFilesUrl(FileCat fileCat)
         {
-            return UrlHelper.Action<FilesController>(x => x.ParentFiles(developer.Url));
+            var parent = await ParentEntityProvider.GetModelParent(fileCat);
+            return ParentFilesUrl((dynamic)parent);
         }
 
-        public string ParentFilesUrl(Game game)
+        public async Task<string> ParentFilesUrl(File file)
         {
-            return UrlHelper.Action<FilesController>(x => x.ParentFiles(game.Url));
+            var parent = await ParentEntityProvider.GetModelParent(file);
+            return ParentFilesUrl((dynamic)parent);
         }
 
-        public string ParentFilesUrl(Topic topic)
+        public async Task<string> ParentFilesUrl<T>(T parentModel) where T : ParentModel
         {
-            return UrlHelper.Action<FilesController>(x => x.ParentFiles(topic.Url));
+            return await Task.FromResult(UrlHelper.Action<FilesController>(x => x.ParentFiles(parentModel.ParentUrl)));
         }
 
         public async Task<string> CatPublicUrl(FileCat cat, int page = 1)
@@ -90,7 +94,7 @@ namespace BioEngine.Site.Components.Url
             if (page > 1)
                 url += $"/page/{page}";
             return GetUrl("Show", "Files",
-                new {parentUrl = ParentUrl(cat), url});
+                new {parentUrl = await ParentUrl(cat), url});
         }
 
         private static string CatUrl(FileCat cat)

@@ -1,8 +1,12 @@
-﻿@using BioEngine.Site.ViewComponents
+﻿@using BioEngine.Common.Base
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Gallery.GalleryCatViewModel
-
+@inject UrlManager UrlManager
+@inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 
@@ -13,11 +17,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.GalleryCat.Title</h2>
             </div>
-            <a class="article-list__title-image" href="@Model.ParentGalleryUrl"
-               title="@Model.GalleryCat.Parent.DisplayTitle">
-                <img src="@Model.ParentIconUrl"
-                     alt="@Model.GalleryCat.Parent.DisplayTitle">
-            </a>
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(await ParentEntityProvider.GetModelParent(Model.GalleryCat), x => UrlManager.Gallery.ParentGalleryUrl((dynamic)x), x => UrlManager.ParentIconUrl((dynamic)x)))
         </header>
         <div id="nanoGallery">
             @foreach (var pic in Model.Pictures)

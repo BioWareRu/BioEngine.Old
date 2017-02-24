@@ -1,11 +1,15 @@
 ﻿@using System.Threading.Tasks
+@using BioEngine.Common.Base
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Articles.ArticleCatViewModel
 @inject UrlManager UrlManager
+@inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
+    var parent = await ParentEntityProvider.GetModelParent(Model.ArticleCat);
 }
 
 <div class="article__block">
@@ -15,11 +19,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.ArticleCat.Title</h2>
             </div>
-            <a class="article-list__title-image" href="@Model.ParentArticlesUrl"
-               title="@Model.ArticleCat.Parent.DisplayTitle">
-                <img src="@Model.ParentIconUrl"
-                     alt="@Model.ArticleCat.Parent.DisplayTitle">
-            </a>
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => UrlManager.Articles.ParentArticlesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
         </header>
         @if (string.IsNullOrEmpty(Model.ArticleCat.Content))
         {

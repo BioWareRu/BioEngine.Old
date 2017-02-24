@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Articles
@@ -13,11 +14,16 @@ namespace BioEngine.Site.ViewModels.Articles
             ArticleCat = articleCat;
             Children = children;
             LastArticles = lastArticles;
-            var title = articleCat.Title;
+        }
+
+        public override async Task<string> Title()
+        {
+            var parent = await ParentEntityProvider.GetModelParent(ArticleCat);
+            var title = ArticleCat.Title;
             title += " - Статьи";
-            if (articleCat.Parent != null)
-                title += " - " + articleCat.Parent.DisplayTitle;
-            Title = title;
+            if (parent != null)
+                title += " - " + parent.DisplayTitle;
+            return title;
         }
 
         public ArticleCat ArticleCat { get; }
@@ -26,8 +32,6 @@ namespace BioEngine.Site.ViewModels.Articles
 
         public IEnumerable<Article> LastArticles { get; }
 
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) ArticleCat.Parent);
-        public string ParentArticlesUrl => UrlManager.Articles.ParentArticlesUrl((dynamic) ArticleCat.Parent);
         public int CurrentPage { get; set; }
         public int TotalArticles { get; set; }
     }

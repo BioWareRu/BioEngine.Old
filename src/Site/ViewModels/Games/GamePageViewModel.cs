@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Games
@@ -15,8 +15,7 @@ namespace BioEngine.Site.ViewModels.Games
             LastArticles = lastArticles;
             LastFiles = lastFiles;
             LastPics = lastPics;
-            Title = Game.Title;
-            ImageUrl = new Uri(UrlManager.ParentIconUrl(game));
+            //ImageUrl = new Uri(UrlManager.ParentIconUrl(game));
             Description = game.Desc;
         }
 
@@ -25,5 +24,10 @@ namespace BioEngine.Site.ViewModels.Games
         public IEnumerable<Article> LastArticles { get; }
         public IEnumerable<File> LastFiles { get; }
         public IEnumerable<GalleryPic> LastPics { get; }
+
+        public override Task<string> Title()
+        {
+            return Task.FromResult(Game.Title);
+        }
     }
 }

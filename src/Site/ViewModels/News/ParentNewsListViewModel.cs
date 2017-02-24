@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 
 namespace BioEngine.Site.ViewModels.News
@@ -13,7 +14,6 @@ namespace BioEngine.Site.ViewModels.News
             News = news;
             TotalNews = totalNews;
             CurrentPage = currentPage;
-            Title = parent.DisplayTitle + " - Новости";
         }
 
         public ParentModel Parent { get; }
@@ -21,5 +21,10 @@ namespace BioEngine.Site.ViewModels.News
 
         public int TotalNews { get; }
         public int CurrentPage { get; }
+
+        public override Task<string> Title()
+        {
+            return Task.FromResult($"{Parent.DisplayTitle}- Новости");
+        }
     }
 }

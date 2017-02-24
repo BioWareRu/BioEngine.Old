@@ -67,9 +67,8 @@ namespace BioEngine.Site.Controllers
                     cat = cat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
-                    "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -99,9 +98,8 @@ namespace BioEngine.Site.Controllers
                     cat = cat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) file.Parent),
-                    "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(file.Parent), file.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -118,13 +116,12 @@ namespace BioEngine.Site.Controllers
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(
+                        new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) category.Parent),
-                    "Файлы"));
-                breadcrumbs.Add(
-                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
 
@@ -164,10 +161,6 @@ namespace BioEngine.Site.Controllers
                     throw new ArgumentOutOfRangeException();
             }
             var cat = await catQuery.FirstOrDefaultAsync();
-            if (cat != null)
-            {
-                cat.Parent = parent;
-            }
             return cat;
         }
 
@@ -216,7 +209,6 @@ namespace BioEngine.Site.Controllers
                     }
                     if (file != null)
                     {
-                        file.Parent = parent;
                         return file;
                     }
                 }

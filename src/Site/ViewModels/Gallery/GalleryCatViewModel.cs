@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Gallery
@@ -12,13 +13,19 @@ namespace BioEngine.Site.ViewModels.Gallery
             GalleryCat = cat;
             Children = children;
             Pictures = pics;
-            var title = GalleryCat.Title;
-            title += " - Галерея";
-            if (GalleryCat.Parent != null)
-                title += " - " + GalleryCat.Parent.DisplayTitle;
-            Title = title;
+
             TotalPictures = totalPictures;
             CurrentPage = currentPage;
+        }
+
+        public override async Task<string> Title()
+        {
+            var parent = await ParentEntityProvider.GetModelParent(GalleryCat);
+            var title = GalleryCat.Title;
+            title += " - Галерея";
+            if (parent != null)
+                title += " - " + parent.DisplayTitle;
+            return title;
         }
 
         public GalleryCat GalleryCat { get; }
@@ -27,8 +34,6 @@ namespace BioEngine.Site.ViewModels.Gallery
 
         public IEnumerable<GalleryPic> Pictures { get; }
 
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) GalleryCat.Parent);
-        public string ParentGalleryUrl => UrlManager.Gallery.ParentGalleryUrl((dynamic) GalleryCat.Parent);
         public int CurrentPage { get; }
         public int TotalPictures { get; }
     }

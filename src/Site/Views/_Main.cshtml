@@ -1,7 +1,7 @@
 ﻿@using BioEngine.Site.Extensions
 @using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.BaseViewModel
-@if (string.IsNullOrEmpty(Model.Title))
+@if (string.IsNullOrEmpty(await Model.Title()))
 {
     throw new ArgumentNullException(nameof(Model.Title));
 }
@@ -30,24 +30,24 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@Html.Raw(Model.SiteTitle)">
-    <meta name="twitter:title" content="@Html.Raw(Model.Title)">
+    <meta name="twitter:title" content="@Html.Raw(await Model.Title())">
     <meta name="twitter:description" content="@Html.Raw(Model.Description)">
     <meta property="twitter:image:src" content="@Html.Raw(Model.ImageUrl)">
 
 
     <!-- G+ -->
-    <meta itemprop="name" content="@Html.Raw(Model.Title)">
+    <meta itemprop="name" content="@Html.Raw(await Model.Title())">
     <meta itemprop="description" content="@Html.Raw(Model.Description)">
     <meta itemprop="image" content="@Html.Raw(Model.ImageUrl)">
 
     <!-- Facebook Markup -->
-    <meta property="og:title" content="@Html.Raw(Model.Title)">
+    <meta property="og:title" content="@Html.Raw(await Model.Title())">
     <meta property="og:type" content="website">
     <meta property="og:image" content="@Html.Raw(Model.ImageUrl)">
     <meta property="og:url" content="@Html.Raw(Context.Request.AbsoluteUrl())">
     <meta property="og:description" content="@Html.Raw(Model.Description)">
 
-    <title>@Html.Raw(Model.Title)</title>
+    <title>@Html.Raw(await Model.Title())</title>
 
     <link rel="stylesheet" href="/css/style_@(Model.ThemeName).css"
           id="stylesheet">

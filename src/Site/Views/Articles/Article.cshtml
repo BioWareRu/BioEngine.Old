@@ -5,7 +5,7 @@
 @model BioEngine.Site.ViewModels.Articles.ArticleViewModel
 @inject UrlManager UrlManager
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 

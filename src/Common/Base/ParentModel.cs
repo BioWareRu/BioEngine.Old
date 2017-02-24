@@ -21,18 +21,6 @@ namespace BioEngine.Common.Base
         [UsedImplicitly]
         public virtual string DisplayTitle { get; }
 
-        public static ParentModel GetParent(IChildModel child)
-        {
-            if (child.GameId > 0)
-                return child.Game;
-            if (child.DeveloperId > 0)
-                return child.Developer;
-            if (child.TopicId > 0)
-                return child.Topic;
-
-            throw new Exception("No parent!");
-        }
-
         public static void SetParent(IChildModel child, ParentModel parent)
         {
             switch (parent.Type)

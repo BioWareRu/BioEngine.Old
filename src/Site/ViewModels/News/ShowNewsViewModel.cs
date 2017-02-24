@@ -18,8 +18,6 @@ namespace BioEngine.Site.ViewModels.News
 
         public DateTimeOffset Date => DateTimeOffset.FromUnixTimeSeconds(News.Date);
 
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) News.Parent);
-        public string ParentNewsUrl => UrlManager.News.ParentNewsUrl((dynamic) News.Parent);
         public string CommentsUrl => UrlManager.News.CommentsUrl(News);
 
         public string NewsUrl => UrlManager.News.PublicUrl(News, true);

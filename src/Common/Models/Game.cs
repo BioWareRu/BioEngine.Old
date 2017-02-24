@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
+using BioEngine.Common.Search;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_games")]
-    public class Game : ParentModel
+    public class Game : ParentModel, ISearchModel
     {
         [Key]
-       public override int Id { get; set; }
+        public override int Id { get; set; }
 
         [Required]
         public int DeveloperId { get; set; }
@@ -28,6 +29,7 @@ namespace BioEngine.Common.Models
         public string Dev { get; set; }
 
         public string Desc { get; set; }
+        public string NewsDesc { get; set; }
 
         public string Keywords { get; set; }
 

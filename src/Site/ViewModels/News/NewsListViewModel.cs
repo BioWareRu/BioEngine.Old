@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BioEngine.Site.ViewModels.News
 {
@@ -16,5 +17,10 @@ namespace BioEngine.Site.ViewModels.News
 
         public int TotalNews { get; }
         public int CurrentPage { get; }
+
+        public override Task<string> Title()
+        {
+            return Task.FromResult(SiteTitle);
+        }
     }
 }

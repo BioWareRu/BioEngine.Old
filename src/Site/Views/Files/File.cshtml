@@ -1,12 +1,16 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
+@using BioEngine.Common.Base
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Files.FileViewModel
 @inject UrlManager UrlManager
+@inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
+    var parent = await ParentEntityProvider.GetModelParent(Model.File);
 }
 
 <div class="article__block">
@@ -16,11 +20,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
             </div>
-            <a class="article-list__title-image" href="@Model.ParentFilesUrl"
-               title="@Model.File.Parent.DisplayTitle">
-                <img src="@Model.ParentIconUrl"
-                     alt="@Model.File.Parent.DisplayTitle">
-            </a>
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => UrlManager.Files.ParentFilesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
         </header>
         @if (!string.IsNullOrEmpty(Model.File.YtId))
         {

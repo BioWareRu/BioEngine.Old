@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -17,22 +19,26 @@ namespace BioEngine.Site.Components.Url
         public readonly DeveloperUrlManager Developer;
         public readonly TopicUrlManager Topics;
         public readonly NewsUrlManager News;
+        public readonly SearchUrlManager Search;
 
         private AppSettings Settings;
+        private ParentEntityProvider _parentEntityProvider;
 
         public UrlManager(BWContext dbContext, IActionContextAccessor contextAccessor,
-            IUrlHelperFactory urlHelperFactory, IOptions<AppSettings> options)
+            IUrlHelperFactory urlHelperFactory, IOptions<AppSettings> options,
+            ParentEntityProvider parentEntityProvider)
         {
             var urlHelper = urlHelperFactory.GetUrlHelper(contextAccessor.ActionContext);
             Settings = options.Value;
-
-            Articles = new ArticleUrlManager(Settings, dbContext, urlHelper);
-            Files = new FileUrlManager(Settings, dbContext, urlHelper);
-            Gallery = new GalleryUrlManager(Settings, dbContext, urlHelper);
-            Games = new GameUrlManager(Settings, dbContext, urlHelper);
-            Developer = new DeveloperUrlManager(Settings, dbContext, urlHelper);
-            Topics = new TopicUrlManager(Settings, dbContext, urlHelper);
-            News = new NewsUrlManager(Settings, dbContext, urlHelper);
+            _parentEntityProvider = parentEntityProvider;
+            Articles = new ArticleUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Files = new FileUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Gallery = new GalleryUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Games = new GameUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Developer = new DeveloperUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Topics = new TopicUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            News = new NewsUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
+            Search = new SearchUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
         }
 
         public string ParentUrl(ParentModel parent)
@@ -50,20 +56,26 @@ namespace BioEngine.Site.Components.Url
             }
         }
 
-        public string ParentIconUrl(Developer developer)
+        public async Task<string> ParentIconUrl(IChildModel child)
         {
-            return Settings.AssetsDomain
-                   + Settings.DevelopersImagesPath + developer.Icon;
+            var parent = await _parentEntityProvider.GetModelParent(child);
+            return ParentIconUrl((dynamic) parent);
         }
 
-        public string ParentIconUrl(Game game)
+        public async Task<string> ParentIconUrl(Developer developer)
         {
-            return Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon;
+            return await Task.FromResult(Settings.AssetsDomain
+                   + Settings.DevelopersImagesPath + developer.Icon);
         }
 
-        public string ParentIconUrl(Topic topic)
+        public async Task<string> ParentIconUrl(Game game)
         {
-            return Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon;
+            return await Task.FromResult(Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon);
+        }
+
+        public async Task<string> ParentIconUrl(Topic topic)
+        {
+            return await Task.FromResult(Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon);
         }
     }
 }

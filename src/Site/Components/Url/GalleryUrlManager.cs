@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -12,8 +13,9 @@ namespace BioEngine.Site.Components.Url
 {
     public class GalleryUrlManager : EntityUrlManager
     {
-        public GalleryUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
-            : base(settings, dbContext, urlHelper)
+        public GalleryUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
+            : base(settings, dbContext, urlHelper, parentEntityProvider)
         {
         }
 
@@ -32,7 +34,7 @@ namespace BioEngine.Site.Components.Url
             if (page > 1)
                 url += $"/page/{page}";
             return GetUrl("Cat", "Gallery",
-                new {parentUrl = ParentUrl(cat), url});
+                new {parentUrl = await ParentUrl(cat), url});
         }
 
         private async Task Poppulate(GalleryCat cat)
@@ -90,19 +92,16 @@ namespace BioEngine.Site.Components.Url
                 await DbContext.Entry(picture).Reference(x => x.Developer).LoadAsync();
         }
 
-        public string ParentGalleryUrl(Developer developer)
+        public async Task<string> ParentGalleryUrl(GalleryCat galleryCat)
         {
-            return UrlHelper.Action<GalleryController>(x => x.ParentGallery(developer.Url));
+            var parent = await ParentEntityProvider.GetModelParent(galleryCat);
+            return ParentGalleryUrl((dynamic) parent);
         }
 
-        public string ParentGalleryUrl(Game game)
+        public async Task<string> ParentGalleryUrl<T>(T parentModel) where T : ParentModel
         {
-            return UrlHelper.Action<GalleryController>(x => x.ParentGallery(game.Url));
-        }
-
-        public string ParentGalleryUrl(Topic topic)
-        {
-            return UrlHelper.Action<GalleryController>(x => x.ParentGallery(topic.Url));
+            return await Task.FromResult(
+                UrlHelper.Action<GalleryController>(x => x.ParentGallery(parentModel.ParentUrl)));
         }
 
         public async Task<string> ThumbUrl(GalleryPic picture, int weight = 100, int height = 0, int index = 0)
@@ -117,7 +116,7 @@ namespace BioEngine.Site.Components.Url
             await Poppulate(picture);
             var file = picture.Files[index];
             return
-                $"{Settings.ImagesDomain}/{ParentUrl(picture)}/{CatUrl(picture.Cat)}/{file.Name}";
+                $"{Settings.ImagesDomain}/{await ParentUrl(picture)}/{CatUrl(picture.Cat)}/{file.Name}";
         }
     }
 }

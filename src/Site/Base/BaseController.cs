@@ -31,7 +31,7 @@ namespace BioEngine.Site.Base
             Context = context;
             ParentEntityProvider = parentEntityProvider;
             _settings = context.Settings.ToList();
-            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings);
+            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings, parentEntityProvider);
         }
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();

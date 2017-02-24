@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
+using BioEngine.Common.Search;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_gallery_cats")]
-    public class GalleryCat : ICat<GalleryCat>
+    public class GalleryCat : ICat<GalleryCat>, ISearchModel
     {
         public const int PicsOnPage = 24;
 
@@ -54,11 +56,9 @@ namespace BioEngine.Common.Models
         [NotMapped]
         public Topic Topic { get; set; }
 
-        [NotMapped]
-        public ParentModel Parent
+        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
         {
-            get { return ParentModel.GetParent(this); }
-            set { ParentModel.SetParent(this, value); }
+            return await parentEntityProvider.GetModelParent(this);
         }
     }
 }

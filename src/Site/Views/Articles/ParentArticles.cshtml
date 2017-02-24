@@ -1,10 +1,11 @@
 ﻿@using System.Threading.Tasks
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Articles.ParentArticlesViewModel
 @inject UrlManager UrlManager
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 
@@ -15,11 +16,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">Статьи</h2>
             </div>
-            <a class="article-list__title-image" href="@Model.ParentArticlesUrl"
-               title="@Model.Parent.DisplayTitle">
-                <img src="@Model.ParentIconUrl"
-                     alt="@Model.Parent.DisplayTitle">
-            </a>
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => UrlManager.Articles.ParentArticlesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
         </header>
 
         <div class="files">

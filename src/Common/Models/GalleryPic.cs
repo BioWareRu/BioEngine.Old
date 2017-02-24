@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Helpers;
 using BioEngine.Common.Interfaces;
@@ -46,11 +47,9 @@ namespace BioEngine.Common.Models
         [NotMapped]
         public Topic Topic { get; set; }
 
-        [NotMapped]
-        public ParentModel Parent
+        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
         {
-            get { return ParentModel.GetParent(this); }
-            set { ParentModel.SetParent(this, value); }
+            return await parentEntityProvider.GetModelParent(this);
         }
 
         private List<GalleryPicFile> _files;

@@ -44,10 +44,10 @@ namespace BioEngine.Site.Controllers
                     breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(cat), cat.Title));
                     cat = cat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat), article.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.ParentArticlesUrl((dynamic) article.Parent),
-                    "Статьи"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(article.Parent), article.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat),
+                    article.Cat.Title));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic) parent), "Статьи"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new ArticleViewModel(ViewModelConfig, article);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -64,13 +64,12 @@ namespace BioEngine.Site.Controllers
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(parentCat), parentCat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(parentCat),
+                        parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Articles.ParentArticlesUrl((dynamic) category.Parent),
-                    "Статьи"));
-                breadcrumbs.Add(
-                    new BreadCrumbsItem(UrlManager.ParentUrl(category.Parent), category.Parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic) parent), "Статьи"));
+                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
                 var children = new List<CatsTree<ArticleCat, Article>>();
@@ -128,12 +127,7 @@ namespace BioEngine.Site.Controllers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            var cat = await catQuery.FirstOrDefaultAsync();
-            if (cat != null)
-            {
-                cat.Parent = parent;
-            }
-            return cat;
+            return await catQuery.FirstOrDefaultAsync();
         }
 
         private async Task<Article> GetArticle(ParentModel parent, string catUrl, string articleUrl)
@@ -181,7 +175,6 @@ namespace BioEngine.Site.Controllers
                     }
                     if (article != null)
                     {
-                        article.Parent = parent;
                         return article;
                     }
                 }

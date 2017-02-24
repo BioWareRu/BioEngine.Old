@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Site.Components
+namespace BioEngine.Common.Base
 {
     [UsedImplicitly]
     public class ParentEntityProvider
@@ -54,6 +54,28 @@ namespace BioEngine.Site.Components
             if (developer != null) return developer;
             var topic = (await GetTopics()).FirstOrDefault(x => x.Url == url);
             return topic;
+        }
+
+        public async Task<ParentModel> GetModelParent(IChildModel model)
+        {
+            ParentModel parent = null;
+            if (model.GameId > 0)
+            {
+                parent = (await GetGames()).FirstOrDefault(x => x.Id == model.GameId);
+            }
+            if (model.DeveloperId > 0)
+            {
+                parent = (await GetDevelopers()).FirstOrDefault(x => x.Id == model.DeveloperId);
+            }
+            if (model.TopicId > 0)
+            {
+                parent = (await GetTopics()).FirstOrDefault(x => x.Id == model.TopicId);
+            }
+            if (parent == null)
+            {
+                throw new Exception("No parent!");
+            }
+            return parent;
         }
     }
 }

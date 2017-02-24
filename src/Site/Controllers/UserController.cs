@@ -1,4 +1,5 @@
 ﻿using System;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;

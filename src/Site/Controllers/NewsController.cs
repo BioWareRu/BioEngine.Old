@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
@@ -51,21 +52,21 @@ namespace BioEngine.Site.Controllers
                     .ToListAsync();
             var totalNews = await Context.News.CountAsync();
 
-            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page) {Title = "Новости"});
+            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
         }
 
         [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> NewsList(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? ParentNewsList((dynamic) parent) : StatusCode(404);
+            return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> NewsList(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? ParentNewsList((dynamic) parent, page) : StatusCode(404);
+            return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
         }
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
@@ -162,10 +163,10 @@ namespace BioEngine.Site.Controllers
             if (news == null) return StatusCode(404);
 
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
-
+            var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.ParentNewsUrl((dynamic) news.Parent),
-                news.Parent.DisplayTitle));
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
+                parent.DisplayTitle));
             return View(viewModel);
         }
 

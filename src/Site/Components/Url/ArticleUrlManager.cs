@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -10,22 +11,24 @@ namespace BioEngine.Site.Components.Url
 {
     public class ArticleUrlManager : EntityUrlManager
     {
-        public ArticleUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
-            : base(settings, dbContext, urlHelper)
+        public ArticleUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
+            : base(settings, dbContext, urlHelper, parentEntityProvider)
         {
         }
 
         public async Task<string> PublicUrl(Article article)
         {
             await Poppulate(article);
-            var url = CatUrl(article.Cat) + "/" + article.Url;
+            var url = await CatUrl(article.Cat) + "/" + article.Url;
             return GetUrl("Show", "Articles",
-                new {parentUrl = ParentUrl(article), url});
+                new {parentUrl = await ParentUrl(article), url});
             /*return _urlHelper.Action<ArticlesController>(x => x.Show(ParentUrl(article), CatUrl(article), article.Url));*/
         }
 
-        private static string CatUrl(ArticleCat cat)
+        private async Task<string> CatUrl(ArticleCat cat)
         {
+            await Poppulate(cat);
             var urls = new SortedList<int, string>();
             var i = 0;
             while (cat != null)
@@ -82,28 +85,30 @@ namespace BioEngine.Site.Components.Url
         public async Task<string> CatPublicUrl(ArticleCat cat, int page = 1)
         {
             await Poppulate(cat);
-            var url = CatUrl(cat) + "/" + cat.Url;
+            var url = await CatUrl(cat) + "/" + cat.Url;
             if (page > 1)
             {
                 url += $"/page/{page}";
             }
             return GetUrl("Show", "Articles",
-                new {parentUrl = ParentUrl(cat), url});
+                new {parentUrl = await ParentUrl(cat), url});
         }
 
-        public string ParentArticlesUrl(Developer developer)
+        public async Task<string> ParentArticlesUrl(Article article)
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(developer.Url));
+            var parent = await ParentEntityProvider.GetModelParent(article);
+            return ParentArticlesUrl((dynamic) parent);
         }
 
-        public string ParentArticlesUrl(Game game)
+        public async Task<string> ParentArticlesUrl(ArticleCat articleCat)
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(game.Url));
+            var parent = await ParentEntityProvider.GetModelParent(articleCat);
+            return ParentArticlesUrl((dynamic)parent);
         }
 
-        public string ParentArticlesUrl(Topic topic)
+        public async Task<string> ParentArticlesUrl<T>(T parentModel) where T : ParentModel
         {
-            return UrlHelper.Action<ArticlesController>(x => x.ParentArticles(topic.Url));
+            return await Task.FromResult(UrlHelper.Action<ArticlesController>(x => x.ParentArticles(parentModel.ParentUrl)));
         }
     }
 }

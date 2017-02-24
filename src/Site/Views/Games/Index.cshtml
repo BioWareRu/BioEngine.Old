@@ -3,7 +3,7 @@
 @model BioEngine.Site.ViewModels.Games.GamePageViewModel
 @inject UrlManager UrlManager
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 <div class="article__block">
@@ -70,7 +70,7 @@
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@UrlManager.News.ParentNewsUrl(Model.Game)">Все новости</a>
+                        <a href="@await UrlManager.News.ParentNewsUrl(Model.Game)">Все новости</a>
                     </p>
                 </div>
                 <div class="game-info__links">
@@ -82,7 +82,7 @@
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@UrlManager.Games.NewsUrl(Model.Game)">Все файлы</a>
+                        <a href="@await UrlManager.Files.ParentFilesUrl(Model.Game)">Все файлы</a>
                     </p>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@UrlManager.Articles.ParentArticlesUrl(Model.Game)">Все статьи</a>
+                        <a href="@await UrlManager.Articles.ParentArticlesUrl(Model.Game)">Все статьи</a>
                     </p>
                 </div>
                 <div class="game-info__links">
@@ -112,7 +112,7 @@
                         }
                     </div>
                     <p class="game-info__all">
-                        <a href="@UrlManager.Games.GalleryUrl(Model.Game)">Все картинки</a>
+                        <a href="@await UrlManager.Gallery.ParentGalleryUrl(Model.Game)">Все картинки</a>
                     </p>
                 </div>
             </div>

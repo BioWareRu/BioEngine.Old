@@ -1,0 +1,6 @@
+﻿@model BioEngine.Site.ViewModels.ParentHeaderViewModel
+<a class="article-list__title-image" href="@await Model.GetUrl(Model.Parent)"
+   title="@Model.Parent.DisplayTitle">
+    <img src="@await Model.GetIconUrl(Model.Parent)"
+         alt="@Model.Parent.DisplayTitle">
+</a>

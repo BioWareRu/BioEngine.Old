@@ -1,5 +1,4 @@
-﻿using BioEngine.Common.Base;
-using BioEngine.Common.Models;
+﻿using BioEngine.Common.Models;
 
 namespace BioEngine.Common.Interfaces
 {
@@ -14,7 +13,5 @@ namespace BioEngine.Common.Interfaces
         Developer Developer { get; set; }
 
         Topic Topic { get; set; }
-
-        ParentModel Parent { get; set; }
     }
 }

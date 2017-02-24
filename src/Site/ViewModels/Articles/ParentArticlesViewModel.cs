@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Models;
 
@@ -15,10 +16,11 @@ namespace BioEngine.Site.ViewModels.Articles
             Parent = parent;
             Cats = cats;
             BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(Parent), Parent.DisplayTitle));
-            Title = $"{Parent.DisplayTitle} - Статьи";
         }
 
-        public string ParentArticlesUrl => UrlManager.Articles.ParentArticlesUrl((dynamic) Parent);
-        public string ParentIconUrl => UrlManager.ParentIconUrl((dynamic) Parent);
+        public override Task<string> Title()
+        {
+            return Task.FromResult($"{Parent.DisplayTitle} - Статьи");
+        }
     }
 }

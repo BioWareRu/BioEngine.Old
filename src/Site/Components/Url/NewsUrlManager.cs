@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
@@ -8,8 +10,9 @@ namespace BioEngine.Site.Components.Url
 {
     public class NewsUrlManager : EntityUrlManager
     {
-        public NewsUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
-            : base(settings, dbContext, urlHelper)
+        public NewsUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
+            : base(settings, dbContext, urlHelper, parentEntityProvider)
         {
         }
 
@@ -30,19 +33,15 @@ namespace BioEngine.Site.Components.Url
             return $"{Settings.IPBDomain}/topic/{news.ForumTopicId}/?do=getNewComment";
         }
 
-        public string ParentNewsUrl(Developer developer)
+        public async Task<string> ParentNewsUrl(News news)
         {
-            return UrlHelper.Action<NewsController>(x => x.NewsList(developer.Url));
+            var parent = await ParentEntityProvider.GetModelParent(news);
+            return ParentNewsUrl((dynamic) parent);
         }
 
-        public string ParentNewsUrl(Game game)
+        public async Task<string> ParentNewsUrl<T>(T parentModel) where T : ParentModel
         {
-            return UrlHelper.Action<NewsController>(x => x.NewsList(game.Url));
-        }
-
-        public string ParentNewsUrl(Topic topic)
-        {
-            return UrlHelper.Action<NewsController>(x => x.NewsList(topic.Url));
+            return await Task.FromResult(UrlHelper.Action<NewsController>(x => x.NewsList(parentModel.ParentUrl)));
         }
     }
 }

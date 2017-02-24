@@ -1,4 +1,5 @@
-﻿using BioEngine.Common.DB;
+﻿using BioEngine.Common.Base;
+using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,34 +7,15 @@ namespace BioEngine.Site.Components.Url
 {
     public class GameUrlManager : EntityUrlManager
     {
-        public GameUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper)
-            : base(settings, dbContext, urlHelper)
+        public GameUrlManager(AppSettings settings, BWContext dbContext, IUrlHelper urlHelper,
+            ParentEntityProvider parentEntityProvider)
+            : base(settings, dbContext, urlHelper, parentEntityProvider)
         {
         }
 
         public string PublicUrl(Game game, bool absolute = false)
         {
             return GetUrl("Index", "Games", new {gameUrl = game.Url}, absolute);
-        }
-
-        public string NewsUrl(Game game, bool absolute = false)
-        {
-            return GetUrl("Game", "News", new {gameUrl = game.Url}, absolute);
-        }
-
-        public string ArticlesUrl(Game game, bool absolute = false)
-        {
-            return GetUrl("Game", "Articles", new {gameUrl = game.Url}, absolute);
-        }
-
-        public string FilesUrl(Game game, bool absolute = false)
-        {
-            return GetUrl("Game", "Files", new {gameUrl = game.Url}, absolute);
-        }
-
-        public string GalleryUrl(Game game, bool absolute = false)
-        {
-            return GetUrl("Game", "Gallery", new {gameUrl = game.Url}, absolute);
         }
 
         public string LogoUrl(Game game)

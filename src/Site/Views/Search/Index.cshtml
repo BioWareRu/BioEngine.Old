@@ -1,0 +1,49 @@
+﻿@model BioEngine.Site.ViewModels.Search.SearchViewModel
+
+@{
+    ViewBag.Title = await Model.Title();
+    Layout = "~/Views/_Main.cshtml";
+}
+
+<div class="search-page">
+    <h2 class="search-page__title">Поиск</h2>
+    <!--{% include 'b-search.twig' with {'query': searchResults.query, 'mix': 'search-page__form'} %}-->
+    <form action="@Url.Action("Index", "Search")" class="search search-page__form">
+        <input class="search__input" type="search" placeholder="Поиск" name="query" value="@Model.Query"/>
+        <button class="search__magnifier"></button>
+    </form>
+    <div class="search-page__content">
+        @foreach (var block in Model.Blocks)
+        {
+            <div class="search-page__cat">
+                <h3 class="search-page__cat-title">
+                    <a class="search-page__cat-link" href="@block.Url">@Html.Raw(block.Title)</a>
+                </h3>
+
+                <div class="search-page__cat-items">
+                    @if (block.Count == 0)
+                    {
+                        <div class="search-page__item">
+                            <em>В этом разделе по вашему запросу ничего не найдено.</em>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in block.Items)
+                        {
+                            <div class="search-page__item">
+                                <a class="search-page__link" href="@item.Url">@item.Title</a>
+
+                                <p class="search-page__desc">@Html.Raw(item.Text)</p>
+                            </div>
+                        }
+                        if (block.TotalCount > block.Count)
+                        {
+                            <a class="search-page__more-link" href="@block.Url">+ ещё @(block.TotalCount - block.Count)</a>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

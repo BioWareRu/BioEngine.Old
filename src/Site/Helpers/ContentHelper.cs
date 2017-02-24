@@ -12,6 +12,36 @@ namespace BioEngine.Site.Helpers
 {
     public class ContentHelper
     {
+        private readonly BWContext _dbContext;
+        private readonly UrlManager _urlManager;
+
+        public ContentHelper(BWContext dbContext, UrlManager urlManager)
+        {
+            _dbContext = dbContext;
+            _urlManager = urlManager;
+
+            _placeholders = new List<ContentPlaceholder>()
+            {
+                new ContentPlaceholder(new Regex("\\[game:([a-zA-Z0-9_]+)\\]"), false, ReplaceGame),
+                new ContentPlaceholder(new Regex("\\[gameUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceGame),
+                new ContentPlaceholder(new Regex("\\[developer:([a-zA-Z0-9_]+)\\]"), false, ReplaceDeveloper),
+                new ContentPlaceholder(new Regex("\\[developerUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceDeveloper),
+                new ContentPlaceholder(new Regex("\\[news:([0-9]+)\\]"), false, ReplaceNews),
+                new ContentPlaceholder(new Regex("\\[newsUrl:([0-9]+)\\]"), true, ReplaceNews),
+                new ContentPlaceholder(new Regex("\\[file:([0-9]+)\\]"), false, ReplaceFile),
+                new ContentPlaceholder(new Regex("\\[fileUrl:([0-9]+)\\]"), true, ReplaceFile),
+                new ContentPlaceholder(new Regex("\\[article:([0-9]+)\\]"), false, ReplaceArticle),
+                new ContentPlaceholder(new Regex("\\[articleUrl:([0-9]+)\\]"), true, ReplaceArticle),
+                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+)\\]"), false, ReplaceGallery),
+                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+):([0-9]+):([0-9]+)\\]"), false, ReplaceGallery),
+                new ContentPlaceholder(new Regex("\\[galleryUrl:([0-9]+)\\]"), true, ReplaceGallery),
+                new ContentPlaceholder(new Regex("src=\"http:"), true, ReplaceHttp),
+                new ContentPlaceholder(new Regex("\\[video id\\=([0-9]+?) uri\\=(.*?)\\](.*?)\\[\\/video\\]"), true,
+                    ReplaceVideo),
+                new ContentPlaceholder(new Regex("\\[twitter:([0-9]+)\\]"), false, ReplaceTwitter),
+            };
+        }
+
         private static readonly Regex ImgRegex = new Regex("<img.+?src=[\\\"\'](.+?)[\\\"\'].*?>",
             RegexOptions.IgnoreCase);
 
@@ -64,39 +94,19 @@ namespace BioEngine.Site.Helpers
             return success;
         }
 
-        private static readonly List<ContentPlaceholder> Placeholders = new List<ContentPlaceholder>()
-        {
-            new ContentPlaceholder(new Regex("\\[game:([a-zA-Z0-9_]+)\\]"), false, ReplaceGame),
-            new ContentPlaceholder(new Regex("\\[gameUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceGame),
-            new ContentPlaceholder(new Regex("\\[developer:([a-zA-Z0-9_]+)\\]"), false, ReplaceDeveloper),
-            new ContentPlaceholder(new Regex("\\[developerUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceDeveloper),
-            new ContentPlaceholder(new Regex("\\[news:([0-9]+)\\]"), false, ReplaceNews),
-            new ContentPlaceholder(new Regex("\\[newsUrl:([0-9]+)\\]"), true, ReplaceNews),
-            new ContentPlaceholder(new Regex("\\[file:([0-9]+)\\]"), false, ReplaceFile),
-            new ContentPlaceholder(new Regex("\\[fileUrl:([0-9]+)\\]"), true, ReplaceFile),
-            new ContentPlaceholder(new Regex("\\[article:([0-9]+)\\]"), false, ReplaceArticle),
-            new ContentPlaceholder(new Regex("\\[articleUrl:([0-9]+)\\]"), true, ReplaceArticle),
-            new ContentPlaceholder(new Regex("\\[gallery:([0-9]+)\\]"), false, ReplaceGallery),
-            new ContentPlaceholder(new Regex("\\[gallery:([0-9]+):([0-9]+):([0-9]+)\\]"), false, ReplaceGallery),
-            new ContentPlaceholder(new Regex("\\[galleryUrl:([0-9]+)\\]"), true, ReplaceGallery),
-            new ContentPlaceholder(new Regex("src=\"http:"), true, ReplaceHttp),
-            new ContentPlaceholder(new Regex("\\[video id\\=([0-9]+?) uri\\=(.*?)\\](.*?)\\[\\/video\\]"), true,
-                ReplaceVideo),
-            new ContentPlaceholder(new Regex("\\[twitter:([0-9]+)\\]"), false, ReplaceTwitter),
-        };
+        private readonly List<ContentPlaceholder> _placeholders;
 
 
-        public static async Task<string> ReplacePlaceholders(string text, BWContext dbContext, UrlManager urlManager)
+        public async Task<string> ReplacePlaceholders(string text)
         {
-            foreach (var contentPlaceholder in Placeholders)
+            foreach (var contentPlaceholder in _placeholders)
             {
                 var matches = contentPlaceholder.Regex.Matches(text);
                 if (matches.Count > 0)
                 {
                     foreach (Match match in matches)
                     {
-                        var replacement = await contentPlaceholder.Replace(match, contentPlaceholder.UrlOnly, dbContext,
-                                              urlManager) ?? "n/a";
+                        var replacement = await contentPlaceholder.Replace(match, contentPlaceholder.UrlOnly) ?? "n/a";
 
                         text = text.Replace(match.Value, replacement);
                     }
@@ -105,39 +115,35 @@ namespace BioEngine.Site.Helpers
             return text;
         }
 
-        private static async Task<string> ReplaceGame(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceGame(Match match, bool urlOnly)
         {
             var gameUrl = match.Groups[1].Value;
-            var game = await dbcontext.Games.FirstOrDefaultAsync(x => x.Url == gameUrl);
+            var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Url == gameUrl);
             if (game == null) return null;
-            var url = urlManager.ParentUrl(game);
+            var url = _urlManager.ParentUrl(game);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
         }
 
-        private static async Task<string> ReplaceDeveloper(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceDeveloper(Match match, bool urlOnly)
         {
             var developerUrl = match.Groups[1].Value;
-            var developer = await dbcontext.Developers.FirstOrDefaultAsync(x => x.Url == developerUrl);
+            var developer = await _dbContext.Developers.FirstOrDefaultAsync(x => x.Url == developerUrl);
             if (developer == null) return null;
-            var url = urlManager.ParentUrl(developer);
+            var url = _urlManager.ParentUrl(developer);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
         }
 
-        private static async Task<string> ReplaceNews(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceNews(Match match, bool urlOnly)
         {
             var newsId = int.Parse(match.Groups[1].Value);
             if (newsId <= 0) return null;
-            var news = await dbcontext.News.FirstOrDefaultAsync(x => x.Id == newsId);
+            var news = await _dbContext.News.FirstOrDefaultAsync(x => x.Id == newsId);
             if (news == null) return null;
-            var url = urlManager.News.PublicUrl(news);
+            var url = _urlManager.News.PublicUrl(news);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
         }
 
-        private static async Task<string> ReplaceTwitter(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceTwitter(Match match, bool urlOnly)
         {
             var id = match.Groups[1].Value;
             var html = @"
@@ -152,25 +158,22 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             return await Task.FromResult(html);
         }
 
-        private static async Task<string> ReplaceVideo(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceVideo(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
-            var file = await dbcontext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
+            var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
             var result = !string.IsNullOrEmpty(file?.YtId)
                 ? $"<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/{file.YtId}\" frameborder=\"0\" allowfullscreen></iframe>"
                 : null;
             return result;
         }
 
-        private static async Task<string> ReplaceHttp(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceHttp(Match match, bool urlOnly)
         {
             return await Task.FromResult("src=\"");
         }
 
-        private static async Task<string> ReplaceGallery(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceGallery(Match match, bool urlOnly)
         {
             var width = 300;
             var height = 300;
@@ -181,38 +184,36 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
                 height = int.Parse(match.Groups[3].Value);
             }
             if (galleryId <= 0) return null;
-            var pic = await dbcontext.GalleryPics.FirstOrDefaultAsync(x => x.Id == galleryId);
+            var pic = await _dbContext.GalleryPics.FirstOrDefaultAsync(x => x.Id == galleryId);
             if (pic == null) return null;
 
 
-            var picUrl = urlManager.Gallery.PublicUrl(pic) + "#nanogallery/nanoGallery/0/" + pic.Id;
+            var picUrl = _urlManager.Gallery.PublicUrl(pic) + "#nanogallery/nanoGallery/0/" + pic.Id;
             if (urlOnly)
             {
                 return picUrl;
             }
-            var thumbUrl = await urlManager.Gallery.ThumbUrl(pic, width, height);
+            var thumbUrl = await _urlManager.Gallery.ThumbUrl(pic, width, height);
             return $"<a href='{picUrl}' title='{pic.Desc}'><img src='{thumbUrl}' alt='{pic.Desc}' /></a>";
         }
 
-        private static async Task<string> ReplaceArticle(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceArticle(Match match, bool urlOnly)
         {
             var articleId = int.Parse(match.Groups[1].Value);
             if (articleId <= 0) return null;
-            var article = await dbcontext.Articles.FirstOrDefaultAsync(x => x.Id == articleId);
+            var article = await _dbContext.Articles.FirstOrDefaultAsync(x => x.Id == articleId);
             if (article == null) return null;
-            var url = await urlManager.Articles.PublicUrl(article);
+            var url = await _urlManager.Articles.PublicUrl(article);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
         }
 
-        private static async Task<string> ReplaceFile(Match match, bool urlOnly, BWContext dbcontext,
-            UrlManager urlManager)
+        private async Task<string> ReplaceFile(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
             if (fileId <= 0) return null;
-            var file = await dbcontext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
+            var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
             if (file == null) return null;
-            var url = await urlManager.Files.PublicUrl(file);
+            var url = await _urlManager.Files.PublicUrl(file);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";
         }
     }
@@ -222,10 +223,10 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         public Regex Regex { get; }
         public bool UrlOnly { get; }
 
-        public readonly Func<Match, bool, BWContext, UrlManager, Task<string>> Replace;
+        public readonly Func<Match, bool, Task<string>> Replace;
 
         public ContentPlaceholder(Regex regex, bool urlOnly,
-            Func<Match, bool, BWContext, UrlManager, Task<string>> replaceFunc)
+            Func<Match, bool, Task<string>> replaceFunc)
         {
             Regex = regex;
             UrlOnly = urlOnly;

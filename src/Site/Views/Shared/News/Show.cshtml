@@ -1,13 +1,15 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
-@using BioEngine.Common.DB
+@using BioEngine.Common.Base
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.Helpers
 @using BioEngine.Site.Extensions
+@using BioEngine.Site.ViewModels
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @inject UrlManager UrlManager
-@inject BWContext DbContext
+@inject ParentEntityProvider ParentEntityProvider
+@inject ContentHelper ContentHelper
 @model BioEngine.Site.ViewModels.News.ShowNewsViewModel
 
 <article class="@(!Model.ShowFull ? "article-list__item" : "article")">
@@ -42,18 +44,14 @@
                   datetime="@Model.Date.DateTime.ToString("yyyy-MM-dd hh:mm:ss")">
                 @Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),&nbsp;@Model.News.Author.Name</time>
         </div>
-        <a class="article-list__title-image" href="@Model.ParentNewsUrl"
-           title="@Model.News.Parent.DisplayTitle">
-            <img src="@Model.ParentIconUrl"
-                 alt="@Model.News.Parent.DisplayTitle">
-        </a>
+        @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(await ParentEntityProvider.GetModelParent(Model.News), x => UrlManager.News.ParentNewsUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
     </header>
 
     <div class="b-text">
-        @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.ShortText, DbContext, UrlManager))
+        @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.ShortText))
         @if (Model.ShowFull)
         {
-            @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.AddText, DbContext, UrlManager))
+            @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.AddText))
         }
     </div>
 

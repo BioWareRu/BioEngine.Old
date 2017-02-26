@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Search;
 using BioEngine.Site.Components;
-using BioEngine.Site.Components.Ipb;
 using BioEngine.Site.Components.Url;
 using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Site
 {
@@ -46,27 +50,14 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(config =>
-                {
-                    var policy = new AuthorizationPolicyBuilder()
-                        //.RequireAuthenticatedUser()
-                        .AddAuthenticationSchemes("ipb")
-                        .AddRequirements(new IpbRequestPassed())
-                        .Build();
-                    config.Filters.Add(new AuthorizeFilter(policy));
-                })
+            services.AddMvc()
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization()
                 .AddTypedRouting();
-
-            services.AddSingleton<IAuthorizationHandler, IpbAuthorizationHandler>();
+            services.AddAuthentication(options => options.SignInScheme =
+                CookieAuthenticationDefaults.AuthenticationScheme);
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.Configure<IpbAuthenticationOptions>(o =>
-            {
-                o.AutomaticChallenge = true;
-                o.AuthenticationScheme = "ipb";
-            });
 
             var mysqlConnBuilder = new MySqlConnectionStringBuilder
             {
@@ -136,7 +127,73 @@ namespace BioEngine.Site
 
             app.UseSession();
 
-            app.UseMiddleware<IpbAuthenticationMiddleware>();
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                LoginPath = new PathString("/login")
+            });
+
+            app.UseOAuthAuthentication(new OAuthOptions()
+            {
+                SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,
+                AuthenticationScheme = "IPB",
+                DisplayName = "IPB",
+                ClientId = Configuration["Data:OAuth:ClientId"],
+                ClientSecret = Configuration["Data:OAuth:ClientSecret"],
+                CallbackPath = new PathString(Configuration["Data:OAuth:CallbackPath"]),
+                AuthorizationEndpoint = Configuration["Data:OAuth:AuthorizationEndpoint"],
+                TokenEndpoint = Configuration["Data:OAuth:TokenEndpoint"],
+                UserInformationEndpoint = Configuration["Data:OAuth:UserInformationEndpoint"],
+                SaveTokens = true,
+                Events = new OAuthEvents
+                {
+                    OnCreatingTicket = async context =>
+                    {
+                        // Get the GitHub user
+                        var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+                        response.EnsureSuccessStatusCode();
+
+                        var user = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+                        var identifier = user.Value<string>("id");
+                        if (!string.IsNullOrEmpty(identifier))
+                        {
+                            context.Identity.AddClaim(new Claim(
+                                ClaimTypes.NameIdentifier, identifier,
+                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                        }
+
+                        var userName = user.Value<string>("displayName");
+                        if (!string.IsNullOrEmpty(userName))
+                        {
+                            context.Identity.AddClaim(new Claim(
+                                ClaimsIdentity.DefaultNameClaimType, userName,
+                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                        }
+
+                        var profileUrl = user.Value<string>("profileUrl");
+                        if (!string.IsNullOrEmpty(profileUrl))
+                        {
+                            context.Identity.AddClaim(new Claim(
+                                ClaimTypes.Webpage, profileUrl,
+                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                        }
+
+                        var link = user.Value<string>("avatar");
+                        if (!string.IsNullOrEmpty(link))
+                        {
+                            context.Identity.AddClaim(new Claim(
+                                "avatarUrl", link,
+                                ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                        }
+                    }
+                }
+            });
 
             app.UseMvc(routes =>
             {

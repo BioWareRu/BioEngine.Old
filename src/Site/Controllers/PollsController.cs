@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
@@ -7,6 +8,7 @@ using BioEngine.Common.Models;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -42,7 +44,7 @@ namespace BioEngine.Site.Controllers
             var sessionId = HttpContext.Session.Id;
             if (User.Identity.IsAuthenticated)
             {
-                userId = int.Parse(User.Claims.First(x => x.Type == "userId").Value);
+                userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
                 userLogin = User.Identity.Name;
             }
             if (await poll.GetIsVoted(Context, userId, ip, sessionId))
@@ -65,7 +67,7 @@ namespace BioEngine.Site.Controllers
             await Context.SaveChangesAsync();
 
             await poll.Recount(Context);
-
+            HttpContext.Session.SetInt32("voted", poll.PollId);
             return new RedirectResult(returnUrl);
         }
     }

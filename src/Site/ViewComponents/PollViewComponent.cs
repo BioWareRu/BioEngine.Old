@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ namespace BioEngine.Site.ViewComponents
             if (User.Identity.IsAuthenticated)
             {
                 userId =
-                    int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
+                    int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
             }
             voted =
                 await poll.GetIsVoted(_dbContext, userId, Request.HttpContext.Connection.RemoteIpAddress.ToString(), sessionId);

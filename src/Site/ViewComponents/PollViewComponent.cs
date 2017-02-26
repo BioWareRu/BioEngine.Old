@@ -23,22 +23,15 @@ namespace BioEngine.Site.ViewComponents
                 await _dbContext.Polls.Where(x => x.OnOff == 1).OrderByDescending(x => x.PollId).FirstOrDefaultAsync();
 
             bool voted;
+            var userId = 0;
+            var sessionId = HttpContext.Session.Id;
             if (User.Identity.IsAuthenticated)
             {
-                var userId =
+                userId =
                     int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
-
-                voted = await _dbContext.PollVotes.AnyAsync(x => (x.UserId == userId) && (x.PollId == poll.PollId));
             }
-            else
-            {
-                voted =
-                    await
-                        _dbContext.PollVotes.AnyAsync(
-                            x =>
-                                (x.UserId == 0) && (x.PollId == poll.PollId) &&
-                                (x.Ip == Request.Headers["REMOTE_ADDR"].ToString()));
-            }
+            voted =
+                await poll.GetIsVoted(_dbContext, userId, Request.HttpContext.Connection.RemoteIpAddress.ToString(), sessionId);
 
             if (voted) poll.SetVoted();
             return View(poll);

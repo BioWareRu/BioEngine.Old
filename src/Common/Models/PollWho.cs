@@ -12,7 +12,7 @@ namespace BioEngine.Common.Models
         public int PollId { get; set; }
         public int UserId { get; set; }
         public string Login { get; set; }
-        public int VoteDate { get; set; }
+        public long VoteDate { get; set; }
 
         [Column("voteoption")]
         public int VoteOption { get; set; }

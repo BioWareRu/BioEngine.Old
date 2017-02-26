@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Threading.Tasks;
+using BioEngine.Common.DB;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
@@ -62,9 +65,11 @@ namespace BioEngine.Common.Models
             get { return JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson); }
         }
 
+        [NotMapped]
         public Dictionary<string, string> Votes
         {
             get { return JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson); }
+            set { VotesJson = JsonConvert.SerializeObject(value); }
         }
 
         public void SetVoted()
@@ -75,6 +80,34 @@ namespace BioEngine.Common.Models
         public bool IsVoted()
         {
             return _voted;
+        }
+
+        public async Task<bool> GetIsVoted(BWContext dbContext, int userId, string ipAddress, string sessionId)
+        {
+            if (userId > 0)
+            {
+                return await
+                    dbContext.PollVotes.AnyAsync(x => x.UserId == userId && x.PollId == PollId);
+            }
+            else
+            {
+                return await
+                    dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == PollId && x.Ip == ipAddress &&
+                                                      x.SessionId == sessionId);
+            }
+        }
+
+        public async Task Recount(BWContext dbContext)
+        {
+            var votes = new Dictionary<string, string>();
+            foreach (var option in Options)
+            {
+                var voteCount =
+                    await dbContext.PollVotes.CountAsync(x => x.PollId == PollId && x.VoteOption == option.Id);
+                votes.Add($"opt_{option.Id}", voteCount.ToString());
+            }
+            Votes = votes;
+            await dbContext.SaveChangesAsync();
         }
     }
 

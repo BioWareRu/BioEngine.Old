@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
@@ -83,6 +84,16 @@ namespace BioEngine.Site
             services.AddScoped<ContentHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
             services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                // Set a short timeout for easy testing.
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.CookieName = ".BioWareRu.Session";
+                options.CookieHttpOnly = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -121,6 +132,9 @@ namespace BioEngine.Site
             app.UseStaticFiles();
 
             app.UseStatusCodePages();
+
+
+            app.UseSession();
 
             app.UseMiddleware<IpbAuthenticationMiddleware>();
 

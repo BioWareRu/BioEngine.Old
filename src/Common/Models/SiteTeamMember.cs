@@ -39,5 +39,8 @@ namespace BioEngine.Common.Models
 
         [Required]
         public int Active { get; set; }
+
+        [ForeignKey(nameof(MemberId))]
+        public User User { get; set; }
     }
 }

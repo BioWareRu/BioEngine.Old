@@ -7,15 +7,21 @@ namespace BioEngine.Common.Models
     [Table("be_core_members")]
     public class User : BaseModel
     {
+        private const int AdminsGroupId = 4;
+
         [Key]
         [Column("member_id")]
         public int Id { get; set; }
 
         public string Name { get; set; }
+
         [Column("member_group_id")]
         public int GroupId { get; set; }
 
-        public bool IsAdmin => GroupId == 4;
+        public bool IsAdmin => GroupId == AdminsGroupId;
+
+        [InverseProperty(nameof(Models.SiteTeamMember.User))]
+        public SiteTeamMember SiteTeamMember { get; set; }
 
         public bool HasRight(UserRights right, SiteTeamMember siteTeam = null)
         {

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Search;
@@ -9,7 +8,7 @@ using BioEngine.Common.Search;
 namespace BioEngine.Common.Models
 {
     [Table("be_gallery_cats")]
-    public class GalleryCat : ICat<GalleryCat>, ISearchModel
+    public class GalleryCat : BaseModel<int>, ICat<GalleryCat>, ISearchModel
     {
         public const int PicsOnPage = 24;
 
@@ -33,7 +32,7 @@ namespace BioEngine.Common.Models
 
         [Key]
         
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         [InverseProperty(nameof(ParentCat))]
         public List<GalleryCat> Children { get; set; }
@@ -55,10 +54,5 @@ namespace BioEngine.Common.Models
 
         [NotMapped]
         public Topic Topic { get; set; }
-
-        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
-        {
-            return await parentEntityProvider.GetModelParent(this);
-        }
     }
 }

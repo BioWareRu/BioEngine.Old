@@ -5,10 +5,10 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_site_team")]
-    public class SiteTeamMember : BaseModel
+    public class SiteTeamMember : BaseModel<int>
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         [Required]
         public int MemberId { get; set; }

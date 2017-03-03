@@ -5,21 +5,17 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_activity")]
-    public class Activity : BaseModel
+    public class Activity : BaseModel<int>
     {
         [Key]
-        [Column("id")]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
-        [Column("user_id")]
         [Required]
         public int UserId { get; set; }
 
-        [Column("page")]
         [Url]
         public string Page { get; set; }
 
-        [Column("time")]
         [Required]
         public int Time { get; set; }
     }

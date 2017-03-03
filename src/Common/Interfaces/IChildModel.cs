@@ -1,4 +1,5 @@
-﻿using BioEngine.Common.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using BioEngine.Common.Models;
 
 namespace BioEngine.Common.Interfaces
 {
@@ -8,10 +9,13 @@ namespace BioEngine.Common.Interfaces
         int? DeveloperId { get; set; }
         int? TopicId { get; set; }
 
+        [ForeignKey(nameof(GameId))]
         Game Game { get; set; }
 
+        [ForeignKey(nameof(DeveloperId))]
         Developer Developer { get; set; }
 
+        [ForeignKey(nameof(TopicId))]
         Topic Topic { get; set; }
     }
 }

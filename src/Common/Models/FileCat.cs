@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Search;
@@ -9,7 +8,7 @@ using BioEngine.Common.Search;
 namespace BioEngine.Common.Models
 {
     [Table("be_files_cats")]
-    public class FileCat : ICat<FileCat>, ISearchModel
+    public class FileCat : BaseModel<int>, ICat<FileCat>, ISearchModel
     {
         
         public int Pid { get; set; }
@@ -31,7 +30,7 @@ namespace BioEngine.Common.Models
 
         [Key]
         
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         [InverseProperty(nameof(ParentCat))]
         public List<FileCat> Children { get; set; }
@@ -54,10 +53,5 @@ namespace BioEngine.Common.Models
 
         [NotMapped]
         public Topic Topic { get; set; }
-
-        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
-        {
-            return await parentEntityProvider.GetModelParent(this);
-        }
     }
 }

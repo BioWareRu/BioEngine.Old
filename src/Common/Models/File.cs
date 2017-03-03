@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Search;
@@ -9,11 +8,11 @@ using BioEngine.Common.Search;
 namespace BioEngine.Common.Models
 {
     [Table("be_files")]
-    public class File : IChildModel, ISearchModel
+    public class File : BaseModel<int>, IChildModel, ISearchModel
     {
         [Key]
         
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         
         public string Url { get; set; }
@@ -71,10 +70,5 @@ namespace BioEngine.Common.Models
 
         [NotMapped]
         public Topic Topic { get; set; }
-
-        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
-        {
-            return await parentEntityProvider.GetModelParent(this);
-        }
     }
 }

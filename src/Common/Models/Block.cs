@@ -5,11 +5,11 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_blocks")]
-    public class Block : BaseModel
+    public class Block : BaseModel<string>
     {
         [Key]
-        
-        public string Index { get; set; }
+        [Column("index")]
+        public override string Id { get; set; }
 
         [Required]
         

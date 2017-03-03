@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,14 +12,15 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_poll")]
-    public class Poll
+    public class Poll: BaseModel<int>
     {
         private List<PollResultsEntry> _results;
 
         private bool _voted;
 
         [Key]
-        public int PollId { get; set; }
+        [Column("poll_id")]
+        public override int Id { get; set; }
 
         public string Question { get; set; }
 
@@ -87,12 +89,12 @@ namespace BioEngine.Common.Models
             if (userId > 0)
             {
                 return await
-                    dbContext.PollVotes.AnyAsync(x => x.UserId == userId && x.PollId == PollId);
+                    dbContext.PollVotes.AnyAsync(x => x.UserId == userId && x.PollId == Id);
             }
             else
             {
                 return await
-                    dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == PollId && x.Ip == ipAddress &&
+                    dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == Id && x.Ip == ipAddress &&
                                                       x.SessionId == sessionId);
             }
         }
@@ -103,7 +105,7 @@ namespace BioEngine.Common.Models
             foreach (var option in Options)
             {
                 var voteCount =
-                    await dbContext.PollVotes.CountAsync(x => x.PollId == PollId && x.VoteOption == option.Id);
+                    await dbContext.PollVotes.CountAsync(x => x.PollId == Id && x.VoteOption == option.Id);
                 votes.Add($"opt_{option.Id}", voteCount.ToString());
             }
             Votes = votes;

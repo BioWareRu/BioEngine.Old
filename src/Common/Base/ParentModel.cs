@@ -5,10 +5,8 @@ using JetBrains.Annotations;
 
 namespace BioEngine.Common.Base
 {
-    public abstract class ParentModel : BaseModel
+    public abstract class ParentModel : BaseModel<int>, IParentModel
     {
-        public abstract int Id { get; set; }
-
         [UsedImplicitly]
         public virtual ParentType Type { get; }
 
@@ -21,7 +19,7 @@ namespace BioEngine.Common.Base
         [UsedImplicitly]
         public virtual string DisplayTitle { get; }
 
-        public static void SetParent(IChildModel child, ParentModel parent)
+        public static void SetParent(IChildModel child, IParentModel parent)
         {
             switch (parent.Type)
             {

@@ -5,10 +5,10 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_settings")]
-    public class Settings : BaseModel
+    public class Settings : BaseModel<int>
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Name { get; set; }
 

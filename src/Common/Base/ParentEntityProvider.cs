@@ -35,18 +35,18 @@ namespace BioEngine.Common.Base
             return await GetParentModels<Topic>();
         }
 
-        private Dictionary<Type, List<ParentModel>> _parentModels = new Dictionary<Type, List<ParentModel>>();
+        private readonly Dictionary<Type, List<IParentModel>> _parentModels = new Dictionary<Type, List<IParentModel>>();
 
-        private async Task<List<T>> GetParentModels<T>() where T : ParentModel
+        private async Task<List<T>> GetParentModels<T>() where T : class, IParentModel
         {
             if (!_parentModels.ContainsKey(typeof(T)))
             {
-                _parentModels.Add(typeof(T), await _dbContext.Set<T>().Cast<ParentModel>().ToListAsync());
+                _parentModels.Add(typeof(T), await _dbContext.Set<T>().Cast<IParentModel>().ToListAsync());
             }
             return _parentModels[typeof(T)].Cast<T>().ToList();
         }
 
-        public async Task<ParentModel> GetParenyByUrl(string url)
+        public async Task<IParentModel> GetParenyByUrl(string url)
         {
             var game = (await GetGames()).FirstOrDefault(x => x.Url == url);
             if (game != null) return game;
@@ -56,9 +56,9 @@ namespace BioEngine.Common.Base
             return topic;
         }
 
-        public async Task<ParentModel> GetModelParent(IChildModel model)
+        public async Task<IParentModel> GetModelParent(IChildModel model)
         {
-            ParentModel parent = null;
+            IParentModel parent = null;
             if (model.GameId > 0)
             {
                 parent = (await GetGames()).FirstOrDefault(x => x.Id == model.GameId);

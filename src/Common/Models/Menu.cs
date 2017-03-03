@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_menu")]
-    public class Menu : BaseModel
+    public class Menu : BaseModel<int>
     {
         [Key]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
         public string Key { get; set; }
 

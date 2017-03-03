@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_core_advertisements")]
-    public class Advertisement : BaseModel
+    public class Advertisement : BaseModel<long>
     {
         [Key]
-
-        public long AdId { get; set; }
+        [Column("ad_id")]
+        public override long Id { get; set; }
 
 
         public string AdLocation { get; set; }

@@ -1,19 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
+using JsonApiDotNetCore.Models;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_core_members")]
-    public class User : BaseModel
+    public class User : BaseModel<int>
     {
         private const int AdminsGroupId = 4;
 
         [Key]
         [Column("member_id")]
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
-        public string Name { get; set; }
+        [Attr("name")]
+        public virtual string Name { get; set; }
 
         [Column("member_group_id")]
         public int GroupId { get; set; }

@@ -8,11 +8,11 @@ using BioEngine.Common.Search;
 namespace BioEngine.Common.Models
 {
     [Table("be_articles")]
-    public class Article : IChildModel, ISearchModel
+    public class Article : BaseModel<int>, IChildModel, ISearchModel
     {
         [Key]
 
-        public int Id { get; set; }
+        public override int Id { get; set; }
 
 
         public string Url { get; set; }
@@ -72,7 +72,7 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(TopicId))]
         public Topic Topic { get; set; }
 
-        public async Task<ParentModel> Parent(ParentEntityProvider parentEntityProvider)
+        public async Task<IParentModel> Parent(ParentEntityProvider parentEntityProvider)
         {
             return await parentEntityProvider.GetModelParent(this);
         }

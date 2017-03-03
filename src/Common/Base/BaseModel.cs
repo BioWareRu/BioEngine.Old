@@ -1,7 +1,8 @@
-﻿namespace BioEngine.Common.Base
+﻿using JsonApiDotNetCore.Models;
+
+namespace BioEngine.Common.Base
 {
-    public abstract class BaseModel
+    public abstract class BaseModel<T> : Identifiable<T>
     {
-       
     }
 }

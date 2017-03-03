@@ -1,5 +1,4 @@
 ﻿using BioEngine.Common.Base;
-using JsonApiDotNetCore.Models;
 
 namespace BioEngine.Common.Interfaces
 {

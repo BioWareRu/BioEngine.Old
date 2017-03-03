@@ -1,17 +1,20 @@
 ﻿using System.IO;
-using API.Auth;
+using BioEngine.API.Auth;
+using BioEngine.API.Data;
 using BioEngine.Common.DB;
-using Microsoft.AspNetCore.Authorization;
+using BioEngine.Common.Models;
+using JsonApiDotNetCore.Data;
+using JsonApiDotNetCore.Extensions;
+using JsonApiDotNetCore.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
-namespace API
+namespace BioEngine.API
 {
     public class Startup
     {
@@ -53,6 +56,14 @@ namespace API
 
             services.AddDbContext<BWContext>(builder => builder.UseMySql(mysqlConnBuilder.ConnectionString));
 
+            services.AddJsonApi<BWContext>(options =>
+            {
+                options.DefaultPageSize = 20;
+                options.IncludeTotalRecordCount = true;
+            });
+
+            services.AddScoped<IEntityRepository<News, int>, NewsRepository>();
+
             // Add framework services.
             services.AddMvc();
         }
@@ -63,7 +74,7 @@ namespace API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             app.UseMiddleware<TokenAuthMiddleware>();
-            app.UseMvc();
+            app.UseJsonApi();
         }
     }
 }

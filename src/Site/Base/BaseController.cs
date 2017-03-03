@@ -81,7 +81,7 @@ namespace BioEngine.Site.Base
             return false;
         }
 
-        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(ParentModel parent, DbSet<TCat> dbSet,
+        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(IParentModel parent, DbSet<TCat> dbSet,
             Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {

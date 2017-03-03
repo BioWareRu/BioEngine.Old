@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 
 namespace BioEngine.Site.ViewModels.News
 {
     public class ParentNewsListViewModel : BaseViewModel
     {
-        public ParentNewsListViewModel(BaseViewModelConfig config, ParentModel parent,
+        public ParentNewsListViewModel(BaseViewModelConfig config, IParentModel parent,
             IEnumerable<Common.Models.News> news, int totalNews,
             int currentPage) : base(config)
         {
@@ -16,7 +16,7 @@ namespace BioEngine.Site.ViewModels.News
             CurrentPage = currentPage;
         }
 
-        public ParentModel Parent { get; }
+        public IParentModel Parent { get; }
         public IEnumerable<Common.Models.News> News { get; }
 
         public int TotalNews { get; }

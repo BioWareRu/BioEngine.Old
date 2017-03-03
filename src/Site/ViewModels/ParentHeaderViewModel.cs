@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 
 namespace BioEngine.Site.ViewModels
 {
     public class ParentHeaderViewModel
     {
-        public ParentHeaderViewModel(ParentModel parent, Func<ParentModel, Task<string>> getUrl,
-            Func<ParentModel, Task<string>> getIconUrl)
+        public ParentHeaderViewModel(IParentModel parent, Func<IParentModel, Task<string>> getUrl,
+            Func<IParentModel, Task<string>> getIconUrl)
         {
             Parent = parent;
             GetUrl = getUrl;
             GetIconUrl = getIconUrl;
         }
 
-        public ParentModel Parent { get; }
+        public IParentModel Parent { get; }
 
-        public readonly Func<ParentModel, Task<string>> GetUrl;
-        public readonly Func<ParentModel, Task<string>> GetIconUrl;
+        public readonly Func<IParentModel, Task<string>> GetUrl;
+        public readonly Func<IParentModel, Task<string>> GetIconUrl;
     }
 }

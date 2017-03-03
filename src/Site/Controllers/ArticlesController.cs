@@ -108,7 +108,7 @@ namespace BioEngine.Site.Controllers
         }
 
 
-        private async Task<ArticleCat> GetCat(ParentModel parent, string catUrl)
+        private async Task<ArticleCat> GetCat(IParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 
@@ -130,7 +130,7 @@ namespace BioEngine.Site.Controllers
             return await catQuery.FirstOrDefaultAsync();
         }
 
-        private async Task<Article> GetArticle(ParentModel parent, string catUrl, string articleUrl)
+        private async Task<Article> GetArticle(IParentModel parent, string catUrl, string articleUrl)
         {
             if (!string.IsNullOrEmpty(catUrl) && !string.IsNullOrEmpty(articleUrl))
             {

@@ -75,7 +75,7 @@ namespace BioEngine.Site.Controllers
                 .ToListAsync();
         }
 
-        private async Task<GalleryCat> GetCat(ParentModel parent, string catUrl)
+        private async Task<GalleryCat> GetCat(IParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 

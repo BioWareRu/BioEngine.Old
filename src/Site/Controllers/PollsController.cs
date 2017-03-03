@@ -32,7 +32,7 @@ namespace BioEngine.Site.Controllers
         [HttpPost("polls/{pollId}/vote.html")]
         public async Task<IActionResult> Vote(int pollId, [FromForm] int vote)
         {
-            var poll = await Context.Polls.FirstOrDefaultAsync(x => x.PollId == pollId);
+            var poll = await Context.Polls.FirstOrDefaultAsync(x => x.Id == pollId);
             if (poll == null)
             {
                 return new NotFoundResult();
@@ -67,7 +67,7 @@ namespace BioEngine.Site.Controllers
             await Context.SaveChangesAsync();
 
             await poll.Recount(Context);
-            HttpContext.Session.SetInt32("voted", poll.PollId);
+            HttpContext.Session.SetInt32("voted", poll.Id);
             return new RedirectResult(returnUrl);
         }
     }

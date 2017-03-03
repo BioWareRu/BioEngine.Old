@@ -141,7 +141,7 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        private async Task<FileCat> GetCat(ParentModel parent, string catUrl)
+        private async Task<FileCat> GetCat(IParentModel parent, string catUrl)
         {
             var url = catUrl.Split('/').Last();
 
@@ -164,7 +164,7 @@ namespace BioEngine.Site.Controllers
             return cat;
         }
 
-        private async Task<File> GetFile(ParentModel parent, string catUrl, string articleUrl)
+        private async Task<File> GetFile(IParentModel parent, string catUrl, string articleUrl)
         {
             if (!string.IsNullOrEmpty(catUrl) && !string.IsNullOrEmpty(articleUrl))
             {

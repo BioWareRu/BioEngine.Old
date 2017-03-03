@@ -21,7 +21,7 @@ namespace BioEngine.Site.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var poll =
-                await _dbContext.Polls.Where(x => x.OnOff == 1).OrderByDescending(x => x.PollId).FirstOrDefaultAsync();
+                await _dbContext.Polls.Where(x => x.OnOff == 1).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
             bool voted;
             var userId = 0;

@@ -41,7 +41,7 @@ namespace BioEngine.Site.Components.Url
             Search = new SearchUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
         }
 
-        public string ParentUrl(ParentModel parent)
+        public string ParentUrl(IParentModel parent)
         {
             switch (parent.Type)
             {

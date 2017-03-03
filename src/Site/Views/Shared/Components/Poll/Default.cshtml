@@ -29,7 +29,7 @@
     }
     else
     {
-        using (Html.BeginForm("Vote", "Polls", new {pollId = Model.PollId}, method: FormMethod.Post))
+        using (Html.BeginForm("Vote", "Polls", new {pollId = Model.Id}, method: FormMethod.Post))
         {
             <fieldset class="sidebar__poll-fieldset">
                 @foreach (var opt in Model.Options)

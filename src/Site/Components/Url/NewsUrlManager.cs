@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace BioEngine.Site.Components.Url
             return ParentNewsUrl((dynamic) parent);
         }
 
-        public async Task<string> ParentNewsUrl<T>(T parentModel) where T : ParentModel
+        public async Task<string> ParentNewsUrl<T>(T parentModel) where T : IParentModel
         {
             return await Task.FromResult(UrlHelper.Action<NewsController>(x => x.NewsList(parentModel.ParentUrl)));
         }

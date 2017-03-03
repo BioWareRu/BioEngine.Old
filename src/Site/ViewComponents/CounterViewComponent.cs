@@ -16,7 +16,7 @@ namespace BioEngine.Site.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var block = await _dbContext.Blocks.FirstOrDefaultAsync(x => x.Index == "counter");
+            var block = await _dbContext.Blocks.FirstOrDefaultAsync(x => x.Id == "counter");
             return View(block);
         }
     }

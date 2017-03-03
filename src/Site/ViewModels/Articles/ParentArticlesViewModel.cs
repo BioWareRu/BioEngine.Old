@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Articles
@@ -8,9 +8,9 @@ namespace BioEngine.Site.ViewModels.Articles
     public class ParentArticlesViewModel : BaseViewModel
     {
         public readonly List<CatsTree<ArticleCat, Article>> Cats;
-        public readonly ParentModel Parent;
+        public readonly IParentModel Parent;
 
-        public ParentArticlesViewModel(BaseViewModelConfig config, ParentModel parent,
+        public ParentArticlesViewModel(BaseViewModelConfig config, IParentModel parent,
             List<CatsTree<ArticleCat, Article>> cats) : base(config)
         {
             Parent = parent;

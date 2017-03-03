@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
-namespace API
+namespace BioEngine.API
 {
     public class Program
     {

@@ -6,9 +6,8 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 
-namespace API.Auth
+namespace BioEngine.API.Auth
 {
     public class TokenAuthenticationHandler : AuthenticationHandler<TokenAuthOptions>
     {

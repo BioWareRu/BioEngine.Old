@@ -1,22 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Site", "src\Site\Site.xproj", "{EC308F99-E836-430C-9B90-5117E0B8852F}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Common", "src\Common\Common.xproj", "{984A4148-132B-4CB0-A0D7-81A3EC91125C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE461BBF-74FB-451C-8B8C-868722024373}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		dev.bat = dev.bat
 		docker-compose.dev.yml = docker-compose.dev.yml
 		docker-compose.yml = docker-compose.yml
-		global.json = global.json
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "API", "src\API\API.xproj", "{308888F3-2B5D-43F6-86B6-659FC5BA732F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Site", "src\Site\Site.csproj", "{EC308F99-E836-430C-9B90-5117E0B8852F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{984A4148-132B-4CB0-A0D7-81A3EC91125C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "src\API\API.csproj", "{308888F3-2B5D-43F6-86B6-659FC5BA732F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

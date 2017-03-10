@@ -22,6 +22,7 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - ls -la ${CACHE_DIR}
+  - echo ${CACHE_FILE_ASPNET_BUILD}
   - if [ -f ${CACHE_FILE_ASPNET_BUILD} ]; then gunzip -c ${CACHE_FILE_ASPNET_BUILD} | docker load; fi
   - if [ -f ${CACHE_FILE_ASPNETCORE} ]; then gunzip -c ${CACHE_FILE_ASPNETCORE} | docker load; fi
 

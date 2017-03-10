@@ -47,8 +47,8 @@
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="bower install --allow-root" WorkingDirectory="Static" />
     <Exec Command="npm install" WorkingDirectory="Static" />
-    <Exec Command="grunt copy" WorkingDirectory="Static" />
-    <Exec Command="grunt publish" WorkingDirectory="Static" />
+    <Exec Command="npm run copy" WorkingDirectory="Static" />
+    <Exec Command="npm run publish" WorkingDirectory="Static" />
   </Target>
 
   <ItemGroup>

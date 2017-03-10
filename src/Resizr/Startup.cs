@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using ImageSharp;
 using ImageSharp.Processing;
@@ -40,8 +41,8 @@ namespace Resizr
 
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-
-            loggerFactory.CreateLogger("Resizr").LogInformation($"Root: {Configuration["ROOT_PATH"]}");
+            var logger = loggerFactory.CreateLogger("Resizr");
+            logger.LogInformation($"Root: {Configuration["ROOT_PATH"]}");
 
             app.Run(async context =>
             {
@@ -53,8 +54,18 @@ namespace Resizr
                     var imageName = match.Groups["imageName"].Value;
                     var format = match.Groups["format"].Value;
 
-                    var width = int.Parse(match.Groups["width"].Value);
-                    var height = int.Parse(match.Groups["height"].Value);
+                    if (!int.TryParse(match.Groups["width"].Value, out int width))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        await context.Response.WriteAsync("Bad width");
+                        return;
+                    }
+                    if (!int.TryParse(match.Groups["height"].Value, out int height))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        await context.Response.WriteAsync("Bad height");
+                        return;
+                    }
                     var destPath = $"{Configuration["ROOT_PATH"]}/{folderPath}/{imageName}.{width}x{height}.{format}";
                     if (File.Exists(destPath))
                     {
@@ -70,14 +81,22 @@ namespace Resizr
                                 Mode = ResizeMode.Max,
                                 Size = new Size(width, height)
                             };
-                            using (var image = new Image(sourcePath))
+                            try
                             {
-                                image.Resize(resizeOptions)
-                                    .Save(destPath);
-                                context.Response.ContentType = image.CurrentImageFormat.MimeType;
+                                using (var image = new Image(sourcePath))
+                                {
+                                    image.Resize(resizeOptions)
+                                        .Save(destPath);
+                                    context.Response.ContentType = image.CurrentImageFormat.MimeType;
+                                    await context.Response.SendFileAsync(destPath);
+                                }
                             }
-                            
-                            await context.Response.SendFileAsync(destPath);
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex.Message);
+                                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                                await context.Response.WriteAsync("Internal error");
+                            }
                         }
                         else
                         {

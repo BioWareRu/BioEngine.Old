@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  resizr:
+    image: biowareru/bioengine-resizr
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    volumes:
+      - ~/clrdbg:/clrdbg:ro
+    entrypoint: tail -f /dev/null
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"

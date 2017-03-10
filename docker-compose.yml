@@ -1,6 +1,12 @@
-version: "2"
+version: '2'
+
 services:
-    mysql:
-        image: mariadb:latest
-    elasticsearch:
-        image: elasticsearch:alpine
+  resizr:
+    image: resizr
+    build:
+      context: ./src/Resizr
+      dockerfile: Dockerfile
+  mysql:
+    image: mariadb:latest
+  elasticsearch:
+    image: elasticsearch:alpine

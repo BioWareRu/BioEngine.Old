@@ -11,6 +11,9 @@ cache:
   directories:
   - $CACHE_DIR
 
+node_js:
+    - "7.1.0"
+
 services:
   - docker
 
@@ -19,8 +22,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - ls -la ${CACHE_DIR}
-  - echo ${CACHE_FILE_ASPNET_BUILD}
+  - npm install -g grunt-cli
   - if [ -f ${CACHE_FILE_ASPNET_BUILD} ]; then gunzip -c ${CACHE_FILE_ASPNET_BUILD} | docker load; fi
   - if [ -f ${CACHE_FILE_ASPNETCORE} ]; then gunzip -c ${CACHE_FILE_ASPNETCORE} | docker load; fi
 

@@ -74,7 +74,9 @@ namespace Resizr
                             {
                                 image.Resize(resizeOptions)
                                     .Save(destPath);
+                                context.Response.ContentType = image.CurrentImageFormat.MimeType;
                             }
+                            
                             await context.Response.SendFileAsync(destPath);
                         }
                         else

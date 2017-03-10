@@ -41,6 +41,7 @@ namespace Resizr
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
+            loggerFactory.CreateLogger("Resizr").LogInformation($"Root: {Configuration["ROOT_PATH"]}");
 
             app.Run(async context =>
             {

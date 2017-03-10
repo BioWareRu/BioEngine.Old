@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
@@ -105,11 +106,14 @@ namespace BioEngine.Site.Components.Url
                 UrlHelper.Action<GalleryController>(x => x.ParentGallery(parentModel.ParentUrl)));
         }
 
-        public async Task<string> ThumbUrl(GalleryPic picture, int weight = 100, int height = 0, int index = 0)
+        public async Task<string> ThumbUrl(GalleryPic picture, int width = 100, int height = 0, int index = 0)
         {
             await Poppulate(picture);
+            var file = picture.Files[index];
+            var fileName = Path.GetFileNameWithoutExtension(file.Name);
+            var ext = Path.GetExtension(file.Name);
             return
-                $"{Settings.SiteDomain}/gallery/thumb/{picture.Id}/{weight}/{height}";
+                $"{Settings.ImagesDomain}{await ParentUrl(picture)}/{CatUrl(picture.Cat)}/{fileName}.{width}x{height}{ext}";
         }
 
         public async Task<string> FullUrl(GalleryPic picture, int index = 0)
@@ -117,7 +121,7 @@ namespace BioEngine.Site.Components.Url
             await Poppulate(picture);
             var file = picture.Files[index];
             return
-                $"{Settings.ImagesDomain}/{await ParentUrl(picture)}/{CatUrl(picture.Cat)}/{file.Name}";
+                $"{Settings.ImagesDomain}{await ParentUrl(picture)}/{CatUrl(picture.Cat)}/{file.Name}";
         }
     }
 }

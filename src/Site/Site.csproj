@@ -45,8 +45,10 @@
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="bower install" />
-    <Exec Command="dotnet bundle" />
+    <Exec Command="bower install --allow-root" WorkingDirectory="Static" />
+    <Exec Command="npm install" WorkingDirectory="Static" />
+    <Exec Command="grunt copy" WorkingDirectory="Static" />
+    <Exec Command="grunt publish" WorkingDirectory="Static" />
   </Target>
 
   <ItemGroup>

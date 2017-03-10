@@ -1,5 +1,15 @@
 sudo: required
 
+env:
+  global:
+    - CACHE_DIR=$HOME/.cache/docker
+    - CACHE_FILE_ASPNET_BUILD=$CACHE_DIR/aspnet-build.tar.gz
+    - CACHE_FILE_ASPNETCORE=$CACHE_DIR/aspnetcore.tar.gz
+
+cache:
+  directories:
+  - $CACHE_DIR
+
 services:
   - docker
 
@@ -11,6 +21,12 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
+  - if [ -f ${CACHE_FILE_ASPNET_BUILD} ]; then gunzip -c ${CACHE_FILE_ASPNET_BUILD} | docker load; fi
+  - if [ -f ${CACHE_FILE_ASPNETCORE} ]; then gunzip -c ${CACHE_FILE_ASPNETCORE} | docker load; fi
+
+install:
+  - if [ ! -f ${CACHE_FILE_ASPNET_BUILD} ]; then docker save microsoft/aspnetcore-build:1.0-1.1 | gzip > ${CACHE_FILE_ASPNET_BUILD}; fi
+  - if [ ! -f ${CACHE_FILE_ASPNETCORE} ]; then docker save microsoft/aspnetcore:1.1 | gzip > ${CACHE_FILE_ASPNETCORE}; fi
 
 script:
   - docker-compose -f docker-compose.ci.build.yml run ci-build

@@ -8,6 +8,7 @@
     <PackageId>Site</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
+    <RootNamespace>BioEngine.Site</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

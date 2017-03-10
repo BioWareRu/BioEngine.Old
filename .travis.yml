@@ -5,6 +5,7 @@ env:
     - CACHE_DIR=$HOME/.cache/docker
     - CACHE_FILE_ASPNET_BUILD=$CACHE_DIR/aspnet-build.tar.gz
     - CACHE_FILE_ASPNETCORE=$CACHE_DIR/aspnetcore.tar.gz
+    - DOCKER_COMPOSE_VERSION: 1.11.2
 
 cache:
   directories:
@@ -12,9 +13,6 @@ cache:
 
 services:
   - docker
-
-env:
-  DOCKER_COMPOSE_VERSION: 1.11.2
 
 before_install:
   - sudo rm /usr/local/bin/docker-compose

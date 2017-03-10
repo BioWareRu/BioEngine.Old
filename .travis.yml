@@ -24,15 +24,13 @@ before_install:
   - if [ -f ${CACHE_FILE_ASPNET_BUILD} ]; then gunzip -c ${CACHE_FILE_ASPNET_BUILD} | docker load; fi
   - if [ -f ${CACHE_FILE_ASPNETCORE} ]; then gunzip -c ${CACHE_FILE_ASPNETCORE} | docker load; fi
 
-install:
-  - if [ ! -f ${CACHE_FILE_ASPNET_BUILD} ]; then docker save microsoft/aspnetcore-build:1.0-1.1 | gzip > ${CACHE_FILE_ASPNET_BUILD}; fi
-  - if [ ! -f ${CACHE_FILE_ASPNETCORE} ]; then docker save microsoft/aspnetcore:1.1 | gzip > ${CACHE_FILE_ASPNETCORE}; fi
-
 script:
   - docker-compose -f docker-compose.ci.build.yml run ci-build
   - docker-compose -f docker-compose.yml -f docker-compose.vs.release.yml build
 
 after_success:
+  - if [ ! -f ${CACHE_FILE_ASPNET_BUILD} ]; then docker save microsoft/aspnetcore-build:1.0-1.1 | gzip > ${CACHE_FILE_ASPNET_BUILD}; fi
+  - if [ ! -f ${CACHE_FILE_ASPNETCORE} ]; then docker save microsoft/aspnetcore:1.1 | gzip > ${CACHE_FILE_ASPNETCORE}; fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push biowareru/bioengine-resizr;

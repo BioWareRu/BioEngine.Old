@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Resizr": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ROOT_PATH": "D:\\Projects\\Images",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}

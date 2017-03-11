@@ -10,6 +10,8 @@
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
     <RootNamespace>BioEngine.Site</RootNamespace>
     <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
+    <GeneratedItemPatterns>wwwroot/js/**;wwwroot/img/**;wwwroot/css/**</GeneratedItemPatterns>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(GeneratedItemPatterns)</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,18 +49,16 @@
     <PackageReference Include="cloudscribe.Syndication.Web" Version="1.1.0" />
   </ItemGroup>
 
-  <!--https://github.com/aspnet/websdk/issues/114-->
-  <Target Name="AddGeneratedContentItems" BeforeTargets="AssignTargetPaths" DependsOnTargets="PrepareForPublish">
-    <ItemGroup>
-      <Content Include="wwwroot/**" CopyToPublishDirectory="PreserveNewest" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);@(Content)" />
-    </ItemGroup>
-  </Target>
-
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="bower install --allow-root" WorkingDirectory="Static" />
     <Exec Command="npm install" WorkingDirectory="Static" />
     <Exec Command="npm run copy" WorkingDirectory="Static" />
     <Exec Command="npm run publish" WorkingDirectory="Static" />
+    <!--https://github.com/aspnet/websdk/issues/114-->
+    <ItemGroup>
+      <_GeneratedFiles Include="$(GeneratedItemPatterns)" />
+      <ContentWithTargetPath Include="@(_GeneratedFiles->'%(FullPath)')" RelativePath="%(_GeneratedFiles.Identity)" TargetPath="%(_GeneratedFiles.Identity)" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
   </Target>
 
   <ItemGroup>

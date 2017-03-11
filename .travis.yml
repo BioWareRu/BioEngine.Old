@@ -33,4 +33,6 @@ after_success:
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker tag biowareru/bioengine-resizr:latest biowareru/bioengine-resizr:1.0-$TRAVIS_BUILD_NUMBER;
     docker push biowareru/bioengine-resizr;
+    docker tag biowareru/bioengine-site:latest biowareru/bioengine-site:1.0-$TRAVIS_BUILD_NUMBER;
+    docker push biowareru/bioengine-site;
     fi

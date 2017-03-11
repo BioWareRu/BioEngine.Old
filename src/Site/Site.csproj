@@ -9,6 +9,7 @@
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
     <RootNamespace>BioEngine.Site</RootNamespace>
+    <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
     <PackageReference Include="BundlerMinifier.Core" Version="2.4.337" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.ViewCompilation" Version="1.1.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="1.1.1" />
@@ -59,6 +61,7 @@
 
   <PropertyGroup>
     <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
 </Project>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Hosting;
 
 namespace BioEngine.Site.Controllers
 {
@@ -20,8 +21,13 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/login")]
-        public async Task Login()
+        public async Task Login([FromServices] IHostingEnvironment env)
         {
+            if (env.IsProduction())
+            {
+                //with ssl termination on cloudflare, AuthenticationHandler will build redirectUrl with http scheme.
+                HttpContext.Request.Scheme = "https";
+            }
             await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() { RedirectUri = "/" });
         }
 

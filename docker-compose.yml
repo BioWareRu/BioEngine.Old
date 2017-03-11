@@ -17,3 +17,8 @@ services:
     image: elasticsearch:alpine
     volumes:
       - /var/data/bwcore/elasticsearch:/usr/share/elasticsearch/data
+  site:
+    image: site
+    build:
+      context: ./src/Site
+      dockerfile: Dockerfile

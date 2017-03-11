@@ -8,5 +8,12 @@ services:
       dockerfile: Dockerfile
   mysql:
     image: mariadb:latest
+    volumes:
+      - .:/app
+      - /var/data/bwcore/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
   elasticsearch:
     image: elasticsearch:alpine
+    volumes:
+      - /var/data/bwcore/elasticsearch:/usr/share/elasticsearch/data

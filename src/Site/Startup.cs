@@ -24,6 +24,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace BioEngine.Site
 {
@@ -114,6 +115,11 @@ namespace BioEngine.Site
                 SupportedCultures = supportedCultures,
                 // UI strings that we have localized.
                 SupportedUICultures = supportedCultures
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
             app.UseStaticFiles();

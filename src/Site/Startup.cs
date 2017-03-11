@@ -64,7 +64,7 @@ namespace BioEngine.Site
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton(Configuration);
             services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
-           
+
             services.AddDbContext<BWContext>();
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
@@ -117,10 +117,17 @@ namespace BioEngine.Site
                 SupportedUICultures = supportedCultures
             });
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            if (env.IsProduction())
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+                var options = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                };
+                options.KnownProxies.Clear();
+                options.KnownNetworks.Clear();
+                options.RequireHeaderSymmetry = false;
+                app.UseForwardedHeaders(options);
+            }
 
             app.UseStaticFiles();
 

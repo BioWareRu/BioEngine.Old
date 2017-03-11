@@ -28,6 +28,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
@@ -35,5 +36,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.1.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="1.1.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
+  </PropertyGroup>
 
 </Project>

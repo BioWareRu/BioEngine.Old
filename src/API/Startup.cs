@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using BioEngine.API.Auth;
+using BioEngine.API.Components;
 using BioEngine.API.Data;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
@@ -8,11 +9,9 @@ using JsonApiDotNetCore.Extensions;
 using JsonApiDotNetCore.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MySql.Data.MySqlClient;
 
 namespace BioEngine.API
 {
@@ -23,14 +22,13 @@ namespace BioEngine.API
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
 
-            if (env.IsEnvironment("Development"))
+            if (env.IsDevelopment())
             {
+                builder.AddUserSecrets<Startup>();
             }
 
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
@@ -45,16 +43,10 @@ namespace BioEngine.API
                 o.AuthenticationScheme = "tokenAuth";
             });
 
-            var mysqlConnBuilder = new MySqlConnectionStringBuilder
-            {
-                Server = Configuration["Data:Mysql:Host"],
-                Port = uint.Parse(Configuration["Data:Mysql:Port"]),
-                UserID = Configuration["Data:Mysql:Username"],
-                Password = Configuration["Data:Mysql:Password"],
-                Database = Configuration["Data:Mysql:Database"]
-            };
+            services.AddSingleton(Configuration);
+            services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
 
-            services.AddDbContext<BWContext>(builder => builder.UseMySql(mysqlConnBuilder.ConnectionString));
+            services.AddDbContext<BWContext>();
 
             services.AddJsonApi<BWContext>(options =>
             {

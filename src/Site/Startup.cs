@@ -20,11 +20,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Site
@@ -37,8 +35,12 @@ namespace BioEngine.Site
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
             Configuration = builder.Build();
         }
 
@@ -58,17 +60,10 @@ namespace BioEngine.Site
                 CookieAuthenticationDefaults.AuthenticationScheme);
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-
-            var mysqlConnBuilder = new MySqlConnectionStringBuilder
-            {
-                Server = Configuration["Data:Mysql:Host"],
-                Port = uint.Parse(Configuration["Data:Mysql:Port"]),
-                UserID = Configuration["Data:Mysql:Username"],
-                Password = Configuration["Data:Mysql:Password"],
-                Database = Configuration["Data:Mysql:Database"]
-            };
-
-            services.AddDbContext<BWContext>(builder => builder.UseMySql(mysqlConnBuilder.ConnectionString));
+            services.AddSingleton(Configuration);
+            services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
+           
+            services.AddDbContext<BWContext>();
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();
@@ -139,8 +134,8 @@ namespace BioEngine.Site
                 SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,
                 AuthenticationScheme = "IPB",
                 DisplayName = "IPB",
-                ClientId = Configuration["Data:OAuth:ClientId"],
-                ClientSecret = Configuration["Data:OAuth:ClientSecret"],
+                ClientId = Configuration["IPB_OAUTH_CLIENT_ID"],
+                ClientSecret = Configuration["IPB_OAUTH_CLIENT_SECRET"],
                 CallbackPath = new PathString(Configuration["Data:OAuth:CallbackPath"]),
                 AuthorizationEndpoint = Configuration["Data:OAuth:AuthorizationEndpoint"],
                 TokenEndpoint = Configuration["Data:OAuth:TokenEndpoint"],

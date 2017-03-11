@@ -23,12 +23,6 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/login")]
         public async Task Login([FromServices] ILogger<UserController> logger)
         {
-            foreach (var requestHeader in HttpContext.Request.Headers)
-            {
-                logger.LogWarning($"{requestHeader.Key}: {requestHeader.Value}");
-            }
-            logger.LogWarning($"Scheme: {HttpContext.Request.Scheme}");
-            logger.LogWarning($"IP: {HttpContext.Connection.RemoteIpAddress}");
             await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() {RedirectUri = "/"});
         }
 

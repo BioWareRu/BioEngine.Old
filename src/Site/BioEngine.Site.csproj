@@ -5,7 +5,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>BioEngine.Site</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>Site</PackageId>
+    <PackageId>BioEngine.Site</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
     <RootNamespace>BioEngine.Site</RootNamespace>

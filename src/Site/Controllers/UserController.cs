@@ -7,6 +7,7 @@ using BioEngine.Site.Components.Url;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
@@ -20,9 +21,15 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/login")]
-        public async Task Login()
+        public async Task Login([FromServices] ILogger<UserController> logger)
         {
-            await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() { RedirectUri = "/" });
+            foreach (var requestHeader in HttpContext.Request.Headers)
+            {
+                logger.LogWarning($"{requestHeader.Key}: {requestHeader.Value}");
+            }
+            logger.LogWarning($"Scheme: {HttpContext.Request.Scheme}");
+            logger.LogWarning($"IP: {HttpContext.Connection.RemoteIpAddress}");
+            await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() {RedirectUri = "/"});
         }
 
         [HttpGet("/logout")]

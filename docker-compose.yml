@@ -22,3 +22,9 @@ services:
     build:
       context: ./src/Site
       dockerfile: Dockerfile
+
+  api:
+    image: bioengine.api
+    build:
+      context: ./src/API
+      dockerfile: Dockerfile

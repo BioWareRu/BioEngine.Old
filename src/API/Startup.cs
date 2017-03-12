@@ -41,6 +41,7 @@ namespace BioEngine.API
             {
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "tokenAuth";
+                o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
             });
 
             services.AddSingleton(Configuration);

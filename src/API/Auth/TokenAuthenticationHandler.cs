@@ -12,10 +12,12 @@ namespace BioEngine.API.Auth
     public class TokenAuthenticationHandler : AuthenticationHandler<TokenAuthOptions>
     {
         private readonly BWContext _dbContext;
+        private readonly TokenAuthOptions _options;
 
-        public TokenAuthenticationHandler(BWContext dbContext)
+        public TokenAuthenticationHandler(BWContext dbContext, TokenAuthOptions options)
         {
             _dbContext = dbContext;
+            _options = options;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -30,7 +32,7 @@ namespace BioEngine.API.Auth
 
                     var token =
                         await _dbContext.AccessTokens.Where(
-                                x => x.Token == tokenString && x.Expires > DateTime.Now)
+                                x => x.Token == tokenString && x.Expires > DateTime.Now && x.ClientId==_options.ClientId)
                             .Include(x => x.User)
                             .ThenInclude(x => x.SiteTeamMember)
                             .FirstOrDefaultAsync();

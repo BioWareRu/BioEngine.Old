@@ -23,7 +23,7 @@ services:
     labels:
       - "com.microsoft.visualstudio.targetoperatingsystem=linux"
 
-  bioengine.api:
+  api:
     image: biowareru/bioengine-api
     build:
       args:

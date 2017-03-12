@@ -13,7 +13,7 @@ services:
     ports:
       - "80"
 
-  bioengine.api:
+  api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:

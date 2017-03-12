@@ -22,7 +22,6 @@ namespace BioEngine.Site.ViewComponents
             new GameItem("me", "Mass Effect", "mass_effect"),
             new GameItem("nwn", "NeverWinter Nights", "neverwinter_nights"),
             new GameItem("me2", "Mass Effect 2", "mass_effect_2"),
-            new GameItem("nno", "NeverWinter Online", "neverwinter"),
             new GameItem("je", "Jade Empire", "jade_empire")
         };
 

@@ -35,4 +35,6 @@ after_success:
     docker push biowareru/bioengine-resizr;
     docker tag biowareru/bioengine-site:latest biowareru/bioengine-site:1.0-$TRAVIS_BUILD_NUMBER;
     docker push biowareru/bioengine-site;
+    docker tag biowareru/bioengine-api:latest biowareru/bioengine-api:1.0-$TRAVIS_BUILD_NUMBER;
+    docker push biowareru/bioengine-api;
     fi

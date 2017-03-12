@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>API</AssemblyName>
+    <AssemblyName>BioEngine.API</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>API</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
@@ -15,10 +15,6 @@
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +35,10 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

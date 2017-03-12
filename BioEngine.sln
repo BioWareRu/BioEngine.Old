@@ -14,11 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.Site", "src\Site\BioEngine.Site.csproj", "{EC308F99-E836-430C-9B90-5117E0B8852F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{984A4148-132B-4CB0-A0D7-81A3EC91125C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.Common", "src\Common\BioEngine.Common.csproj", "{984A4148-132B-4CB0-A0D7-81A3EC91125C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "src\API\API.csproj", "{308888F3-2B5D-43F6-86B6-659FC5BA732F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.API", "src\API\BioEngine.API.csproj", "{308888F3-2B5D-43F6-86B6-659FC5BA732F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resizr", "src\Resizr\Resizr.csproj", "{E75D9135-D206-4B92-BEC8-576336F584E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioEngine.Resizr", "src\Resizr\BioEngine.Resizr.csproj", "{E75D9135-D206-4B92-BEC8-576336F584E2}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{16A96F2D-DF68-424A-8E8F-510F256205BE}"
 EndProject

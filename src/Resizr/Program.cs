@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Resizr
+namespace BioEngine.Resizr
 {
     [UsedImplicitly]
     public class Program

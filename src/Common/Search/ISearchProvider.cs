@@ -7,7 +7,8 @@ namespace BioEngine.Common.Search
         IEnumerable<T> Search(string term, int limit);
         long Count(string term);
 
-        void AddUpdateEntity(T skill);
-        void DeleteSkill(long updateId);
+        void AddUpdateEntity(T entitity);
+        void AddUpdateEntities(IEnumerable<T> entities);
+        void DeleteEntity(long updateId);
     }
 }

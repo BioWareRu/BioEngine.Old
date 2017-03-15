@@ -147,10 +147,7 @@ namespace BioEngine.Site.Controllers
         private void AddEntities<T>(IEnumerable<T> entities) where T : ISearchModel
         {
             var provider = HttpContext.RequestServices.GetService<ISearchProvider<T>>();
-            foreach (var entity in entities)
-            {
-                provider.AddUpdateEntity(entity);
-            }
+            provider.AddUpdateEntities(entities);
         }
 
         public async Task<string> Reindex([FromServices] ISearchProvider<Game> searchProvider)

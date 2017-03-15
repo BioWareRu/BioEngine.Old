@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BioEngine.Site.Helpers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BioEngine.Site.ViewModels.Search
@@ -59,7 +60,7 @@ namespace BioEngine.Site.ViewModels.Search
         public SearchBlockItem(string title, string url, string text)
         {
             Title = title;
-            Text = !string.IsNullOrEmpty(text) && text.Length > 250 ? text.Substring(0, 250) : text;
+            Text = ContentHelper.GetDescription(text, 250);
             Url = url;
         }
     }

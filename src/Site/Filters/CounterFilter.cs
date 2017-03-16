@@ -30,7 +30,7 @@ namespace BioEngine.Site.Filters
         {
             base.OnActionExecuted(context);
             timer.Stop();
-            GetSummary(context.ActionDescriptor.DisplayName)?.Observe(timer.ElapsedMilliseconds);
+            GetSummary(context.ActionDescriptor.Id)?.Observe(timer.ElapsedMilliseconds);
         }
 
         private Summary GetSummary(string action)

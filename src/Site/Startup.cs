@@ -110,6 +110,7 @@ namespace BioEngine.Site
 
                 var redis = ConnectionMultiplexer.Connect(redisConfiguration);
                 services.AddDataProtection().PersistKeysToRedis(redis, "DataProtection-Keys");
+                services.AddAntiforgery(opts => opts.CookieName = "beAntiforgeryCookie");
             }
 
             services.AddSession(options =>

@@ -60,6 +60,7 @@ namespace BioEngine.Site.Helpers
 
         public static string GetDescription(string content, int lenght = 20)
         {
+            if (string.IsNullOrEmpty(content)) return content;
             var words =
                 StripTagsRegex.Replace(content, string.Empty)
                     .Trim()

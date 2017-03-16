@@ -27,6 +27,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/")]
+        [HttpGet("/index.html")]
         public async Task<IActionResult> Index()
         {
             return await NewsList();

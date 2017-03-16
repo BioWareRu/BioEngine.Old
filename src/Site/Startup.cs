@@ -164,7 +164,7 @@ namespace BioEngine.Site
                 new CultureInfo("ru-RU"),
                 new CultureInfo("ru")
             };
-
+            
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture("ru-RU"),
@@ -188,9 +188,11 @@ namespace BioEngine.Site
 
             app.UseStaticFiles();
 
-            app.UseStatusCodePages();
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseMiddleware<CounterMiddleware>();
+
+            app.UseStatusCodePages();
 
             app.UseResponseCaching();
 

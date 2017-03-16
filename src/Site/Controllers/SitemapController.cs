@@ -52,6 +52,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [ResponseCache(Duration = 900)]
         public async Task<ActionResult> News()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
@@ -75,6 +76,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [ResponseCache(Duration = 1800)]
         public async Task<ActionResult> Games()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
@@ -90,6 +92,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Articles()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
@@ -113,6 +116,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Files()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
@@ -136,6 +140,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Gallery()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();

@@ -75,6 +75,8 @@ namespace BioEngine.Site
 
             services.AddDistributedMemoryCache();
 
+            services.AddResponseCaching();
+
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
@@ -133,6 +135,7 @@ namespace BioEngine.Site
 
             app.UseStatusCodePages();
 
+            app.UseResponseCaching();
 
             app.UseSession();
 

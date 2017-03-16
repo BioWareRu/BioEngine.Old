@@ -93,10 +93,10 @@ namespace BioEngine.Site.Controllers
 
         private async Task<IActionResult> NewsByDate(int year, int? month, int? day, int page = 1)
         {
-            var dayStart = day ?? 1;
             var monthStart = month ?? 1;
-            var dayEnd = day ?? 31;
             var monthEnd = month ?? 12;
+            var dayStart = day ?? 1;
+            var dayEnd = day ?? DateTime.DaysInMonth(year, monthEnd); ;
             var dateStart = new DateTime(year, monthStart, dayStart, 0, 0, 0);
             var dateEnd = new DateTime(year, monthEnd, dayEnd, 23, 59, 59);
             var news =
@@ -114,7 +114,7 @@ namespace BioEngine.Site.Controllers
                     .ToListAsync();
             var totalNews = await Context.News.CountAsync();
 
-            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
+            return View("NewsList", new NewsListViewModel(ViewModelConfig, news, totalNews, page));
         }
 
         [HttpGet("/{parentUrl}/news.html")]

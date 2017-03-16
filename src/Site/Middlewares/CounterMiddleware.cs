@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +11,7 @@ namespace BioEngine.Site.Middlewares
     {
         private readonly RequestDelegate _next;
 
-        private static Summary QueriesSummary = Metrics.CreateSummary("queriesSummary", "Queries stats");
+        private static readonly Summary QueriesSummary = Metrics.CreateSummary("queriesSummary", "Queries stats");
 
         public CounterMiddleware(RequestDelegate next)
         {

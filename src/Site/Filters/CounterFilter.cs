@@ -14,7 +14,7 @@ namespace BioEngine.Site.Filters
 
         private readonly ILogger _logger;
 
-        public Stopwatch timer;
+        private Stopwatch _timer;
 
         public CounterFilter(ILogger<CounterFilter> logger)
         {
@@ -24,17 +24,17 @@ namespace BioEngine.Site.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
-            timer = Stopwatch.StartNew();
+            _timer = Stopwatch.StartNew();
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             base.OnActionExecuted(context);
-            timer.Stop();
-            GetSummary(context.ActionDescriptor.DisplayName)?.Observe(timer.ElapsedMilliseconds);
+            _timer.Stop();
+            GetSummary(context.ActionDescriptor.DisplayName)?.Observe(_timer.ElapsedMilliseconds);
         }
 
-        private static Regex ActionNameRegex = new Regex("BioEngine_Site_Controllers_(.*)\\s\\(");
+        private static readonly Regex ActionNameRegex = new Regex("BioEngine_Site_Controllers_(.*)\\s\\(");
 
         private Summary GetSummary(string action)
         {

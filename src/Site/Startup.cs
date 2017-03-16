@@ -29,10 +29,9 @@ using Serilog.Core;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
-using prometheus_netcore;
-using Prometheus;
 using BioEngine.Site.Middlewares;
 using BioEngine.Site.Filters;
+using BioEngine.Prometheus.Core;
 
 namespace BioEngine.Site
 {

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using BioEngine.Site.Extensions;
 
 namespace BioEngine.Site.Controllers
 {
@@ -26,6 +27,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/articles/{*url}")]
+        [HttpGet("/articles/{parentUrl}/{*url}")]
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find article
@@ -39,6 +41,10 @@ namespace BioEngine.Site.Controllers
             var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
             {
+                if (await UrlManager.Articles.PublicUrl(article) != HttpContext.Request.AbsoluteUrl())
+                {
+                    return new RedirectResult(await UrlManager.Articles.PublicUrl(article), true);
+                }
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = article.Cat.ParentCat;
                 while (cat != null)

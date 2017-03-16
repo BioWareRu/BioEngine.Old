@@ -41,10 +41,11 @@ namespace BioEngine.Site.Controllers
             var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
             {
-                if (await UrlManager.Articles.PublicUrl(article) != HttpContext.Request.AbsoluteUrl())
+                /*var fullUrl = await UrlManager.Articles.PublicUrl(article, true);
+                if (fullUrl != HttpContext.Request.AbsoluteUrl())
                 {
-                    return new RedirectResult(await UrlManager.Articles.PublicUrl(article), true);
-                }
+                    return new RedirectResult(fullUrl, true);
+                }*/
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = article.Cat.ParentCat;
                 while (cat != null)

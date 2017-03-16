@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -32,14 +33,19 @@ using Serilog.Sinks.Graylog;
 using BioEngine.Site.Middlewares;
 using BioEngine.Site.Filters;
 using BioEngine.Prometheus.Core;
+using Microsoft.AspNetCore.DataProtection;
+using StackExchange.Redis;
 
 namespace BioEngine.Site
 {
     [UsedImplicitly]
     public class Startup
     {
+        private readonly IHostingEnvironment _env;
+
         public Startup(IHostingEnvironment env)
         {
+            _env = env;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
@@ -61,7 +67,11 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); options.Filters.Add(typeof(CounterFilter)); })
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(ExceptionFilter));
+                    options.Filters.Add(typeof(CounterFilter));
+                })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization()
                 .AddTypedRouting();
@@ -84,6 +94,22 @@ namespace BioEngine.Site
 
             services.AddResponseCaching();
 
+            if (_env.IsProduction())
+            {
+                var redisConfiguration = new ConfigurationOptions()
+                {
+                    EndPoints =
+                    {
+                        new DnsEndPoint(Configuration["BE_REDIS_HOST"], int.Parse(Configuration["BE_REDIS_PORT"]))
+                    },
+                    AbortOnConnectFail = false,
+                    DefaultDatabase = int.Parse(Configuration["BE_REDIS_DATABASE"])
+                };
+
+                var redis = ConnectionMultiplexer.Connect(redisConfiguration);
+                services.AddDataProtection().PersistKeysToRedis(redis, "DataProtection-Keys");
+            }
+
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
@@ -97,10 +123,11 @@ namespace BioEngine.Site
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         [UsedImplicitly]
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApplicationLifetime lifetime)
         {
             var loggerConfiguration =
-                 new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
+                new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
 
             if (env.IsDevelopment())
             {
@@ -113,12 +140,12 @@ namespace BioEngine.Site
             {
                 app.UseExceptionHandler("/Home/Error");
                 loggerConfiguration = loggerConfiguration
-                   .WriteTo.Graylog(new GraylogSinkOptions()
-                   {
-                       HostnameOrAdress = Configuration["BE_GELF_HOST"],
-                       Port = int.Parse(Configuration["BE_GELF_PORT"]),
-                       Facility = Configuration["BE_GELF_FACILITY"]
-                   });
+                    .WriteTo.Graylog(new GraylogSinkOptions()
+                    {
+                        HostnameOrAdress = Configuration["BE_GELF_HOST"],
+                        Port = int.Parse(Configuration["BE_GELF_PORT"]),
+                        Facility = Configuration["BE_GELF_FACILITY"]
+                    });
             }
             Log.Logger = loggerConfiguration.CreateLogger();
             loggerFactory.AddSerilog();

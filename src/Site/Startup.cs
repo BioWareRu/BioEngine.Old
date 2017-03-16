@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -96,11 +97,12 @@ namespace BioEngine.Site
 
             if (_env.IsProduction())
             {
+                var resolved = TryResolveDns(Configuration["BE_REDIS_HOST"]);
                 var redisConfiguration = new ConfigurationOptions()
                 {
                     EndPoints =
                     {
-                        new DnsEndPoint(Configuration["BE_REDIS_HOST"], int.Parse(Configuration["BE_REDIS_PORT"]))
+                        new IPEndPoint(resolved.AddressList.First(), int.Parse(Configuration["BE_REDIS_PORT"]))
                     },
                     AbortOnConnectFail = false,
                     DefaultDatabase = int.Parse(Configuration["BE_REDIS_DATABASE"])
@@ -118,6 +120,13 @@ namespace BioEngine.Site
                 options.CookieHttpOnly = true;
             });
         }
+
+        private static IPHostEntry TryResolveDns(string redisUrl)
+        {
+            var ip = Dns.GetHostEntryAsync(redisUrl).GetAwaiter().GetResult();
+            return ip;
+        }
+
 
         public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
 

@@ -61,7 +61,7 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); })
+            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); options.Filters.Add(typeof(CounterFilter)); })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization()
                 .AddTypedRouting();

@@ -55,18 +55,80 @@ namespace BioEngine.Site.Controllers
             return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
         }
 
+        [Route("/{year:int}.html")]
+        public async Task<IActionResult> NewsByYear(int year)
+        {
+            return await NewsByDate(year, null, null);
+        }
+
+        [Route("/{year:int}/page/{page:int}.html")]
+        public async Task<IActionResult> NewsByYear(int year, int page)
+        {
+            return await NewsByDate(year, null, null, page);
+        }
+
+        [Route("/{year:int}/{month:range(1,12)}.html")]
+        public async Task<IActionResult> NewsByYearAndMonth(int year, int month)
+        {
+            return await NewsByDate(year, month, null);
+        }
+
+        [Route("/{year:int}/{month:range(1,12)}/page/{page:int}.html")]
+        public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int page)
+        {
+            return await NewsByDate(year, month, null, page);
+        }
+
+        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}.html")]
+        public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day)
+        {
+            return await NewsByDate(year, month, day);
+        }
+
+        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}/page/{page:int}.html")]
+        public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int page)
+        {
+            return await NewsByDate(year, month, day, page);
+        }
+
+        private async Task<IActionResult> NewsByDate(int year, int? month, int? day, int page = 1)
+        {
+            var dayStart = day ?? 1;
+            var monthStart = month ?? 1;
+            var dayEnd = day ?? 31;
+            var monthEnd = month ?? 12;
+            var dateStart = new DateTime(year, monthStart, dayStart, 0, 0, 0);
+            var dateEnd = new DateTime(year, monthEnd, dayEnd, 23, 59, 59);
+            var news =
+                await Context.News.Where(x => x.Pub == 1
+                && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
+                && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
+                )
+                    .OrderByDescending(x => x.Date)
+                    .Include(x => x.Author)
+                    .Include(x => x.Game)
+                    .Include(x => x.Developer)
+                    .Include(x => x.Topic)
+                    .Skip((page - 1) * 20)
+                    .Take(20)
+                    .ToListAsync();
+            var totalNews = await Context.News.CountAsync();
+
+            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
+        }
+
         [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> NewsList(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic)parent) : Task.FromResult(StatusCode(404));
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> NewsList(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic)parent, page) : Task.FromResult(StatusCode(404));
         }
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
@@ -165,7 +227,7 @@ namespace BioEngine.Site.Controllers
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
             var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic)parent),
                 parent.DisplayTitle));
             return View(viewModel);
         }

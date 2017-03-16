@@ -17,7 +17,8 @@ namespace BioEngine.Site.Components
                 Port = Port,
                 UserID = UserName,
                 Password = Password,
-                Database = DBName
+                Database = DBName,
+                MaximumPoolSize = 300
             };
             optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString);
         }

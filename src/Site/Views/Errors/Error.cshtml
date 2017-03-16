@@ -1,0 +1,33 @@
+﻿@using BioEngine.Site.ViewComponents
+@using Microsoft.AspNetCore.Http
+@model BioEngine.Site.ViewModels.Errors.ErrorsViewModel
+
+@{
+    ViewBag.Title = await Model.Title();
+    Layout = "~/Views/_Main.cshtml";
+}
+<div class="article__block">
+    @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
+    <article class="article">
+        <header class="article__header">
+            <div class="article__title-wrap">
+                <h1 class="article__title">
+                    Страница не найдена
+                </h1>
+            </div>
+        </header>
+            
+        <div class="b-text">
+            <p>
+                Возможно, она была удалена, а может её и вовсе никогда не было. Попробуйте воспользоваться поиском или
+                просто вернуться на <a href="/">главную</a>.
+            </p>
+            @if (Model.ErrorCode == StatusCodes.Status500InternalServerError)
+            {
+                <p>Сообщите этот код разработчикам: @Context.TraceIdentifier</p>
+            }
+        </div>
+    </article>
+
+
+</div>

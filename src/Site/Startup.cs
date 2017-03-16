@@ -70,7 +70,7 @@ namespace BioEngine.Site
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddMvc(options =>
                 {
-                    options.Filters.Add(typeof(ExceptionFilter));
+                    //options.Filters.Add(typeof(ExceptionFilter));
                     options.Filters.Add(typeof(CounterFilter));
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
@@ -148,7 +148,6 @@ namespace BioEngine.Site
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
                 loggerConfiguration = loggerConfiguration
                     .WriteTo.Graylog(new GraylogSinkOptions()
                     {
@@ -193,7 +192,9 @@ namespace BioEngine.Site
 
             app.UseMiddleware<CounterMiddleware>();
 
-            app.UseStatusCodePages();
+            app.UseExceptionHandler("/error/500");
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseResponseCaching();
 

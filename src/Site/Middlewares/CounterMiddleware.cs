@@ -23,7 +23,7 @@ namespace BioEngine.Site.Middlewares
 
         private static Summary GetSummary(string path)
         {
-            path = path.Replace('/', '_');
+            path = path.Replace('/', '_').Replace('.', '_').Replace('-', '_');
             return PathSummaries.GetOrAdd(path,
                 newPath => Metrics.CreateSummary($"query_{newPath}_summary", $"Queries summary for {newPath}"));
         }

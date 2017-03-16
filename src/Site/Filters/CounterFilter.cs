@@ -4,6 +4,7 @@ using Prometheus;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace BioEngine.Site.Filters
 {
@@ -30,12 +31,15 @@ namespace BioEngine.Site.Filters
         {
             base.OnActionExecuted(context);
             timer.Stop();
-            GetSummary(context.ActionDescriptor.Id)?.Observe(timer.ElapsedMilliseconds);
+            GetSummary(context.ActionDescriptor.DisplayName)?.Observe(timer.ElapsedMilliseconds);
         }
+
+        private static Regex ActionNameRegex = new Regex("BioEngine_Site_Controllers_(.*)\\s\\(");
 
         private Summary GetSummary(string action)
         {
-            return PathSummaries.GetOrAdd($"{action.Replace('.', '_')}",
+            var actionName = ActionNameRegex.Match(action.Replace('.', '_'));
+            return actionName.Success ? PathSummaries.GetOrAdd($"{actionName.Groups[1]}",
                 newPath =>
                 {
                     try
@@ -48,7 +52,7 @@ namespace BioEngine.Site.Filters
                         _logger.LogError($"Can't create metric for {newPath}: {ex.Message}");
                     }
                     return null;
-                });
+                }) : null;
         }
     }
 }

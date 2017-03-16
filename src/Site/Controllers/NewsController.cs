@@ -55,7 +55,7 @@ namespace BioEngine.Site.Controllers
             return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
         }
 
-        [Route("/{year:int}.html")]
+        [Route("/{year:int}.html", Order = 1)]
         public async Task<IActionResult> NewsByYear(int year)
         {
             return await NewsByDate(year, null, null);
@@ -99,22 +99,23 @@ namespace BioEngine.Site.Controllers
             var dayEnd = day ?? DateTime.DaysInMonth(year, monthEnd);
             var dateStart = new DateTime(year, monthStart, dayStart, 0, 0, 0);
             var dateEnd = new DateTime(year, monthEnd, dayEnd, 23, 59, 59);
-            var news =
-                await Context.News.Where(x => x.Pub == 1
-                && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
-                && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
+            var query = Context.News.Where(x => x.Pub == 1
+                                                && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
+                                                && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
                 )
-                    .OrderByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic)
+                .OrderByDescending(x => x.Date)
+                .Include(x => x.Author)
+                .Include(x => x.Game)
+                .Include(x => x.Developer)
+                .Include(x => x.Topic);
+            var news =
+                await query
                     .Skip((page - 1) * 20)
                     .Take(20)
                     .ToListAsync();
-            var totalNews = await Context.News.CountAsync();
+            var totalNews = await query.CountAsync();
 
-            return View("Index", new NewsListViewModel(ViewModelConfig, news, totalNews, page));
+            return View("ListByDate", new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
         }
 
         [HttpGet("/{parentUrl}/news.html")]

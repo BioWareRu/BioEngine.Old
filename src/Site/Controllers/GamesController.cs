@@ -21,7 +21,7 @@ namespace BioEngine.Site.Controllers
         }
 
 
-        [HttpGet("/{gameUrl:regex(^[[a-z0-9_]]+$)}.html")]
+        [HttpGet("/{gameUrl:regex(^[[a-z0-9_]]+$)}.html", Order = 2)]
         public async Task<IActionResult> Index(string gameUrl)
         {
             var game = await Context.Games.Include(x => x.Developer).FirstOrDefaultAsync(x => x.Url == gameUrl);

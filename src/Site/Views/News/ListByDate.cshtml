@@ -1,0 +1,40 @@
+﻿@using System.Threading.Tasks
+@using BioEngine.Site.ViewModels.News
+@using BioEngine.Site.Components.Url
+@using BioEngine.Site.ViewComponents
+
+@inject UrlManager UrlManager
+@model NewsListByDateViewModel
+
+@{
+    ViewBag.Title = await Model.Title();
+    Layout = "~/Views/_Main.cshtml";
+}
+<div class="article-list">
+    @foreach (var news in Model.News)
+    {
+        @Html.Partial("~/Views/Shared/News/Show.cshtml", new ShowNewsViewModel(news, false, UrlManager))
+    }
+
+    @(await Component.InvokeAsync<PagerViewComponent>(new
+      {
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (page) =>
+          {
+              var action = "NewsByYear";
+              var routeAttibutes = new {Model.Year, Model.Month, Model.Day, page};
+              if (Model.Day > 0)
+              {
+                  action = "NewsByYearAndMonthAndDay";
+              }
+              else
+              {
+                  if (Model.Month > 0)
+                  {
+                      action = "NewsByYearAndMonth";
+                  }
+              }
+              return Task.FromResult(Url.Action(action, "News", routeAttibutes));
+
+          },20)
+    }))
+</div>

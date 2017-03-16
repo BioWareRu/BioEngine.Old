@@ -112,8 +112,11 @@ namespace BioEngine.Site.Controllers
             }
 
             //not file... search for cat
-            int page;
-            ParseCatchAll(url, out catUrl, out page);
+            var parsed = ParseCatchAll(url, out catUrl, out int page);
+            if (!parsed)
+            {
+                return new NotFoundResult();
+            }
             var category = await GetCat(parent, catUrl);
             if (category != null)
             {

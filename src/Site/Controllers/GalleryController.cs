@@ -34,7 +34,11 @@ namespace BioEngine.Site.Controllers
             {
                 return new NotFoundResult();
             }
-            ParseCatchAll(url, out string catUrl, out int page);
+            var parsed = ParseCatchAll(url, out string catUrl, out int page);
+            if (!parsed)
+            {
+                return new NotFoundResult();
+            }
             var category = await GetCat(parent, catUrl);
             if (category != null)
             {

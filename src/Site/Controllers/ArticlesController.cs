@@ -29,10 +29,12 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find article
-            string catUrl;
-            string articleUrl;
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            ParseCatchAll(url, out catUrl, out articleUrl);
+            if (parent == null)
+            {
+                return new NotFoundResult();
+            }
+            ParseCatchAll(url, out string catUrl, out string articleUrl);
 
             var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
@@ -46,7 +48,7 @@ namespace BioEngine.Site.Controllers
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat),
                     article.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic) parent), "Статьи"));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic)parent), "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new ArticleViewModel(ViewModelConfig, article);
                 breadcrumbs.Reverse();
@@ -68,7 +70,7 @@ namespace BioEngine.Site.Controllers
                         parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic) parent), "Статьи"));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic)parent), "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
@@ -91,7 +93,10 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> ParentArticles(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            if (parent == null) return StatusCode(404);
+            if (parent == null)
+            {
+                return new NotFoundResult();
+            }
 
             var cats = await LoadCatsTree(parent, Context.ArticleCats,
                 async (cat) => await GetLastArticles(cat));

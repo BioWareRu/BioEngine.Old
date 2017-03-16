@@ -29,7 +29,10 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            if (parent == null) return StatusCode(404);
+            if (parent == null)
+            {
+                return new NotFoundResult();
+            }
 
             var cats = await LoadCatsTree(parent, Context.FileCats, async cat => await GetLastFiles(cat));
 
@@ -47,10 +50,12 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/download/{*url}")]
         public async Task<IActionResult> Download(string parentUrl, string url)
         {
-            string catUrl;
-            string fileUrl;
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            ParseCatchAll(url, out catUrl, out fileUrl);
+            if (parent == null)
+            {
+                return new NotFoundResult();
+            }
+            ParseCatchAll(url, out string catUrl, out string fileUrl);
 
             var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)

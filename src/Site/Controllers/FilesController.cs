@@ -72,7 +72,7 @@ namespace BioEngine.Site.Controllers
                     cat = cat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();

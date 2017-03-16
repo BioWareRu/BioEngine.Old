@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using BioEngine.Common.Base;
 using BioEngine.Common.Helpers;
 using BioEngine.Common.Interfaces;
@@ -64,6 +66,10 @@ namespace BioEngine.Common.Models
                                 long.Parse(file["size"].ToString()), file["res"].ToString());
                             _files.Add(picFile);
                         }
+                    }
+                    if (!_files.Any())
+                    {
+                        throw new Exception($"Picture {Id} has no files");
                     }
                 }
                 return _files;

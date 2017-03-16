@@ -109,6 +109,7 @@ namespace BioEngine.Site.Components.Url
         public async Task<string> ThumbUrl(GalleryPic picture, int width = 100, int height = 0, int index = 0)
         {
             await Poppulate(picture);
+            
             var file = picture.Files[index];
             var fileName = Path.GetFileNameWithoutExtension(file.Name);
             var ext = Path.GetExtension(file.Name);

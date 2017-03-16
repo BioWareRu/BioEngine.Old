@@ -23,6 +23,7 @@ namespace BioEngine.Site.Controllers
         {
         }
 
+        [HttpGet("/sitemap.xml")]
         public ActionResult Index()
         {
             List<SitemapIndexNode> sitemapIndexNodes = new List<SitemapIndexNode>
@@ -38,6 +39,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemapIndex(new SitemapIndexModel(sitemapIndexNodes));
         }
 
+        [HttpGet("/sitemap.main.xml")]
         public ActionResult Main()
         {
             List<SitemapNode> nodes = new List<SitemapNode>
@@ -52,6 +54,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [HttpGet("/sitemap.news.xml")]
         [ResponseCache(Duration = 900)]
         public async Task<ActionResult> News()
         {
@@ -76,6 +79,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [HttpGet("/sitemap.games.xml")]
         [ResponseCache(Duration = 1800)]
         public async Task<ActionResult> Games()
         {
@@ -92,6 +96,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [HttpGet("/sitemap.articles.xml")]
         [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Articles()
         {
@@ -116,6 +121,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [HttpGet("/sitemap.files.xml")]
         [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Files()
         {
@@ -140,6 +146,7 @@ namespace BioEngine.Site.Controllers
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
+        [HttpGet("/sitemap.gallery.xml")]
         [ResponseCache(Duration = 900)]
         public async Task<ActionResult> Gallery()
         {

@@ -8,20 +8,24 @@ using BioEngine.Common.DB;
 using BioEngine.Site.Components.Url;
 using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Components
 {
+    [UsedImplicitly]
     public class RssProvider : IChannelProvider
     {
         private readonly BWContext _dbContext;
         private readonly UrlManager _urlManager;
+        private readonly ContentHelper _contentHelper;
 
-        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, UrlManager urlManager)
+        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, UrlManager urlManager, ContentHelper contentHelper)
         {
             _dbContext = dbContext;
             _urlManager = urlManager;
+            _contentHelper = contentHelper;
             _appSettings = options.Value;
         }
 
@@ -67,12 +71,10 @@ namespace BioEngine.Site.Components
                         Author = news.Author.Name,
                         Guid = new RssGuid(newsUrl, true)
                     };
-                    var imgUrl = ContentHelper.GetImageUrl(news.ShortText);
+                    var imgUrl = _contentHelper.GetImageUrl(news.ShortText);
                     if (imgUrl != null)
                     {
-                        long size;
-                        string mimeType;
-                        ContentHelper.GetSizeAndMime(imgUrl, out size, out mimeType);
+                        ContentHelper.GetSizeAndMime(imgUrl, out long size, out string mimeType);
                         item.Enclosures.Add(new RssEnclosure(size, mimeType, imgUrl));
                     }
 

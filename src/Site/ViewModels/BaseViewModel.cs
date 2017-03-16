@@ -30,7 +30,7 @@ namespace BioEngine.Site.ViewModels
         //public string Title { get; set; }
         public abstract System.Threading.Tasks.Task<string> Title();
 
-        public Uri ImageUrl { get; protected set; }
+        public Uri ImageUrl { get; set; }
 
         public string Description { get; protected set; }
 

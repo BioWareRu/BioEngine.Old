@@ -8,7 +8,7 @@ namespace BioEngine.Site.ViewModels.News
         public OneNewsViewModel(BaseViewModelConfig config, Common.Models.News news) : base(config)
         {
             News = news;
-            ImageUrl = ContentHelper.GetImageUrl(news.ShortText);
+            
             Description = ContentHelper.GetDescription(news.ShortText);
         }
 

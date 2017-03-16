@@ -18,12 +18,12 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public async Task<string> PublicUrl(Article article)
+        public async Task<string> PublicUrl(Article article, bool absoluteUrl = false)
         {
             await Poppulate(article);
             var url = await CatUrl(article.Cat) + "/" + article.Url;
             return GetUrl("Show", "Articles",
-                new {parentUrl = await ParentUrl(article), url});
+                new { parentUrl = await ParentUrl(article), url }, absoluteUrl);
             /*return _urlHelper.Action<ArticlesController>(x => x.Show(ParentUrl(article), CatUrl(article), article.Url));*/
         }
 
@@ -92,13 +92,13 @@ namespace BioEngine.Site.Components.Url
                 url += $"/page/{page}";
             }
             return GetUrl("Show", "Articles",
-                new {parentUrl = await ParentUrl(cat), url});
+                new { parentUrl = await ParentUrl(cat), url });
         }
 
         public async Task<string> ParentArticlesUrl(Article article)
         {
             var parent = await ParentEntityProvider.GetModelParent(article);
-            return ParentArticlesUrl((dynamic) parent);
+            return ParentArticlesUrl((dynamic)parent);
         }
 
         public async Task<string> ParentArticlesUrl(ArticleCat articleCat)

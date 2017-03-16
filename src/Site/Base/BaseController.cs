@@ -36,7 +36,7 @@ namespace BioEngine.Site.Base
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();
 
-        private static readonly Regex CatchAllRegex = new Regex("(.*)/([a-zA-Z0-9_]+).html");
+        private static readonly Regex CatchAllRegex = new Regex("(.*)/([a-zA-Z0-9_-]+).html");
         private static readonly Regex CatchAllCatRegex = new Regex("(.*).html");
         private static readonly Regex CatchAllCatWithPageRegex = new Regex("(.*)/page/([0-9]+).html");
 

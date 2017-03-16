@@ -57,8 +57,7 @@ namespace BioEngine.Site.Controllers
             }
 
             //not article... search for cat
-            int page;
-            ParseCatchAll(url, out catUrl, out page);
+            ParseCatchAll(url, out catUrl, out int page);
             var category = await GetCat(parent, catUrl);
             if (category != null)
             {
@@ -86,7 +85,7 @@ namespace BioEngine.Site.Controllers
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("ArticleCat", viewModel);
             }
-            throw new NotImplementedException();
+            return new NotFoundResult();
         }
 
         [HttpGet("/{parentUrl}/articles.html")]

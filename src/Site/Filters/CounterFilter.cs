@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace BioEngine.Site.Filters
 {
-    public class CounterFilter: ActionFilterAttribute
+    public class CounterFilter : ActionFilterAttribute
     {
         private static readonly ConcurrentDictionary<string, Summary> PathSummaries = new ConcurrentDictionary<string, Summary>();
 
@@ -21,12 +21,12 @@ namespace BioEngine.Site.Filters
         {
             base.OnActionExecuted(context);
             timer.Stop();
-            GetSummary(context.Controller.ToString(), context.ActionDescriptor.DisplayName).Observe(timer.ElapsedMilliseconds);
+            GetSummary(context.ActionDescriptor.DisplayName).Observe(timer.ElapsedMilliseconds);
         }
 
-        private static Summary GetSummary(string controller, string action)
+        private static Summary GetSummary(string action)
         {
-            return PathSummaries.GetOrAdd($"{controller}_{action}",
+            return PathSummaries.GetOrAdd($"{action.Replace('.', '_')}",
                 newPath => Metrics.CreateSummary($"query_{newPath}_summary", $"Queries summary for {newPath}"));
         }
     }

@@ -25,6 +25,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.HttpOverrides;
+using Serilog.Core;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Graylog;
+using prometheus_netcore;
+using Prometheus;
+using BioEngine.Site.Middlewares;
+using BioEngine.Site.Filters;
 
 namespace BioEngine.Site
 {
@@ -54,7 +62,7 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc()
+            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization()
                 .AddTypedRouting();
@@ -86,23 +94,35 @@ namespace BioEngine.Site
             });
         }
 
+        public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         [UsedImplicitly]
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime lifetime)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            var loggerConfiguration =
+                 new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
+                loggerFactory.AddDebug();
+                loggerConfiguration = loggerConfiguration
+                    .WriteTo.LiterateConsole();
+                LogLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                loggerConfiguration = loggerConfiguration
+                   .WriteTo.Graylog(new GraylogSinkOptions()
+                   {
+                       HostnameOrAdress = Configuration["BE_GELF_HOST"],
+                       Port = int.Parse(Configuration["BE_GELF_PORT"]),
+                       Facility = Configuration["BE_GELF_FACILITY"]
+                   });
             }
-
+            Log.Logger = loggerConfiguration.CreateLogger();
+            loggerFactory.AddSerilog();
 
             var supportedCultures = new[]
             {
@@ -134,6 +154,8 @@ namespace BioEngine.Site
             app.UseStaticFiles();
 
             app.UseStatusCodePages();
+
+            app.UseMiddleware<CounterMiddleware>();
 
             app.UseResponseCaching();
 
@@ -213,6 +235,26 @@ namespace BioEngine.Site
                     "default",
                     "{controller=Index}/{action=Index}/{id?}");
             });
+
+            if (env.IsProduction())
+            {
+                lifetime.ApplicationStarted.Register(RunPrometheus);
+                lifetime.ApplicationStopped.Register(StopPrometheus);
+            }
+            lifetime.ApplicationStopped.Register(Log.CloseAndFlush);
+        }
+
+        private MetricServer _metricServer;
+
+        private void RunPrometheus()
+        {
+            _metricServer = new MetricServer("*", int.Parse(Configuration["BE_PROMETHEUS_PORT"]));
+            _metricServer.Start();
+        }
+
+        private void StopPrometheus()
+        {
+            _metricServer.Stop();
         }
     }
 }

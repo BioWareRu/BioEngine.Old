@@ -184,6 +184,10 @@ namespace BioEngine.Site
                 options.KnownNetworks.Clear();
                 options.RequireHeaderSymmetry = false;
                 app.UseForwardedHeaders(options);
+
+                app.UseExceptionHandler("/error/500");
+
+                app.UseStatusCodePagesWithReExecute("/error/{0}");
             }
 
             app.UseStaticFiles();
@@ -191,10 +195,6 @@ namespace BioEngine.Site
             app.UseMiddleware<LoggingMiddleware>();
 
             app.UseMiddleware<CounterMiddleware>();
-
-            app.UseExceptionHandler("/error/500");
-
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseResponseCaching();
 

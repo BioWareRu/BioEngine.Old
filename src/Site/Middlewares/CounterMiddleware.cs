@@ -11,7 +11,7 @@ namespace BioEngine.Site.Middlewares
     {
         private readonly RequestDelegate _next;
 
-        private static readonly Summary QueriesSummary = Metrics.CreateSummary("queriesSummary", "Queries stats");
+        private static readonly Summary QueriesSummary = Metrics.CreateSummary("bw_queries", "BW Queries stats");
 
         public CounterMiddleware(RequestDelegate next)
         {

@@ -8,7 +8,7 @@ namespace BioEngine.Site.Filters
     {
         private readonly ILogger _logger;
 
-        private static Summary ErrorsSummary = Metrics.CreateSummary("errorsSummary", "Logged errors");
+        private static Summary ErrorsSummary = Metrics.CreateSummary("bw_errors", "BW logged errors");
 
         public ExceptionFilter(ILogger<ExceptionFilter> logger)
         {

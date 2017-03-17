@@ -44,7 +44,7 @@ namespace BioEngine.Site.Filters
                 {
                     try
                     {
-                        var metric = Metrics.CreateSummary($"query_{newPath}_summary", $"Queries summary for {newPath}");
+                        var metric = Metrics.CreateSummary($"bw_{newPath}_summary", $"BW queries summary for {newPath}");
                         return metric;
                     }
                     catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
@@ -31,7 +32,8 @@ namespace BioEngine.Site.Base
             Context = context;
             ParentEntityProvider = parentEntityProvider;
             _settings = context.Settings.ToList();
-            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings, parentEntityProvider);
+            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings,
+                parentEntityProvider);
         }
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();
@@ -87,7 +89,8 @@ namespace BioEngine.Site.Base
             return false;
         }
 
-        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(IParentModel parent, DbSet<TCat> dbSet,
+        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(IParentModel parent,
+            DbSet<TCat> dbSet,
             Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
@@ -109,23 +112,44 @@ namespace BioEngine.Site.Base
 
             var rootCats = await rootCatsQuery.ToListAsync();
             var catsTree = new List<CatsTree<TCat, TEntity>>();
-            foreach(var rootCat in rootCats)
+            foreach (var rootCat in rootCats)
             {
                 catsTree.Add(await LoadCatChildren(rootCat, getLast));
             }
             return catsTree;
         }
 
-        private async Task<CatsTree<TCat, TEntity>> LoadCatChildren<TCat, TEntity>(TCat cat, Func<ICat<TCat>, Task<List<TEntity>>> getLast)
+        private async Task<CatsTree<TCat, TEntity>> LoadCatChildren<TCat, TEntity>(TCat cat,
+            Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
             await Context.Entry(cat).Collection(x => x.Children).LoadAsync();
             var children = new List<CatsTree<TCat, TEntity>>();
-            foreach(var child in cat.Children)
+            foreach (var child in cat.Children)
             {
                 children.Add(await LoadCatChildren(child, getLast));
             }
             return new CatsTree<TCat, TEntity>(cat, await getLast(cat), children);
+        }
+
+        private User _user;
+
+        private async Task<User> GetUser()
+        {
+            if (_user != null) return _user;
+            if (!User.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+            var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            _user = await Context.Users.Where(x => x.Id == userId).Include(x => x.SiteTeamMember).FirstOrDefaultAsync();
+            return _user;
+        }
+
+        protected async Task<bool> HasRight(UserRights right)
+        {
+            var user = await GetUser();
+            return user != null && user.HasRight(right, user.SiteTeamMember);
         }
     }
 }

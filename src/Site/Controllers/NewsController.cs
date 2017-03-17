@@ -50,8 +50,14 @@ namespace BioEngine.Site.Controllers
 
         private async Task<IActionResult> NewsList(int page = 1)
         {
+            var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
+            var query = Context.News.AsQueryable();
+            if (!canUserSeeUnpublishedNews)
+            {
+                query = query.Where(x => x.Pub == 1);
+            }
             var news =
-                await Context.News.Where(x => x.Pub == 1)
+                await query
                     .OrderByDescending(x => x.Date)
                     .Include(x => x.Author)
                     .Include(x => x.Game)
@@ -119,7 +125,8 @@ namespace BioEngine.Site.Controllers
                 _logger.LogWarning($"Bad date creation: {ex.Message}");
                 return new BadRequestResult();
             }
-            var query = Context.News.Where(x => x.Pub == 1
+            var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
+            var query = Context.News.Where(x => (canUserSeeUnpublishedNews || x.Pub == 1)
                                                 && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
                                                 && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
                 )
@@ -135,21 +142,22 @@ namespace BioEngine.Site.Controllers
                     .ToListAsync();
             var totalNews = await query.CountAsync();
 
-            return View("ListByDate", new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
+            return View("ListByDate",
+                new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
         }
 
         [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> NewsList(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic)parent) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> NewsList(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic)parent, page) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
         }
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
@@ -248,7 +256,7 @@ namespace BioEngine.Site.Controllers
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
             var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic)parent),
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
                 parent.DisplayTitle));
             return View(viewModel);
         }
@@ -288,9 +296,9 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/news/update-forum-post/{newsId:int}.html")]
-        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper, [FromServices] IConfigurationRoot configuration)
+        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper,
+            [FromServices] IConfigurationRoot configuration)
         {
-
             if (newsId == 0)
             {
                 return new BadRequestResult();

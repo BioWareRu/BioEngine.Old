@@ -59,24 +59,27 @@ namespace BioEngine.Site.Base
 
         protected bool ParseCatchAll(string url, out string catUrl, out int page)
         {
-            if (url.IndexOf("/page/", StringComparison.Ordinal) > -1)
+            if (!string.IsNullOrEmpty(url))
             {
-                var match = CatchAllCatWithPageRegex.Match(url);
-                if (match.Success)
+                if (url.IndexOf("/page/", StringComparison.Ordinal) > -1)
                 {
-                    catUrl = match.Groups[1].Value;
-                    page = int.Parse(match.Groups[2].Value);
-                    return true;
+                    var match = CatchAllCatWithPageRegex.Match(url);
+                    if (match.Success)
+                    {
+                        catUrl = match.Groups[1].Value;
+                        page = int.Parse(match.Groups[2].Value);
+                        return true;
+                    }
                 }
-            }
-            else
-            {
-                var match = CatchAllCatRegex.Match(url);
-                if (match.Success)
+                else
                 {
-                    catUrl = match.Groups[1].Value;
-                    page = 1;
-                    return true;
+                    var match = CatchAllCatRegex.Match(url);
+                    if (match.Success)
+                    {
+                        catUrl = match.Groups[1].Value;
+                        page = 1;
+                        return true;
+                    }
                 }
             }
             catUrl = null;

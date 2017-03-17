@@ -105,6 +105,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/gallery.html")]
+        [HttpGet("/gallery/{parentUrl}/")]
         public async Task<IActionResult> ParentGallery(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);

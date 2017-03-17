@@ -26,6 +26,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/files.html")]
+        [HttpGet("/files/{parentUrl}/")]
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);

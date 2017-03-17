@@ -14,7 +14,7 @@ namespace BioEngine.Common.Ipb
     {
         private readonly BWContext _dbContext;
         private readonly string _apiUrl;
-        private readonly string _ipbNewsForumId;
+        private readonly int _ipbNewsForumId;
         private readonly HttpClient _client;
 
         public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext)
@@ -22,7 +22,7 @@ namespace BioEngine.Common.Ipb
             _dbContext = dbContext;
             var apiKey = configuration["BE_IPB_API_KEY"];
             _apiUrl = configuration["BE_IPB_API_URL"];
-            _ipbNewsForumId = configuration["BE_IPB_NEWS_FORUM_ID"];
+            _ipbNewsForumId = int.Parse(configuration["BE_IPB_NEWS_FORUM_ID"]);
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(apiKey) + ":");
         }

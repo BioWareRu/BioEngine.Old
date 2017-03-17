@@ -15,8 +15,12 @@ using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog.Context;
+using Serilog.Core;
+using Serilog.Core.Enrichers;
 
 namespace BioEngine.Site.Controllers
 {
@@ -284,27 +288,39 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/news/update-forum-post/{newsId:int}.html")]
-        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper)
+        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper, [FromServices] IConfigurationRoot configuration)
         {
+
             if (newsId == 0)
             {
                 return new BadRequestResult();
             }
+            var logProperties = new List<ILogEventEnricher>
+            {
+                new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
+                new PropertyEnricher("BE_IPB_API_URL", configuration["BE_IPB_API_URL"]),
+                new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
+            };
+
             var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
+
             if (news == null)
             {
                 return new NotFoundResult();
             }
 
-            var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
-            if (result)
+            using (LogContext.PushProperties(logProperties.ToArray()))
             {
-                Response.StatusCode = 200;
+                var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
+                if (result)
+                {
+                    Response.StatusCode = 200;
+                    return new EmptyResult();
+                }
+
+                Response.StatusCode = 500;
                 return new EmptyResult();
             }
-
-            Response.StatusCode = 500;
-            return new EmptyResult();
         }
     }
 }

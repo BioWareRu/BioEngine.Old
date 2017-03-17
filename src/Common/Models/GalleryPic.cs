@@ -62,8 +62,22 @@ namespace BioEngine.Common.Models
                     {
                         foreach (Hashtable file in files)
                         {
-                            var picFile = new GalleryPicFile(file["name"].ToString(),
-                                long.Parse(file["size"].ToString()), file["res"].ToString());
+                            var name = "n/a";
+                            if (file.ContainsKey("name"))
+                            {
+                                name = file["name"].ToString();
+                            }
+                            long size = 0;
+                            if (file.ContainsKey("size"))
+                            {
+                                size = long.Parse(file["size"].ToString());
+                            }
+                            var res = "0x0";
+                            if (file.ContainsKey("res"))
+                            {
+                                res = file["res"].ToString();
+                            }
+                            var picFile = new GalleryPicFile(name, size, res);
                             _files.Add(picFile);
                         }
                     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace BioEngine.Common.Ipb
         private readonly BWContext _dbContext;
         private readonly ILogger<IPBApiHelper> _logger;
         private readonly string _apiUrl;
-        private readonly int _ipbNewsForumId;
+        private readonly string _ipbNewsForumId;
         private readonly HttpClient _client;
 
         public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext, ILogger<IPBApiHelper> logger)
@@ -25,18 +26,18 @@ namespace BioEngine.Common.Ipb
             _logger = logger;
             var apiKey = configuration["BE_IPB_API_KEY"];
             _apiUrl = configuration["BE_IPB_API_URL"];
-            _ipbNewsForumId = int.Parse(configuration["BE_IPB_NEWS_FORUM_ID"]);
+            _ipbNewsForumId = configuration["BE_IPB_NEWS_FORUM_ID"];
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(apiKey) + ":");
         }
 
-        private async Task<HttpResponseMessage> DoApiRequest(string method, object data)
+        private async Task<HttpResponseMessage> DoApiRequest(string method, IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _apiUrl + method;
             var payload = JsonConvert.SerializeObject(data);
             _logger.LogWarning("IPB API Request: " + payload);
             var response = await _client.PostAsync(url,
-                new StringContent(payload, Encoding.UTF8, "application/json"));
+                new FormUrlEncodedContent(data));
             return response;
         }
 
@@ -51,14 +52,15 @@ namespace BioEngine.Common.Ipb
             if (news.ForumTopicId == 0)
             {
                 var topicCreateResponse = await DoApiRequest("/forums/topics",
-                    new
+                    new List<KeyValuePair<string, string>>()
                     {
-                        forum = _ipbNewsForumId,
-                        author = news.AuthorId,
-                        title = news.Title,
-                        hidden = news.Pub == 1 ? 0 : 1,
-                        pinned = news.Sticky == 1 ? 1 : 0,
-                        post = GetPostContent(news)
+                        new KeyValuePair<string, string>("forum", _ipbNewsForumId),
+                        new KeyValuePair<string, string>("author", news.AuthorId.ToString()),
+                        new KeyValuePair<string, string>("title", news.Title),
+                        new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
+                        new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
+                        new KeyValuePair<string, string>("forum", _ipbNewsForumId),
+                        new KeyValuePair<string, string>("post", GetPostContent(news))
                     });
                 var response = await topicCreateResponse.Content.ReadAsStringAsync();
                 if (topicCreateResponse.IsSuccessStatusCode)
@@ -74,9 +76,9 @@ namespace BioEngine.Common.Ipb
                 throw new Exception($"Can't create topic: {response}");
             }
             var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
-                new
+                new List<KeyValuePair<string, string>>()
                 {
-                    title = news.Title,
+                    new KeyValuePair<string, string>("title", news.Title),
                 });
             if (!topicTitleUpdateResponse.IsSuccessStatusCode)
             {
@@ -84,17 +86,17 @@ namespace BioEngine.Common.Ipb
             }
 
             var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
-                new
+                new List<KeyValuePair<string, string>>()
                 {
-                    hidden = news.Pub == 1 ? 0 : 1,
-                    pinned = news.Sticky == 1 ? 1 : 0
+                    new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
+                    new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
                 });
             if (topicStatusUpdateResponse.IsSuccessStatusCode)
             {
                 var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
-                    new
+                    new List<KeyValuePair<string, string>>()
                     {
-                        post = GetPostContent(news)
+                        new KeyValuePair<string, string>("post", GetPostContent(news))
                     });
                 if (!postUpdateResponse.IsSuccessStatusCode)
                 {

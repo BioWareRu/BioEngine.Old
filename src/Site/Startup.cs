@@ -146,16 +146,16 @@ namespace BioEngine.Site
                 SupportedUICultures = supportedCultures
             });
 
-            if (env.IsProduction())
-            {
-                ConfigureProduction(app, lifetime);
-            }
-
             app.UseStaticFiles();
 
             app.UseMiddleware<LoggingMiddleware>();
 
             app.UseMiddleware<CounterMiddleware>();
+
+            if (env.IsProduction())
+            {
+                ConfigureProduction(app, lifetime);
+            }
 
             app.UseResponseCaching();
 

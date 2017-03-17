@@ -55,7 +55,11 @@ namespace BioEngine.Site.Controllers
             {
                 return new NotFoundResult();
             }
-            ParseCatchAll(url, out string catUrl, out string fileUrl);
+            var parsed = ParseCatchAll(url, out string catUrl, out string fileUrl);
+            if (!parsed)
+            {
+                return new NotFoundResult();
+            }
 
             var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)
@@ -87,10 +91,16 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find file
-            string catUrl;
-            string fileUrl;
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            ParseCatchAll(url, out catUrl, out fileUrl);
+            if (parent == null)
+            {
+                return new NotFoundResult();
+            }
+            var parsed = ParseCatchAll(url, out string catUrl, out string fileUrl);
+            if (!parsed)
+            {
+                return new NotFoundResult();
+            }
 
             var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)
@@ -112,7 +122,7 @@ namespace BioEngine.Site.Controllers
             }
 
             //not file... search for cat
-            var parsed = ParseCatchAll(url, out catUrl, out int page);
+            parsed = ParseCatchAll(url, out catUrl, out int page);
             if (!parsed)
             {
                 return new NotFoundResult();

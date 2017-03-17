@@ -42,12 +42,15 @@ namespace BioEngine.Site.Base
 
         protected bool ParseCatchAll(string url, out string parentUrl, out string pageUrl)
         {
-            var match = CatchAllRegex.Match(url);
-            if (match.Success)
+            if (!string.IsNullOrEmpty(url))
             {
-                parentUrl = match.Groups[1].Value;
-                pageUrl = match.Groups[2].Value;
-                return true;
+                var match = CatchAllRegex.Match(url);
+                if (match.Success)
+                {
+                    parentUrl = match.Groups[1].Value;
+                    pageUrl = match.Groups[2].Value;
+                    return true;
+                }
             }
             parentUrl = null;
             pageUrl = null;

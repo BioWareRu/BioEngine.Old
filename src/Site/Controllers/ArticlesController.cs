@@ -35,7 +35,11 @@ namespace BioEngine.Site.Controllers
             {
                 return new NotFoundResult();
             }
-            ParseCatchAll(url, out string catUrl, out string articleUrl);
+            var parsed = ParseCatchAll(url, out string catUrl, out string articleUrl);
+            if (!parsed)
+            {
+                return new NotFoundResult();
+            }
 
             var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
@@ -63,7 +67,7 @@ namespace BioEngine.Site.Controllers
             }
 
             //not article... search for cat
-            var parsed = ParseCatchAll(url, out catUrl, out int _);
+            parsed = ParseCatchAll(url, out catUrl, out int _);
             if (!parsed)
             {
                 return new NotFoundResult();

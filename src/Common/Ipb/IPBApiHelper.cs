@@ -56,17 +56,18 @@ namespace BioEngine.Common.Ipb
                         pinned = news.Sticky == 1 ? 1 : 0,
                         post = GetPostContent(news)
                     });
+                var response = await topicCreateResponse.Content.ReadAsStringAsync();
                 if (topicCreateResponse.IsSuccessStatusCode)
                 {
                     var topicCreateData =
-                        JObject.Parse(await topicCreateResponse.Content.ReadAsStringAsync());
+                        JObject.Parse(response);
                     news.ForumTopicId = topicCreateData.Value<int>("id");
                     news.ForumPostId = topicCreateData["firstPost"].Value<int>("id");
                     _dbContext.Update(news);
                     await _dbContext.SaveChangesAsync();
                     return true;
                 }
-                throw new Exception("Can't create topic");
+                throw new Exception($"Can't create topic: {response}");
             }
             var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
                 new
@@ -75,7 +76,7 @@ namespace BioEngine.Common.Ipb
                 });
             if (!topicTitleUpdateResponse.IsSuccessStatusCode)
             {
-                throw new Exception("Can't update topic title");
+                throw new Exception($"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
             }
 
             var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
@@ -93,7 +94,7 @@ namespace BioEngine.Common.Ipb
                     });
                 if (!postUpdateResponse.IsSuccessStatusCode)
                 {
-                    throw new Exception("Can't update post content");
+                    throw new Exception($"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
                 }
             }
             return true;

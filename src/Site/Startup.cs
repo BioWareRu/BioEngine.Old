@@ -167,7 +167,8 @@ namespace BioEngine.Site
             {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
-                LoginPath = new PathString("/login")
+                LoginPath = new PathString("/login"),
+                ExpireTimeSpan = TimeSpan.FromDays(30)
             });
 
             app.UseIpbOAuthAuthentication(Configuration);

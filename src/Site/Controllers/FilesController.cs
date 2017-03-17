@@ -26,6 +26,7 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/{parentUrl}/files.html")]
+        [HttpGet("/{parentUrl}/files")]
         [HttpGet("/files/{parentUrl}/")]
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {

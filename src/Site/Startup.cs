@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Ipb;
 using BioEngine.Common.Search;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
@@ -94,6 +95,7 @@ namespace BioEngine.Site
             services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();
             services.AddScoped<ContentHelper>();
+            services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
             services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
 

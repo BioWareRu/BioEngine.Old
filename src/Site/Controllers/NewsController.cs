@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
@@ -280,6 +281,30 @@ namespace BioEngine.Site.Controllers
             var xml = xmlFormatter.BuildXml(currentChannel);
 
             return new XmlResult(xml);
+        }
+
+        [HttpGet("/news/update-forum-post/{newsId:int}.html")]
+        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper)
+        {
+            if (newsId == 0)
+            {
+                return new BadRequestResult();
+            }
+            var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
+            if (news == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
+            if (result)
+            {
+                Response.StatusCode = 200;
+                return new EmptyResult();
+            }
+
+            Response.StatusCode = 500;
+            return new EmptyResult();
         }
     }
 }

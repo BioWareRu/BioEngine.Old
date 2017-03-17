@@ -23,7 +23,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/login")]
         public async Task Login([FromServices] ILogger<UserController> logger)
         {
-            await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() {RedirectUri = "/"});
+            await HttpContext.Authentication.ChallengeAsync("IPB", new AuthenticationProperties() { RedirectUri = "/", IsPersistent = true });
         }
 
         [HttpGet("/logout")]

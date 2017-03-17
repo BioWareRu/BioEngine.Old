@@ -14,16 +14,20 @@ using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class NewsController : BaseController
     {
+        private readonly ILogger<NewsController> _logger;
+
         public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions
+            IOptions<AppSettings> appSettingsOptions, ILogger<NewsController> logger
         ) : base(context, parentEntityProvider, urlManager, appSettingsOptions)
         {
+            _logger = logger;
         }
 
         [HttpGet("/")]
@@ -98,8 +102,18 @@ namespace BioEngine.Site.Controllers
             var monthEnd = month ?? 12;
             var dayStart = day ?? 1;
             var dayEnd = day ?? DateTime.DaysInMonth(year, monthEnd);
-            var dateStart = new DateTime(year, monthStart, dayStart, 0, 0, 0);
-            var dateEnd = new DateTime(year, monthEnd, dayEnd, 23, 59, 59);
+            DateTime dateStart;
+            DateTime dateEnd;
+            try
+            {
+                dateStart = new DateTime(year, monthStart, dayStart, 0, 0, 0);
+                dateEnd = new DateTime(year, monthEnd, dayEnd, 23, 59, 59);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Bad date creation: {ex.Message}");
+                return new BadRequestResult();
+            }
             var query = Context.News.Where(x => x.Pub == 1
                                                 && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
                                                 && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()

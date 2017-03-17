@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using BioEngine.Site.Extensions;
 
 namespace BioEngine.Site.Controllers
 {

@@ -95,4 +95,12 @@
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <RetainVMGarbageCollection>true</RetainVMGarbageCollection>
+    <ThreadPoolMinThreads>500</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>800</ThreadPoolMaxThreads>
+  </PropertyGroup>
+
 </Project>

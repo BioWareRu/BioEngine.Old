@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -78,10 +80,28 @@ namespace BioEngine.Site.Helpers
             {
                 avatarUrl = user.Value<string>("avatar");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ipbLogger.LogError($"Error while parsing ipb avatarUrl: {ex.Message}");
-                return false;
+                //second format
+                Dictionary<string, string> avatarData;
+                try
+                {
+                    avatarData = user["avatar"].Value<Dictionary<string, string>>("data");
+                }
+                catch (Exception exData)
+                {
+                    ipbLogger.LogError($"Error while parsing ipb avatarUrl: {exData.Message}");
+                    return false;
+                }
+                if (avatarData.Any())
+                {
+                    avatarUrl = $"{avatarData["scheme"]}/{avatarData["host"]}/{avatarData["path"]}";
+                }
+                else
+                {
+                    ipbLogger.LogError($"Empty avatar data");
+                    return false;
+                }
             }
             if (!string.IsNullOrEmpty(avatarUrl))
             {

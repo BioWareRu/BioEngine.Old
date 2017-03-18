@@ -88,8 +88,8 @@ namespace BioEngine.Resizr
                                     image.Resize(resizeOptions)
                                         .Save(destPath);
                                     context.Response.ContentType = image.CurrentImageFormat.MimeType;
-                                    await context.Response.SendFileAsync(destPath);
                                 }
+                                await context.Response.SendFileAsync(destPath);
                             }
                             catch (Exception ex)
                             {

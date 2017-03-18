@@ -171,7 +171,9 @@ namespace BioEngine.Site
                 ExpireTimeSpan = TimeSpan.FromDays(30)
             });
 
-            app.UseIpbOAuthAuthentication(Configuration);
+            var ipbLogger = loggerFactory.CreateLogger("IpbAuthLogger");
+
+            app.UseIpbOAuthAuthentication(Configuration, ipbLogger);
 
             app.UseMvc(routes =>
             {

@@ -116,7 +116,11 @@ namespace BioEngine.Site.Helpers
                         var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
                         response.EnsureSuccessStatusCode();
 
-                        ParseIpbResponse(await response.Content.ReadAsStringAsync(), context.Identity, context.Options.ClaimsIssuer, ipbLogger);
+                        var success = ParseIpbResponse(await response.Content.ReadAsStringAsync(), context.Identity, context.Options.ClaimsIssuer, ipbLogger);
+                        if (!success)
+                        {
+                            throw new Exception("Can't parse ipb response");
+                        }
                     }
                 }
             });

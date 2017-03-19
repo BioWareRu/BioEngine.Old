@@ -70,15 +70,6 @@ namespace BioEngine.Site.Components
                         Author = news.Author.Name,
                         Guid = new RssGuid(newsUrl, true)
                     };
-                    var imgUrl = _contentHelper.GetImageUrl(news.ShortText);
-                    if (imgUrl != null)
-                    {
-                        var success = _contentHelper.GetSizeAndMime(imgUrl, out long size, out string mimeType);
-                        if (success)
-                        {
-                            item.Enclosures.Add(new RssEnclosure(size, mimeType, imgUrl));
-                        }
-                    }
 
                     items.Add(item);
                 }

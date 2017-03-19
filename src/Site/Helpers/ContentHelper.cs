@@ -85,38 +85,6 @@ namespace BioEngine.Site.Helpers
             return desc;
         }
 
-        public bool GetSizeAndMime(Uri imgUrl, out long size, out string mimeType)
-        {
-            var request = WebRequest.Create(imgUrl);
-            var success = false;
-            WebResponse response = null;
-            try
-            {
-                response = request.GetResponseAsync().Result;
-                if (response.Headers.AllKeys.Contains("Content-Length") &&
-                    response.Headers.AllKeys.Contains("Content-Type"))
-                {
-                    success = true;
-                }
-            }
-            catch (Exception)
-            {
-                _logger.LogError($"Can't receive image information: {imgUrl}");
-                success = false;
-            }
-            if (!success)
-            {
-                size = 0;
-                mimeType = string.Empty;
-            }
-            else
-            {
-                size = long.Parse(response.Headers["Content-Length"]);
-                mimeType = response.Headers["Content-Type"];
-            }
-            return success;
-        }
-
         private readonly List<ContentPlaceholder> _placeholders;
 
 

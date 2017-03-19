@@ -7,8 +7,7 @@ module.exports = (grunt) ->
     'jquery/dist/jquery.min.js',
     'owl.carousel/dist/owl.carousel.min.js',
     'jquery-mousewheel/jquery.mousewheel.min.js',
-    'nanogallery/dist/jquery.nanogallery.min.js',
-    'social-likes/dist/social-likes.min.js'
+    'nanogallery/dist/jquery.nanogallery.min.js'
   ].map((path) ->
     return '../wwwroot/js/' + path;
   );
@@ -46,8 +45,7 @@ module.exports = (grunt) ->
       skinConcatConfigCssFiles['../wwwroot/css/style_' + skinName + '.css'] = [
         '../wwwroot/js/owl.carousel/dist/assets/owl.carousel.min.css',
         '../wwwroot/js/nanogallery/dist/css/nanogallery.min.css',
-        '../wwwroot/js/nanogallery/dist/css/nanogallery.woff.min.css',
-        '../wwwroot/js/social-likes/dist/social-likes_flat.css',
+        '../wwwroot/js/nanogallery/dist/css/nanogallery.woff.min.css'
         'blocks/**/*_' + skinName + '.css',
         'assets/**/*.css',
 
@@ -113,8 +111,12 @@ module.exports = (grunt) ->
 
     concat:
       js:
-        src: jsLibs.concat('assets/**/*.js', 'blocks/**/*.js'),
+        src: ['assets/**/*.js', 'blocks/**/*.js'],
         dest: '../wwwroot/js/script.js'
+
+      jsLibs:
+        src: jsLibs.concat('../wwwroot/js/script.min.js'),
+        dest: '../wwwroot/js/script.min.js'
 
       css:
         files:
@@ -221,4 +223,4 @@ module.exports = (grunt) ->
 
   @registerTask('default', ['concat:js', 'stylus', 'newer:concat:css', 'autoprefixer'])
   @registerTask('livereload', ['default', 'connect', 'open', 'watch'])
-  @registerTask('publish', ['default', 'uglify', 'cssmin'])
+  @registerTask('publish', ['default', 'uglify', 'concat:jsLibs', 'cssmin'])

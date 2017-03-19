@@ -73,7 +73,7 @@ namespace BioEngine.Site.Components
                     var imgUrl = _contentHelper.GetImageUrl(news.ShortText);
                     if (imgUrl != null)
                     {
-                        var success = ContentHelper.GetSizeAndMime(imgUrl, out long size, out string mimeType);
+                        var success = _contentHelper.GetSizeAndMime(imgUrl, out long size, out string mimeType);
                         if (success)
                         {
                             item.Enclosures.Add(new RssEnclosure(size, mimeType, imgUrl));

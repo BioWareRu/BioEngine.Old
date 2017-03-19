@@ -85,10 +85,10 @@ namespace BioEngine.Site.Helpers
             return desc;
         }
 
-        public static bool GetSizeAndMime(Uri imgUrl, out long size, out string mimeType)
+        public bool GetSizeAndMime(Uri imgUrl, out long size, out string mimeType)
         {
             var request = WebRequest.Create(imgUrl);
-            var success=false;
+            var success = false;
             WebResponse response = null;
             try
             {
@@ -101,6 +101,7 @@ namespace BioEngine.Site.Helpers
             }
             catch (Exception)
             {
+                _logger.LogError($"Can't receive image information: {imgUrl}");
                 success = false;
             }
             if (!success)

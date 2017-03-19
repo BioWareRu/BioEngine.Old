@@ -82,11 +82,11 @@ namespace BioEngine.Site.Helpers
             }
             catch (Exception)
             {
-                //second format
+                //second formats
                 Dictionary<string, string> avatarData;
                 try
                 {
-                    avatarData = user["avatar"].Value<Dictionary<string, string>>("data");
+                    avatarData = user["avatar"]["data"].ToObject<Dictionary<string, string>>();
                 }
                 catch (Exception exData)
                 {

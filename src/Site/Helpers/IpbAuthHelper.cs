@@ -18,7 +18,6 @@ namespace BioEngine.Site.Helpers
     {
         public static bool ParseIpbResponse(string response, ClaimsIdentity identity, string claimsIssuer, ILogger ipbLogger)
         {
-            ipbLogger.LogWarning($"Response from IPB: {response}");
             JObject user;
             try
             {

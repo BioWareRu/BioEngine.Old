@@ -46,7 +46,7 @@ namespace BioEngine.Resizr
 
             app.Run(async context =>
             {
-                var path = context.Request.Path;
+                var path = System.Net.WebUtility.UrlDecode(context.Request.Path);
                 var match = PathRegex.Match(path);
                 if (match.Success)
                 {

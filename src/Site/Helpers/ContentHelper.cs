@@ -88,14 +88,16 @@ namespace BioEngine.Site.Helpers
         public static bool GetSizeAndMime(Uri imgUrl, out long size, out string mimeType)
         {
             var request = WebRequest.Create(imgUrl);
-            bool success;
+            var success=false;
             WebResponse response = null;
             try
             {
                 response = request.GetResponseAsync().Result;
-                success =
-                    !(!response.Headers.AllKeys.Contains("Content-Length") ||
-                      !response.Headers.AllKeys.Contains("Content-Type"));
+                if (response.Headers.AllKeys.Contains("Content-Length") &&
+                    response.Headers.AllKeys.Contains("Content-Type"))
+                {
+                    success = true;
+                }
             }
             catch (Exception)
             {

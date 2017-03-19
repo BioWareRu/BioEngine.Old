@@ -44,8 +44,7 @@ namespace BioEngine.Site.Components
                     TimeToLive = 60,
                     LastBuildDate = DateTime.Now,
                     Image =
-                        new RssImage(new Uri(_appSettings.SocialLogo), _appSettings.Title,
-                            new Uri(_appSettings.SiteDomain))
+                        new RssImage(new Uri(_appSettings.SiteDomain), _appSettings.Title, new Uri(_appSettings.SocialLogo))
                 };
 
                 var latestNews =

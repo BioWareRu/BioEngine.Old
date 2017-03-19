@@ -2,9 +2,9 @@
   "name": "bioware.ru",
   "private": true,
   "dependencies": {
-    "jquery": "~2.2.3",
-    "owl.carousel": "2.1.1",
+    "jquery": "~3.2.0",
+    "owl.carousel": "2.2.1",
     "jquery-mousewheel": "~3.1.13",
-    "nanogallery": "~5.9.1"
+    "nanogallery": "~5.10.3"
   }
 }

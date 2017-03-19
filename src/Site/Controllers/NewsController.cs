@@ -241,6 +241,9 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/rss.xml")]
+        [HttpGet("/rss")]
+        [HttpGet("/news/rss.xml")]
+        [HttpGet("/news/rss")]
         public async Task<IActionResult> Rss([FromServices] IEnumerable<IChannelProvider> channelProviders = null)
         {
             channelProviders = channelProviders ?? new List<IChannelProvider>();

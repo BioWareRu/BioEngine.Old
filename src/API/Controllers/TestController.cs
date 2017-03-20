@@ -23,7 +23,7 @@ namespace BioEngine.API.Controllers
         }
 
         [Route("/test")]
-        public async Task<JsonResult> News([FromServices] ILogger<TestController> logger)
+        public async Task<string> News([FromServices] ILogger<TestController> logger)
         {
             var stopwatch = Stopwatch.StartNew();
             var news = await _dbContext.News.Include(x => x.Author)
@@ -36,9 +36,10 @@ namespace BioEngine.API.Controllers
             stopwatch.Stop();
             logger.LogWarning($"Test request: {stopwatch.ElapsedMilliseconds}");
             stopwatch.Restart();
-            var json = Json(news);
+            var json = JsonConvert.SerializeObject(news);
             stopwatch.Stop();
             logger.LogWarning($"Test json: {stopwatch.ElapsedMilliseconds}");
+            Response.Headers.Add("Content-Type", "application/json; charset=utf-8");
             return json;
         }
     }

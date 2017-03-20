@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BioEngine.API.Controllers
@@ -18,8 +20,9 @@ namespace BioEngine.API.Controllers
             _dbContext = dbContext;
         }
 
-        public async Task<string> News()
+        public async Task<JsonResult> News([FromServices] ILogger<TestController> logger)
         {
+            var stopwatch = Stopwatch.StartNew();
             var news = await _dbContext.News.Include(x => x.Author)
                 .Include(x => x.Game)
                 .Include(x => x.Developer)
@@ -27,7 +30,9 @@ namespace BioEngine.API.Controllers
                 .Take(20)
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
-            return JsonConvert.SerializeObject(news);
+            stopwatch.Stop();
+            logger.LogWarning($"Test request: {stopwatch.ElapsedMilliseconds}");
+            return Json(news);
         }
     }
 }

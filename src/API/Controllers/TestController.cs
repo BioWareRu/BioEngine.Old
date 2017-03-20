@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.API.Controllers
 {
+    [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
     public class TestController : Controller
     {
         private readonly BWContext _dbContext;
@@ -20,6 +22,7 @@ namespace BioEngine.API.Controllers
             _dbContext = dbContext;
         }
 
+        [Route("/test")]
         public async Task<JsonResult> News([FromServices] ILogger<TestController> logger)
         {
             var stopwatch = Stopwatch.StartNew();

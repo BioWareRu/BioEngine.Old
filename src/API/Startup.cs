@@ -72,7 +72,8 @@ namespace BioEngine.API
         {
             ConfigureLogging(env, loggerFactory);
             app.UseMiddleware<TokenAuthMiddleware>();
-            app.UseJsonApi();
+            //app.UseJsonApi();
+            app.UseMvcWithDefaultRoute();
         }
 
         private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)

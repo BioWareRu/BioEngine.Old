@@ -32,7 +32,11 @@ namespace BioEngine.API.Controllers
                 .ToListAsync();
             stopwatch.Stop();
             logger.LogWarning($"Test request: {stopwatch.ElapsedMilliseconds}");
-            return Json(news);
+            stopwatch.Restart();
+            var json = Json(news);
+            stopwatch.Stop();
+            logger.LogWarning($"Test json: {stopwatch.ElapsedMilliseconds}");
+            return json;
         }
     }
 }

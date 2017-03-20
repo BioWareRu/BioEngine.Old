@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Site.Components.Url;
-using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +18,11 @@ namespace BioEngine.Site.Components
     {
         private readonly BWContext _dbContext;
         private readonly UrlManager _urlManager;
-        private readonly ContentHelper _contentHelper;
 
-        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, UrlManager urlManager, ContentHelper contentHelper)
+        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, UrlManager urlManager)
         {
             _dbContext = dbContext;
             _urlManager = urlManager;
-            _contentHelper = contentHelper;
             _appSettings = options.Value;
         }
 

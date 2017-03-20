@@ -208,13 +208,21 @@ namespace BioEngine.Site.Controllers
                 new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
-        [Route("/{year}/{month}/{day}/{url}.html")]
+        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}/{url}.html")]
         public async Task<IActionResult> Show(int year, int month, int day, string url)
         {
-            var dateStart =
-                new DateTimeOffset(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc)).ToUnixTimeSeconds();
-            var dateEnd =
-                new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59, DateTimeKind.Utc)).ToUnixTimeSeconds();
+            long dateStart;
+            long dateEnd;
+            try
+            {
+                dateStart = new DateTimeOffset(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc)).ToUnixTimeSeconds();
+                dateEnd = new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59, DateTimeKind.Utc)).ToUnixTimeSeconds();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Bad date creation: {ex.Message}");
+                return new BadRequestResult();
+            }
 
             var newsQuery =
                 Context.News.Include(x => x.Author)

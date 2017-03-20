@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Common.Ipb
@@ -15,15 +13,13 @@ namespace BioEngine.Common.Ipb
     public class IPBApiHelper
     {
         private readonly BWContext _dbContext;
-        private readonly ILogger<IPBApiHelper> _logger;
         private readonly string _apiUrl;
         private readonly string _ipbNewsForumId;
         private readonly HttpClient _client;
 
-        public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext, ILogger<IPBApiHelper> logger)
+        public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
             var apiKey = configuration["BE_IPB_API_KEY"];
             _apiUrl = configuration["BE_IPB_API_URL"];
             _ipbNewsForumId = configuration["BE_IPB_NEWS_FORUM_ID"];
@@ -34,8 +30,6 @@ namespace BioEngine.Common.Ipb
         private async Task<HttpResponseMessage> DoApiRequest(string method, IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _apiUrl + method;
-            var payload = JsonConvert.SerializeObject(data);
-            _logger.LogWarning("IPB API Request: " + payload);
             var response = await _client.PostAsync(url,
                 new FormUrlEncodedContent(data));
             return response;

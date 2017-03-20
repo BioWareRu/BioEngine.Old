@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Sinks.Graylog;
 
 namespace BioEngine.API
 {
@@ -61,13 +65,40 @@ namespace BioEngine.API
             services.AddMvc();
         }
 
+        public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            ConfigureLogging(env, loggerFactory);
             app.UseMiddleware<TokenAuthMiddleware>();
             app.UseJsonApi();
+        }
+
+        private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            var loggerConfiguration =
+                new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
+
+            if (env.IsDevelopment())
+            {
+                loggerFactory.AddDebug();
+                loggerConfiguration = loggerConfiguration
+                    .WriteTo.LiterateConsole();
+                LogLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
+            }
+            else
+            {
+                loggerConfiguration = loggerConfiguration
+                    .WriteTo.Graylog(new GraylogSinkOptions()
+                    {
+                        HostnameOrAdress = Configuration["BE_GELF_HOST"],
+                        Port = int.Parse(Configuration["BE_GELF_PORT"]),
+                        Facility = Configuration["BE_GELF_FACILITY"]
+                    });
+            }
+            Log.Logger = loggerConfiguration.CreateLogger();
+            loggerFactory.AddSerilog();
         }
     }
 }

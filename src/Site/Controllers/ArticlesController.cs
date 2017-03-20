@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using BioEngine.Site.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Site.Controllers
 {
@@ -27,7 +29,7 @@ namespace BioEngine.Site.Controllers
 
         [HttpGet("/{parentUrl}/articles/{*url}")]
         [HttpGet("/articles/{parentUrl}/{*url}")]
-        public async Task<IActionResult> Show(string parentUrl, string url)
+        public async Task<IActionResult> Show(string parentUrl, string url, [FromServices] ILogger<ArticlesController> logger)
         {
             //so... let's try to find article
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
@@ -44,11 +46,13 @@ namespace BioEngine.Site.Controllers
             var article = await GetArticle(parent, catUrl, articleUrl);
             if (article != null)
             {
-                /*var fullUrl = await UrlManager.Articles.PublicUrl(article, true);
+                var fullUrl = await UrlManager.Articles.PublicUrl(article, true);
                 if (fullUrl != HttpContext.Request.AbsoluteUrl())
                 {
-                    return new RedirectResult(fullUrl, true);
-                }*/
+                    //return new RedirectResult(fullUrl, true);
+                    logger.LogWarning($"Article urls are not equal. Current url: {HttpContext.Request.AbsoluteUrl()}. Canonical: {fullUrl}");
+
+                }
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = article.Cat.ParentCat;
                 while (cat != null)

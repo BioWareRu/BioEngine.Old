@@ -10,18 +10,20 @@ namespace BioEngine.API.Auth
     public class TokenAuthMiddleware : AuthenticationMiddleware<TokenAuthOptions>
     {
         private readonly TokenAuthOptions _options;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly BWContext _dbContext;
 
         public TokenAuthMiddleware(RequestDelegate next, IOptions<TokenAuthOptions> options, ILoggerFactory loggerFactory,
             UrlEncoder encoder, BWContext dbContext) : base(next, options, loggerFactory, encoder)
         {
             _options = options.Value;
+            _loggerFactory = loggerFactory;
             _dbContext = dbContext;
         }
 
         protected override AuthenticationHandler<TokenAuthOptions> CreateHandler()
         {
-            return new TokenAuthenticationHandler(_dbContext, _options);
+            return new TokenAuthenticationHandler(_dbContext, _options, _loggerFactory.CreateLogger<TokenAuthenticationHandler>());
         }
     }
 }

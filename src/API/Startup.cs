@@ -53,11 +53,11 @@ namespace BioEngine.API
 
             services.AddDbContext<BWContext>();
 
-           /* services.AddJsonApi<BWContext>(options =>
+            services.AddJsonApi<BWContext>(options =>
             {
                 options.DefaultPageSize = 20;
                 options.IncludeTotalRecordCount = true;
-            });*/
+            });
 
             services.AddScoped<IEntityRepository<News, int>, NewsRepository>();
 
@@ -72,8 +72,7 @@ namespace BioEngine.API
         {
             ConfigureLogging(env, loggerFactory);
             app.UseMiddleware<TokenAuthMiddleware>();
-            //app.UseJsonApi();
-            app.UseMvcWithDefaultRoute();
+            app.UseJsonApi();
         }
 
         private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -38,38 +38,39 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
             var parsed = ParseCatchAll(url, out string catUrl, out string articleUrl);
-            if (!parsed)
+            if (parsed)
             {
-                return new NotFoundResult();
-            }
 
-            var article = await GetArticle(parent, catUrl, articleUrl);
-            if (article != null)
-            {
-                var fullUrl = await UrlManager.Articles.PublicUrl(article, true);
-                if (fullUrl != HttpContext.Request.AbsoluteUrl())
+
+                var article = await GetArticle(parent, catUrl, articleUrl);
+                if (article != null)
                 {
-                    //return new RedirectResult(fullUrl, true);
-                    logger.LogWarning($"Article urls are not equal. Current url: {HttpContext.Request.AbsoluteUrl()}. Canonical: {fullUrl}");
+                    var fullUrl = await UrlManager.Articles.PublicUrl(article, true);
+                    if (fullUrl != HttpContext.Request.AbsoluteUrl())
+                    {
+                        //return new RedirectResult(fullUrl, true);
+                        logger.LogWarning(
+                            $"Article urls are not equal. Current url: {HttpContext.Request.AbsoluteUrl()}. Canonical: {fullUrl}");
 
+                    }
+                    var breadcrumbs = new List<BreadCrumbsItem>();
+                    var cat = article.Cat.ParentCat;
+                    while (cat != null)
+                    {
+                        breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(cat), cat.Title));
+                        cat = cat.ParentCat;
+                    }
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat),
+                        article.Cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic) parent),
+                        "Статьи"));
+                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                    var viewModel = new ArticleViewModel(ViewModelConfig, article);
+                    breadcrumbs.Reverse();
+                    viewModel.BreadCrumbs.AddRange(breadcrumbs);
+                    return View("Article", viewModel);
                 }
-                var breadcrumbs = new List<BreadCrumbsItem>();
-                var cat = article.Cat.ParentCat;
-                while (cat != null)
-                {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(cat), cat.Title));
-                    cat = cat.ParentCat;
-                }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.CatPublicUrl(article.Cat),
-                    article.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Articles.ParentArticlesUrl((dynamic)parent), "Статьи"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
-                var viewModel = new ArticleViewModel(ViewModelConfig, article);
-                breadcrumbs.Reverse();
-                viewModel.BreadCrumbs.AddRange(breadcrumbs);
-                return View("Article", viewModel);
             }
-
             //not article... search for cat
             parsed = ParseCatchAll(url, out catUrl, out int _);
             if (!parsed)
@@ -98,7 +99,7 @@ namespace BioEngine.Site.Controllers
                 }
 
                 var viewModel = new ArticleCatViewModel(ViewModelConfig, category, children,
-                    await GetLastArticles(category));
+                    await GetLastArticles(category, await Context.Articles.CountAsync(x => x.CatId == category.Id)));
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("ArticleCat", viewModel);

@@ -78,7 +78,7 @@ namespace BioEngine.Site.Controllers
                     cat = cat.ParentCat;
                 }
                 breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent), "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
@@ -101,26 +101,25 @@ namespace BioEngine.Site.Controllers
             var parsed = ParseCatchAll(url, out string catUrl, out string fileUrl);
             if (!parsed)
             {
-                return new NotFoundResult();
-            }
-
-            var file = await GetFile(parent, catUrl, fileUrl);
-            if (file != null)
-            {
-                var breadcrumbs = new List<BreadCrumbsItem>();
-                var cat = file.Cat.ParentCat;
-                while (cat != null)
+                var file = await GetFile(parent, catUrl, fileUrl);
+                if (file != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
-                    cat = cat.ParentCat;
+                    var breadcrumbs = new List<BreadCrumbsItem>();
+                    var cat = file.Cat.ParentCat;
+                    while (cat != null)
+                    {
+                        breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
+                        cat = cat.ParentCat;
+                    }
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent),
+                        "Файлы"));
+                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                    var viewModel = new FileViewModel(ViewModelConfig, file);
+                    breadcrumbs.Reverse();
+                    viewModel.BreadCrumbs.AddRange(breadcrumbs);
+                    return View("File", viewModel);
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
-                var viewModel = new FileViewModel(ViewModelConfig, file);
-                breadcrumbs.Reverse();
-                viewModel.BreadCrumbs.AddRange(breadcrumbs);
-                return View("File", viewModel);
             }
 
             //not file... search for cat
@@ -140,7 +139,7 @@ namespace BioEngine.Site.Controllers
                         new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic) parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent), "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
@@ -151,9 +150,10 @@ namespace BioEngine.Site.Controllers
                     children.Add(new CatsTree<FileCat, File>(child, await GetLastFiles(child)));
                 }
 
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, await GetLastFiles(category),
+                var filesCount = await Context.Files.CountAsync(x => x.CatId == category.Id);
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, await GetLastFiles(category, filesCount),
                     page,
-                    await Context.Files.CountAsync(x => x.CatId == category.Id));
+                    filesCount);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);

@@ -42,7 +42,7 @@ namespace BioEngine.Site.Controllers
             return await NewsList();
         }
 
-        [HttpGet("/page/{page}.html")]
+        [HttpGet("/page/{page:int}.html")]
         public async Task<IActionResult> Index(int page)
         {
             return await NewsList(page);
@@ -50,6 +50,10 @@ namespace BioEngine.Site.Controllers
 
         private async Task<IActionResult> NewsList(int page = 1)
         {
+            if (page < 1)
+            {
+                return BadRequest();
+            }
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
             var query = Context.News.AsQueryable();
             if (!canUserSeeUnpublishedNews)
@@ -109,6 +113,10 @@ namespace BioEngine.Site.Controllers
 
         private async Task<IActionResult> NewsByDate(int year, int? month, int? day, int page = 1)
         {
+            if (page < 1)
+            {
+                return BadRequest();
+            }
             var monthStart = month ?? 1;
             var monthEnd = month ?? 12;
             var dayStart = day ?? 1;
@@ -162,6 +170,10 @@ namespace BioEngine.Site.Controllers
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
         {
+            if (page < 1)
+            {
+                return BadRequest();
+            }
             var query = Context.News.Where(x => x.Pub == 1 && x.GameId == game.Id).AsQueryable();
             var totalNews = await query.CountAsync();
             var news = await query

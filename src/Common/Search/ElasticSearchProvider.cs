@@ -26,7 +26,9 @@ namespace BioEngine.Common.Search
         public IEnumerable<T> Search(string term, int limit = 100)
         {
             var results = _context.Search<T>(BuildQueryStringSearch(term, limit));
-            return results.PayloadResult.Hits.HitsResult.Select(t => t.Source);
+            return results.PayloadResult.Hits != null
+                ? results.PayloadResult.Hits?.HitsResult.Select(t => t.Source)
+                : new List<T>();
         }
 
         public long Count(string term)

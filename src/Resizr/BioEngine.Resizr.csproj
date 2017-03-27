@@ -9,9 +9,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ImageSharp.Formats.Jpeg" Version="1.0.0-alpha2-00139" />
-    <PackageReference Include="ImageSharp.Formats.Png" Version="1.0.0-alpha2-00135" />
-    <PackageReference Include="ImageSharp.Processing" Version="1.0.0-alpha2-00127" />
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha5-00035" />
     <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />

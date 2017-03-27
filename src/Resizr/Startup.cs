@@ -83,7 +83,7 @@ namespace BioEngine.Resizr
                             };
                             try
                             {
-                                using (var image = new Image(sourcePath))
+                                using (var image = Image.Load(sourcePath))
                                 {
                                     image.Resize(resizeOptions)
                                         .Save(destPath);

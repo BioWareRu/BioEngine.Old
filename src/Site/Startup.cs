@@ -79,7 +79,7 @@ namespace BioEngine.Site
 
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromDays(3);
                 options.CookieName = ".BioWareRu.Session";
                 options.CookieHttpOnly = true;
             });

@@ -12,9 +12,12 @@ namespace BioEngine.API.Controllers
     [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
     public class NewsController : JsonApiController<News>
     {
+        private readonly IEntityRepository<News, int> _entityRepository;
+
         public NewsController(IJsonApiContext jsonApiContext, IEntityRepository<News, int> entityRepository,
             ILoggerFactory loggerFactory) : base(jsonApiContext, entityRepository, loggerFactory)
         {
+            _entityRepository = entityRepository;
         }
 
         public override async Task<IActionResult> GetAsync()
@@ -25,6 +28,19 @@ namespace BioEngine.API.Controllers
                 return result;
             }
             return new ForbidResult();
+        }
+
+        [HttpPost("{id:int}/publish")]
+        public async Task<IActionResult> Publish(int id)
+        {
+            var news = await _entityRepository.GetAsync(id);
+            if (news != null)
+            {
+                news.Pub = 1;
+                //await _entityRepository.UpdateAsync(news.Id, news);
+                return Ok(news);
+            }
+            return NotFound();
         }
     }
 }

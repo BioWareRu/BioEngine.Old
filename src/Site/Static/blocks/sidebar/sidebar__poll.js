@@ -7,4 +7,15 @@ $(function () {
             $('.sidebar__poll-submit', form).attr('disabled', 'disabled');
         }
     });
+    $('.sidebar__poll-submit').on('click', function (e) {
+        e.preventDefault();
+        var form = $(this).parents('.sidebar__poll form');
+        console.log('get fingerprint');
+        getUserFingerPrint(function (fingerprint) {
+            console.log('fingerprint', fingerprint);
+            $('input[name=fingerprint]', form).val(fingerprint);
+            console.log('submit');
+            form.submit();
+        });
+    });
 });

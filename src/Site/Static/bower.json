@@ -5,6 +5,7 @@
     "jquery": "~3.2.0",
     "owl.carousel": "2.2.1",
     "jquery-mousewheel": "~3.1.13",
-    "nanogallery": "~5.10.3"
+    "nanogallery": "~5.10.3",
+    "fingerprintjs2": "1.5.0"
   }
 }

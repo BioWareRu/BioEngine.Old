@@ -30,7 +30,7 @@ namespace BioEngine.Site.Controllers
         }*/
 
         [HttpPost("polls/{pollId}/vote.html")]
-        public async Task<IActionResult> Vote(int pollId, [FromForm] int vote)
+        public async Task<IActionResult> Vote(int pollId, [FromForm] int vote, [FromForm] string fingerprint)
         {
             var poll = await Context.Polls.FirstOrDefaultAsync(x => x.Id == pollId);
             if (poll == null)
@@ -41,13 +41,12 @@ namespace BioEngine.Site.Controllers
             var returnUrl = Request.Headers["REFERER"].ToString();
             var userId = 0;
             var userLogin = "guest";
-            var sessionId = HttpContext.Session.Id;
             if (User.Identity.IsAuthenticated)
             {
                 userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
                 userLogin = User.Identity.Name;
             }
-            if (await poll.GetIsVoted(Context, userId, ip, sessionId))
+            if (await poll.GetIsVoted(Context, userId, ip, fingerprint))
             {
                 return new RedirectResult(returnUrl);
             }
@@ -60,14 +59,13 @@ namespace BioEngine.Site.Controllers
                 Ip = ip,
                 UserId = userId,
                 Login = userLogin,
-                SessionId = sessionId
+                SessionId = fingerprint
             };
 
             Context.Add(pollVote);
             await Context.SaveChangesAsync();
 
             await poll.Recount(Context);
-            HttpContext.Session.SetInt32("voted", poll.Id);
             return new RedirectResult(returnUrl);
         }
     }

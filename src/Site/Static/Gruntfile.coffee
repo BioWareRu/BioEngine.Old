@@ -7,7 +7,8 @@ module.exports = (grunt) ->
     'jquery/dist/jquery.min.js',
     'owl.carousel/dist/owl.carousel.min.js',
     'jquery-mousewheel/jquery.mousewheel.min.js',
-    'nanogallery/dist/jquery.nanogallery.min.js'
+    'nanogallery/dist/jquery.nanogallery.min.js',
+    'fingerprintjs2/dist/fingerprint2.min.js'
   ].map((path) ->
     return '../wwwroot/js/' + path;
   );

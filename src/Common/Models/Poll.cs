@@ -84,7 +84,7 @@ namespace BioEngine.Common.Models
             return _voted;
         }
 
-        public async Task<bool> GetIsVoted(BWContext dbContext, int userId, string ipAddress, string sessionId)
+        public async Task<bool> GetIsVoted(BWContext dbContext, int userId, string ipAddress, string fingerprint)
         {
             if (userId > 0)
             {
@@ -95,7 +95,7 @@ namespace BioEngine.Common.Models
             {
                 return await
                     dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == Id && x.Ip == ipAddress &&
-                                                      x.SessionId == sessionId);
+                                                      x.SessionId == fingerprint);
             }
         }
 

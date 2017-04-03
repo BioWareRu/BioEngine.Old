@@ -3,7 +3,7 @@
 @model Poll
 <div class="sidebar__poll">
     <h3 class="sidebar__poll-title">
-        <span class="upper">ОПРОС</span><br/>
+        <span class="upper">ОПРОС</span><br />
         @Html.Raw(Model.Question)
     </h3>
     @if (Model.IsVoted())
@@ -29,8 +29,9 @@
     }
     else
     {
-        using (Html.BeginForm("Vote", "Polls", new {pollId = Model.Id}, method: FormMethod.Post))
+        using (Html.BeginForm("Vote", "Polls", new { pollId = Model.Id }, method: FormMethod.Post))
         {
+            <input type="hidden" name="fingerprint" />
             <fieldset class="sidebar__poll-fieldset">
                 @foreach (var opt in Model.Options)
                 {
@@ -38,11 +39,11 @@
                         @if (Model.Multiple == 1)
                         {
                             <input class="sidebar__poll-input" type="checkbox" name="votes[@opt.Id]"
-                                   value="@opt.Id" id="opt_@opt.Id"/>
+                                   value="@opt.Id" id="opt_@opt.Id" />
                         }
                         else
                         {
-                            <input class="sidebar__poll-input" type="radio" name="vote" value="@opt.Id" id="opt_@opt.Id"/>
+                            <input class="sidebar__poll-input" type="radio" name="vote" value="@opt.Id" id="opt_@opt.Id" />
                         }
                         @opt.Text
                     </label>

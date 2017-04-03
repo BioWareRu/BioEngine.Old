@@ -26,6 +26,81 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\img\article-list__balloon.png" />
+    <Content Include="wwwroot\img\article-list__bg.png" />
+    <Content Include="wwwroot\img\article-list__bg2.png" />
+    <Content Include="wwwroot\img\article-list__bioware.png" />
+    <Content Include="wwwroot\img\article-list__bioware5.png" />
+    <Content Include="wwwroot\img\article-list__cerberus.png" />
+    <Content Include="wwwroot\img\article-list__da.png" />
+    <Content Include="wwwroot\img\article-list__da2.png" />
+    <Content Include="wwwroot\img\article-list__da2_old.png" />
+    <Content Include="wwwroot\img\article-list__da_eng.png" />
+    <Content Include="wwwroot\img\article-list__devtracker.png" />
+    <Content Include="wwwroot\img\article-list__generals2.png" />
+    <Content Include="wwwroot\img\article-list__iwd.png" />
+    <Content Include="wwwroot\img\article-list__iwd2.png" />
+    <Content Include="wwwroot\img\article-list__je.png" />
+    <Content Include="wwwroot\img\article-list__kotor.png" />
+    <Content Include="wwwroot\img\article-list__kotor2.png" />
+    <Content Include="wwwroot\img\article-list__me.png" />
+    <Content Include="wwwroot\img\article-list__me2.png" />
+    <Content Include="wwwroot\img\article-list__me3.png" />
+    <Content Include="wwwroot\img\article-list__nno.png" />
+    <Content Include="wwwroot\img\article-list__nwn.png" />
+    <Content Include="wwwroot\img\article-list__nwn2.png" />
+    <Content Include="wwwroot\img\article-list__pt.png" />
+    <Content Include="wwwroot\img\article-list__sonic.png" />
+    <Content Include="wwwroot\img\article-list__swtor.png" />
+    <Content Include="wwwroot\img\article-list__swtor1.png" />
+    <Content Include="wwwroot\img\auth__exit-icon.png" />
+    <Content Include="wwwroot\img\auth__icons.png" />
+    <Content Include="wwwroot\img\auth__user-icon.gif" />
+    <Content Include="wwwroot\img\bg.png" />
+    <Content Include="wwwroot\img\body__bg.jpg" />
+    <Content Include="wwwroot\img\body__mea.jpg" />
+    <Content Include="wwwroot\img\body__mea.png" />
+    <Content Include="wwwroot\img\bwb.png" />
+    <Content Include="wwwroot\img\da.png" />
+    <Content Include="wwwroot\img\da2.png" />
+    <Content Include="wwwroot\img\dai.png" />
+    <Content Include="wwwroot\img\footer__logo.png" />
+    <Content Include="wwwroot\img\header__logo.png" />
+    <Content Include="wwwroot\img\je.png" />
+    <Content Include="wwwroot\img\kotor.png" />
+    <Content Include="wwwroot\img\me.png" />
+    <Content Include="wwwroot\img\me2.png" />
+    <Content Include="wwwroot\img\me3.png" />
+    <Content Include="wwwroot\img\me4.png" />
+    <Content Include="wwwroot\img\nno.png" />
+    <Content Include="wwwroot\img\nwn.png" />
+    <Content Include="wwwroot\img\search__magnifier.png" />
+    <Content Include="wwwroot\img\slider__bg.png" />
+    <Content Include="wwwroot\img\slider__bwb.png" />
+    <Content Include="wwwroot\img\slider__controls.png" />
+    <Content Include="wwwroot\img\slider__da.png" />
+    <Content Include="wwwroot\img\slider__da2.png" />
+    <Content Include="wwwroot\img\slider__dai.png" />
+    <Content Include="wwwroot\img\slider__je.png" />
+    <Content Include="wwwroot\img\slider__kotor.png" />
+    <Content Include="wwwroot\img\slider__me.png" />
+    <Content Include="wwwroot\img\slider__me2.png" />
+    <Content Include="wwwroot\img\slider__me3.png" />
+    <Content Include="wwwroot\img\slider__me4.png" />
+    <Content Include="wwwroot\img\slider__mea.png" />
+    <Content Include="wwwroot\img\slider__nno.png" />
+    <Content Include="wwwroot\img\slider__nwn.png" />
+    <Content Include="wwwroot\img\slider__sonic.png" />
+    <Content Include="wwwroot\img\slider__tor.png" />
+    <Content Include="wwwroot\img\sonic.png" />
+    <Content Include="wwwroot\img\sonic1.png" />
+    <Content Include="wwwroot\img\tor.png" />
+    <Content Include="wwwroot\img\auth_user-icon-blue.svg" />
+    <Content Include="wwwroot\img\auth_user-icon-red.svg" />
+    <Content Include="wwwroot\js\script.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
@@ -60,7 +135,7 @@
     <PackageReference Include="BioEngine.Prometheus.Core" Version="1.0.0" />
     <PackageReference Include="Serilog.Exceptions" Version="2.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
-    <PackageReference Include="serilog.sinks.graylog" Version="1.3.2" />
+    <PackageReference Include="serilog.sinks.graylog" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.Literate" Version="2.1.0" />
     <PackageReference Include="SimpleMvcSitemap" Version="3.0.0" />
   </ItemGroup>

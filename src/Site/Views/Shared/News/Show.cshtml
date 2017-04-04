@@ -29,12 +29,12 @@
                     <a class="article-list__permalink" href="@Model.NewsUrl">
                         @if (Model.News.Sticky > 0)
                         {
-                            <text>Важно!</text>
+                            <text>Важно!&nbsp;</text>
                         }
                         @Html.Raw(Model.News.Title)
                         @if (Model.News.Pub != 1)
                         {
-                            <text>(Неопубликовано)</text>
+                            <text>&nbsp;(Неопубликовано)</text>
                         }
                     </a>
                 }

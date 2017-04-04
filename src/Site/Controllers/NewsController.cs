@@ -62,7 +62,8 @@ namespace BioEngine.Site.Controllers
             }
             var news =
                 await query
-                    .OrderByDescending(x => x.Date)
+                    .OrderByDescending(x => x.Sticky)
+                    .ThenByDescending(x => x.Date)
                     .Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
@@ -138,7 +139,8 @@ namespace BioEngine.Site.Controllers
                                                 && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
                                                 && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
                 )
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(x => x.Sticky)
+                .ThenByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Game)
                 .Include(x => x.Developer)
@@ -177,7 +179,8 @@ namespace BioEngine.Site.Controllers
             var query = Context.News.Where(x => x.Pub == 1 && x.GameId == game.Id).AsQueryable();
             var totalNews = await query.CountAsync();
             var news = await query
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(x => x.Sticky)
+                .ThenByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Game)
                 .Skip((page - 1) * 20)
@@ -193,7 +196,8 @@ namespace BioEngine.Site.Controllers
             var query = Context.News.Where(x => x.Pub == 1 && x.DeveloperId == developer.Id).AsQueryable();
             var totalNews = await query.CountAsync();
             var news = await query
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(x => x.Sticky)
+                .ThenByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Developer)
                 .Skip((page - 1) * 20)
@@ -209,7 +213,8 @@ namespace BioEngine.Site.Controllers
             var query = Context.News.Where(x => x.Pub == 1 && x.TopicId == topic.Id).AsQueryable();
             var totalNews = await query.CountAsync();
             var news = await query
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(x => x.Sticky)
+                .ThenByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Topic)
                 .Skip((page - 1) * 20)
@@ -227,8 +232,10 @@ namespace BioEngine.Site.Controllers
             long dateEnd;
             try
             {
-                dateStart = new DateTimeOffset(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc)).ToUnixTimeSeconds();
-                dateEnd = new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59, DateTimeKind.Utc)).ToUnixTimeSeconds();
+                dateStart = new DateTimeOffset(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc))
+                    .ToUnixTimeSeconds();
+                dateEnd = new DateTimeOffset(new DateTime(year, month, day, 23, 59, 59, DateTimeKind.Utc))
+                    .ToUnixTimeSeconds();
             }
             catch (Exception ex)
             {

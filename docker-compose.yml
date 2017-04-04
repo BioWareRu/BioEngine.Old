@@ -22,6 +22,8 @@ services:
     image: elasticsearch:alpine
     volumes:
       - /var/data/bwcore/elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
   site:
     image: site
     build:

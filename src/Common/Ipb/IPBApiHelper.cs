@@ -141,7 +141,7 @@ namespace BioEngine.Common.Ipb
             {
                 return true;
             }
-            return false;
+            throw new Exception($"Can't delete topic: {await topicDeleteResponse.Content.ReadAsStringAsync()}");
         }
     }
 }

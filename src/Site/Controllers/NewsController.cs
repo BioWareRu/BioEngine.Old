@@ -160,14 +160,14 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> NewsList(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic)parent) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> NewsList(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic)parent, page) : Task.FromResult(StatusCode(404));
+            return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
         }
 
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
@@ -262,7 +262,7 @@ namespace BioEngine.Site.Controllers
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
             var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic)parent),
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
                 parent.DisplayTitle));
             return View(viewModel);
         }
@@ -305,9 +305,15 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/news/update-forum-post/{newsId:int}.html")]
-        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, [FromServices] IPBApiHelper ipbApiHelper,
+        public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, string accessToken,
+            [FromServices] IPBApiHelper ipbApiHelper,
             [FromServices] IConfigurationRoot configuration)
         {
+            if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])
+            {
+                Response.StatusCode = 403;
+                return new EmptyResult();
+            }
             if (newsId == 0)
             {
                 return new BadRequestResult();
@@ -329,6 +335,48 @@ namespace BioEngine.Site.Controllers
             using (LogContext.PushProperties(logProperties.ToArray()))
             {
                 var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
+                if (result)
+                {
+                    Response.StatusCode = 200;
+                    return new EmptyResult();
+                }
+
+                Response.StatusCode = 500;
+                return new EmptyResult();
+            }
+        }
+
+        [HttpGet("/news/delete-forum-post/{newsId:int}.html")]
+        public async Task<IActionResult> DeleteNewsTopic(int newsId, string accessToken,
+            [FromServices] IPBApiHelper ipbApiHelper,
+            [FromServices] IConfigurationRoot configuration)
+        {
+            if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])
+            {
+                Response.StatusCode = 403;
+                return new EmptyResult();
+            }
+            if (newsId == 0)
+            {
+                return new BadRequestResult();
+            }
+            var logProperties = new List<ILogEventEnricher>
+            {
+                new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
+                new PropertyEnricher("BE_IPB_API_URL", configuration["BE_IPB_API_URL"]),
+                new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
+            };
+
+            var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
+
+            if (news == null)
+            {
+                return new NotFoundResult();
+            }
+
+            using (LogContext.PushProperties(logProperties.ToArray()))
+            {
+                var result = await ipbApiHelper.DeleteNewsTopic(news);
                 if (result)
                 {
                     Response.StatusCode = 200;

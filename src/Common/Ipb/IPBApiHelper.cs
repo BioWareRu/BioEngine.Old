@@ -27,11 +27,19 @@ namespace BioEngine.Common.Ipb
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(apiKey) + ":");
         }
 
-        private async Task<HttpResponseMessage> DoApiRequest(string method, IEnumerable<KeyValuePair<string, string>> data)
+        private async Task<HttpResponseMessage> DoApiRequest(string method,
+            IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _apiUrl + method;
             var response = await _client.PostAsync(url,
                 new FormUrlEncodedContent(data));
+            return response;
+        }
+
+        private async Task<HttpResponseMessage> DoDeleteApiRequest(string method)
+        {
+            var url = _apiUrl + method;
+            var response = await _client.DeleteAsync(url);
             return response;
         }
 
@@ -76,7 +84,8 @@ namespace BioEngine.Common.Ipb
                 });
             if (!topicTitleUpdateResponse.IsSuccessStatusCode)
             {
-                throw new Exception($"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
+                throw new Exception(
+                    $"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
             }
 
             var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
@@ -94,7 +103,8 @@ namespace BioEngine.Common.Ipb
                     });
                 if (!postUpdateResponse.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
+                    throw new Exception(
+                        $"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
                 }
             }
             return true;
@@ -122,6 +132,16 @@ namespace BioEngine.Common.Ipb
             postContent = postContent.Replace("</ol>", "</ul>");
 
             return postContent;
+        }
+
+        public async Task<bool> DeleteNewsTopic(News news)
+        {
+            var topicDeleteResponse = await DoDeleteApiRequest("/forums/topics/" + news.ForumTopicId);
+            if (topicDeleteResponse.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Common.Models;
 using JsonApiDotNetCore.Controllers;
-using JsonApiDotNetCore.Data;
 using JsonApiDotNetCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,9 @@ namespace BioEngine.API.Controllers
     [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
     public class NewsController : JsonApiController<News>
     {
-        private readonly IEntityRepository<News, int> _entityRepository;
+        private readonly IResourceService<News, int> _entityRepository;
 
-        public NewsController(IJsonApiContext jsonApiContext, IEntityRepository<News, int> entityRepository,
+        public NewsController(IJsonApiContext jsonApiContext, IResourceService<News, int> entityRepository,
             ILoggerFactory loggerFactory) : base(jsonApiContext, entityRepository, loggerFactory)
         {
             _entityRepository = entityRepository;

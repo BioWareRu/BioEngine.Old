@@ -7,6 +7,6 @@ services:
       - .:/src
       - /var/docker/data/vsts:/var/docker/data/vsts
     working_dir: /src
-    command: /bin/bash -c "dotnet restore ./BioEngine.sln && dotnet publish ./BioEngine.sln -c Release -o ./obj/Docker/publish"
+    command: /bin/bash -c "dotnet restore ./src/${PROJECT} && dotnet publish ./src/${PROJECT} -c Release -o ./obj/Docker/publish"
     environment:
       - NUGET_PACKAGES=/var/docker/data/vsts/nuget

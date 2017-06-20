@@ -99,7 +99,7 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
             var parsed = ParseCatchAll(url, out string catUrl, out string fileUrl);
-            if (!parsed)
+            if (parsed)
             {
                 var file = await GetFile(parent, catUrl, fileUrl);
                 if (file != null)

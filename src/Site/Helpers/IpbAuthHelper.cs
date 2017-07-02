@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using BioEngine.Common.Ipb;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
@@ -16,100 +18,17 @@ namespace BioEngine.Site.Helpers
 {
     public static class IpbAuthHelper
     {
-        public static bool ParseIpbResponse(string response, ClaimsIdentity identity, string claimsIssuer, ILogger ipbLogger)
+        private static bool GetClaims(string response, ClaimsIdentity identity, string claimsIssuer,
+            ILogger ipbLogger)
         {
-            JObject user;
-            try
-            {
-                user = JObject.Parse(response);
-            }
-            catch (Exception ex)
-            {
-                ipbLogger.LogError($"Error while parsing ipb response: {ex.Message}");
-                return false;
-            }
-
-            string identifier;
-            try
-            {
-                identifier = user.Value<string>("id");
-            }
-            catch (Exception ex)
-            {
-                ipbLogger.LogError($"Error while parsing ipb id: {ex.Message}");
-                return false;
-            }
-            if (!string.IsNullOrEmpty(identifier))
-            {
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, identifier, ClaimValueTypes.String, claimsIssuer));
-            }
-
-            string userName;
-            try
-            {
-                userName = user.Value<string>("displayName");
-            }
-            catch (Exception ex)
-            {
-                ipbLogger.LogError($"Error while parsing ipb id: {ex.Message}");
-                return false;
-            }
-            if (!string.IsNullOrEmpty(userName))
-            {
-                identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, userName, ClaimValueTypes.String, claimsIssuer));
-            }
-
-            string profileUrl;
-            try
-            {
-                profileUrl = user.Value<string>("profileUrl");
-            }
-            catch (Exception ex)
-            {
-                ipbLogger.LogError($"Error while parsing ipb profileUrl: {ex.Message}");
-                return false;
-            }
-            if (!string.IsNullOrEmpty(profileUrl))
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Webpage, profileUrl, ClaimValueTypes.String, claimsIssuer));
-            }
-
-            string avatarUrl;
-            try
-            {
-                avatarUrl = user.Value<string>("avatar");
-            }
-            catch (Exception)
-            {
-                //second formats
-                Dictionary<string, string> avatarData;
-                try
-                {
-                    avatarData = user["avatar"]["data"].ToObject<Dictionary<string, string>>();
-                }
-                catch (Exception exData)
-                {
-                    ipbLogger.LogError($"Error while parsing ipb avatarUrl: {exData.Message}");
-                    return false;
-                }
-                if (avatarData.Any())
-                {
-                    avatarUrl = $"{avatarData["scheme"]}/{avatarData["host"]}/{avatarData["path"]}";
-                }
-                else
-                {
-                    ipbLogger.LogError($"Empty avatar data");
-                    return false;
-                }
-            }
-            if (!string.IsNullOrEmpty(avatarUrl))
-            {
-                identity.AddClaim(new Claim("avatarUrl", avatarUrl, ClaimValueTypes.String, claimsIssuer));
-            }
+            var userInfo = new IpbUserInfo(response, ipbLogger);
+            if (!userInfo.IsParsed) return false;
+            InsertClaims(userInfo, identity, claimsIssuer);
             return true;
         }
 
-        public static void UseIpbOAuthAuthentication(this IApplicationBuilder app, IConfigurationRoot configuration, ILogger ipbLogger)
+        public static void UseIpbOAuthAuthentication(this IApplicationBuilder app, IConfigurationRoot configuration,
+            ILogger ipbLogger)
         {
             app.UseOAuthAuthentication(new OAuthOptions()
             {
@@ -135,7 +54,8 @@ namespace BioEngine.Site.Helpers
                         var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
                         response.EnsureSuccessStatusCode();
 
-                        var success = ParseIpbResponse(await response.Content.ReadAsStringAsync(), context.Identity, context.Options.ClaimsIssuer, ipbLogger);
+                        var success = GetClaims(await response.Content.ReadAsStringAsync(), context.Identity,
+                            context.Options.ClaimsIssuer, ipbLogger);
                         if (!success)
                         {
                             throw new Exception("Can't parse ipb response");
@@ -143,6 +63,33 @@ namespace BioEngine.Site.Helpers
                     }
                 }
             });
+        }
+
+        public static void InsertClaims(IpbUserInfo userInfo, ClaimsIdentity identity, string claimsIssuer)
+        {
+            if (!string.IsNullOrEmpty(userInfo.Id))
+            {
+                identity.AddClaim(
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.Id, ClaimValueTypes.String, claimsIssuer));
+            }
+
+            if (!string.IsNullOrEmpty(userInfo.UserName))
+            {
+                identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, userInfo.UserName,
+                    ClaimValueTypes.String,
+                    claimsIssuer));
+            }
+
+            if (!string.IsNullOrEmpty(userInfo.ProfileUrl))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Webpage, userInfo.ProfileUrl, ClaimValueTypes.String,
+                    claimsIssuer));
+            }
+
+            if (!string.IsNullOrEmpty(userInfo.AvatarUrl))
+            {
+                identity.AddClaim(new Claim("avatarUrl", userInfo.AvatarUrl, ClaimValueTypes.String, claimsIssuer));
+            }
         }
     }
 }

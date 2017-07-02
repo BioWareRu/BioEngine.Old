@@ -12,15 +12,11 @@ namespace BioEngine.Common.Models
         [Column("ad_id")]
         public override long Id { get; set; }
 
-
         public string AdLocation { get; set; }
-
 
         public string AdHtml { get; set; }
 
-
         public string AdImages { get; set; }
-
 
         public string AdLink { get; set; }
 
@@ -60,10 +56,7 @@ namespace BioEngine.Common.Models
 
         public uint? AdMember { get; set; }
 
-        public AdvetisementImages Images
-        {
-            get { return JsonConvert.DeserializeObject<AdvetisementImages>(AdImages); }
-        }
+        public AdvetisementImages Images => JsonConvert.DeserializeObject<AdvetisementImages>(AdImages);
     }
 
     public struct AdvetisementImages

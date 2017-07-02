@@ -2,6 +2,6 @@
 {
     public interface ISearchModel
     {
-        int Id { get; set; }
+        object GetId();
     }
 }

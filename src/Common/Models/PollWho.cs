@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BioEngine.Common.Base;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_poll_who")]
-    public class PollWho
+    public class PollWho :BaseModel<int>
     {
         [Key]
-        public int PollWhoId { get; set; }
+        [Column("poll_who_id")]
+        public override int Id { get; set; }
 
         public int PollId { get; set; }
         public int UserId { get; set; }

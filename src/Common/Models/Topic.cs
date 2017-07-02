@@ -5,11 +5,8 @@ using BioEngine.Common.Base;
 namespace BioEngine.Common.Models
 {
     [Table("be_nuke_topics")]
-    public class Topic : ParentModel
+    public class Topic : ParentModel<int>
     {
-        [Key]
-        public override int Id { get; set; }
-
         public string Title { get; set; }
 
         public string Url { get; set; }

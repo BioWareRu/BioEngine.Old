@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
-using BioEngine.Common.Search;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_articles_cats")]
-    public class ArticleCat : BaseModel<int>, ICat<ArticleCat>, ISearchModel
+    public class ArticleCat : ChildModel<int>, ICat<ArticleCat>
     {
         public int Pid { get; set; }
 
@@ -33,35 +30,8 @@ namespace BioEngine.Common.Models
 
         [ForeignKey(nameof(Pid))]
         public ArticleCat ParentCat { get; set; }
-
-        [Key]
-
-        public override int Id { get; set; }
-
+        
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
-
-
-        public int? GameId { get; set; }
-
-
-        public int? DeveloperId { get; set; }
-
-
-        public int? TopicId { get; set; }
-
-        [ForeignKey(nameof(GameId))]
-        public Game Game { get; set; }
-
-        [ForeignKey(nameof(DeveloperId))]
-        public Developer Developer { get; set; }
-
-        [ForeignKey(nameof(TopicId))]
-        public Topic Topic { get; set; }
-
-        public async Task<IParentModel> Parent(ParentEntityProvider parentEntityProvider)
-        {
-            return await parentEntityProvider.GetModelParent(this);
-        }
     }
 }

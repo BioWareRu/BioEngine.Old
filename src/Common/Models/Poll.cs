@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_poll")]
-    public class Poll: BaseModel<int>
+    public class Poll : BaseModel<int>
     {
         private List<PollResultsEntry> _results;
 
@@ -62,16 +62,13 @@ namespace BioEngine.Common.Models
             }
         }
 
-        public List<PollOption> Options
-        {
-            get { return JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson); }
-        }
+        public List<PollOption> Options => JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson);
 
         [NotMapped]
         public Dictionary<string, string> Votes
         {
-            get { return JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson); }
-            set { VotesJson = JsonConvert.SerializeObject(value); }
+            get => JsonConvert.DeserializeObject<Dictionary<string, string>>(VotesJson);
+            set => VotesJson = JsonConvert.SerializeObject(value);
         }
 
         public void SetVoted()
@@ -91,12 +88,9 @@ namespace BioEngine.Common.Models
                 return await
                     dbContext.PollVotes.AnyAsync(x => x.UserId == userId && x.PollId == Id);
             }
-            else
-            {
-                return await
-                    dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == Id && x.Ip == ipAddress &&
-                                                      x.SessionId == sessionId);
-            }
+            return await
+                dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == Id && x.Ip == ipAddress &&
+                                                  x.SessionId == sessionId);
         }
 
         public async Task Recount(BWContext dbContext)

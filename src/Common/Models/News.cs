@@ -1,33 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
-using BioEngine.Common.Interfaces;
-using BioEngine.Common.Search;
-using JsonApiDotNetCore.Models;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_news")]
-    public class News : BaseModel<int>, IChildModel, ISearchModel
+    public class News : ChildModel<int>
     {
         [Key]
+        [JsonProperty]
         public override int Id { get; set; }
 
-        [Attr("url")]
+        [JsonProperty]
         public string Url { get; set; }
 
-        [Attr("source")]
+        [JsonProperty]
         public string Source { get; set; }
 
         public string GameOld { get; set; }
 
-        [Attr("title")]
+        [JsonProperty]
         public string Title { get; set; }
 
-        [Attr("shortText")]
+        [JsonProperty]
         public string ShortText { get; set; }
 
-        [Attr("addText")]
+        [JsonProperty]
         public string AddText { get; set; }
 
         [Required]
@@ -41,18 +40,18 @@ namespace BioEngine.Common.Models
         public int ForumPostId { get; set; }
 
         [Required]
-        [Attr("sticky")]
+        [JsonProperty]
         public int Sticky { get; set; }
 
         [Required]
-        [Attr("date")]
+        [JsonProperty]
         public int Date { get; set; }
 
-        [Attr("lastChangeDate")]
+        [JsonProperty]
         public int LastChangeDate { get; set; }
 
         [Required]
-        [Attr("pub")]
+        [JsonProperty]
         public int Pub { get; set; }
 
         [Column("addgames")]
@@ -73,24 +72,23 @@ namespace BioEngine.Common.Models
         public long TwitterId { get; set; }
 
         [ForeignKey(nameof(AuthorId))]
-        [HasOne("author")]
         public virtual User Author { get; set; }
 
         public bool HasMore => !string.IsNullOrEmpty(AddText);
 
-        [Attr("gameId")]
-        public int? GameId { get; set; }
+        [JsonProperty]
+        public override int? GameId { get; set; }
 
-        [Attr("developerId")]
-        public int? DeveloperId { get; set; }
+        [JsonProperty]
+        public override int? DeveloperId { get; set; }
 
-        [Attr("topicId")]
-        public int? TopicId { get; set; }
+        [JsonProperty]
+        public override int? TopicId { get; set; }
 
-        [Attr("authorName")]
+        [JsonProperty]
         public string AuthorName => Author?.Name;
 
-        [Attr("parentName")]
+        [JsonProperty]
         public string ParentName
         {
             get
@@ -103,24 +101,8 @@ namespace BioEngine.Common.Models
                 {
                     return Developer.Name;
                 }
-                if (Topic != null)
-                {
-                    return Topic.Title;
-                }
-                return null;
+                return Topic?.Title;
             }
         }
-
-        [ForeignKey(nameof(GameId))]
-        [HasOne("game")]
-        public virtual Game Game { get; set; }
-
-        [ForeignKey(nameof(DeveloperId))]
-        [HasOne("developer")]
-        public virtual Developer Developer { get; set; }
-
-        [ForeignKey(nameof(TopicId))]
-        [HasOne("topic")]
-        public virtual Topic Topic { get; set; }
     }
 }

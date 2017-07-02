@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
-using JsonApiDotNetCore.Models;
 
 namespace BioEngine.Common.Models
 {
@@ -14,7 +13,6 @@ namespace BioEngine.Common.Models
         [Column("member_id")]
         public override int Id { get; set; }
 
-        [Attr("name")]
         public virtual string Name { get; set; }
 
         [Column("member_group_id")]

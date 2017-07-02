@@ -65,7 +65,7 @@ namespace BioEngine.Common.Search
 
         public void AddUpdateEntity(T entity)
         {
-            _context.AddUpdateDocument(entity, entity.Id);
+            _context.AddUpdateDocument(entity, entity.GetId());
             _context.SaveChanges();
         }
 
@@ -73,7 +73,7 @@ namespace BioEngine.Common.Search
         {
             foreach (var entity in entities)
             {
-                _context.AddUpdateDocument(entity, entity.Id);
+                _context.AddUpdateDocument(entity, entity.GetId());
             }
             _context.SaveChanges();
         }

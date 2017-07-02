@@ -1,15 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BioEngine.Common.Base;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_oauth2server_access_tokens")]
-    public class AccessToken
+    public class AccessToken: BaseModel<string>
     {
         [Key]
         [Column("access_token")]
-        public string Token { get; set; }
+        public override string Id { get; set; }
 
         public string ClientId { get; set; }
 

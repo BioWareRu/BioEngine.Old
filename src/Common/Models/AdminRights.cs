@@ -7,10 +7,6 @@ namespace BioEngine.Common.Models
     [Table("be_admins_rights")]
     public class AdminRights : BaseModel<int>
     {
-        [Key]
-        [Required]
-        public override int Id { get; set; }
-
         [Column("uid")]
         [Required]
         public int UId { get; set; }

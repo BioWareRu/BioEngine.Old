@@ -7,9 +7,6 @@ namespace BioEngine.Common.Models
     [Table("be_activity")]
     public class Activity : BaseModel<int>
     {
-        [Key]
-        public override int Id { get; set; }
-
         [Required]
         public int UserId { get; set; }
 

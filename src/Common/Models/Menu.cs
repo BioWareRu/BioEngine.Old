@@ -10,9 +10,6 @@ namespace BioEngine.Common.Models
     [Table("be_menu")]
     public class Menu : BaseModel<int>
     {
-        [Key]
-        public override int Id { get; set; }
-
         public string Key { get; set; }
 
         public string Title { get; set; }

@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
-using BioEngine.Common.Search;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_games")]
-    public class Game : ParentModel, ISearchModel
+    public class Game : ParentModel<int>
     {
-        [Key]
-        public override int Id { get; set; }
-
         [Required]
         public int DeveloperId { get; set; }
 

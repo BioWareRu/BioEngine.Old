@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using BioEngine.Common.Base;
 using BioEngine.Common.Helpers;
-using BioEngine.Common.Interfaces;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_gallery")]
-    public class GalleryPic : BaseModel<int>, IChildModel
+    public class GalleryPic : ChildModel<int>
     {
-        [Key]
-
-        public override int Id { get; set; }
-
-
         public int CatId { get; set; }
 
         [Column("files")]
@@ -30,23 +23,11 @@ namespace BioEngine.Common.Models
         [ForeignKey(nameof(CatId))]
         public GalleryCat Cat { get; set; }
 
-
-        public int? GameId { get; set; }
-
-
-        public int? DeveloperId { get; set; }
+        [NotMapped]
+        public override int? TopicId { get; set; }
 
         [NotMapped]
-        public int? TopicId { get; set; }
-
-        [ForeignKey(nameof(GameId))]
-        public Game Game { get; set; }
-
-        [ForeignKey(nameof(DeveloperId))]
-        public Developer Developer { get; set; }
-
-        [NotMapped]
-        public Topic Topic { get; set; }
+        public override Topic Topic { get; set; }
 
         private List<GalleryPicFile> _files;
 

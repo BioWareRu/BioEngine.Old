@@ -7,9 +7,6 @@ namespace BioEngine.Common.Models
     [Table("be_site_team")]
     public class SiteTeamMember : BaseModel<int>
     {
-        [Key]
-        public override int Id { get; set; }
-
         [Required]
         public int MemberId { get; set; }
 

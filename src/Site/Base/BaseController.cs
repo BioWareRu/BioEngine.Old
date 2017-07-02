@@ -98,13 +98,13 @@ namespace BioEngine.Site.Base
             switch (parent.Type)
             {
                 case ParentType.Game:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == parent.Id);
+                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == (int)parent.GetId());
                     break;
                 case ParentType.Developer:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == parent.Id);
+                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == (int)parent.GetId());
                     break;
                 case ParentType.Topic:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == parent.Id);
+                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == (int)parent.GetId());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

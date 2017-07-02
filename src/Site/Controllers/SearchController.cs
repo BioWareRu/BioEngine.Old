@@ -11,8 +11,8 @@ using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.Site.Controllers
 {
@@ -150,7 +150,7 @@ namespace BioEngine.Site.Controllers
             provider.AddUpdateEntities(entities);
         }
 
-        public async Task<string> Reindex([FromServices] ISearchProvider<Game> searchProvider)
+        public async Task<string> Reindex()
         {
             AddEntities(await Context.Games.ToListAsync());
             AddEntities(await Context.News.ToListAsync());

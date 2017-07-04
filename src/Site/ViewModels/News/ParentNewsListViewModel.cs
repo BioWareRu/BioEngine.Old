@@ -24,7 +24,7 @@ namespace BioEngine.Site.ViewModels.News
 
         public override Task<string> Title()
         {
-            return Task.FromResult($"{Parent.DisplayTitle}- Новости");
+            return Task.FromResult($"{Parent.DisplayTitle} - Новости");
         }
     }
 }

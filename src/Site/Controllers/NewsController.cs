@@ -14,6 +14,7 @@ using BioEngine.Site.ViewModels.News;
 using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -88,25 +89,25 @@ namespace BioEngine.Site.Controllers
             return await NewsByDate(year, null, null, page);
         }
 
-        [Route("/{year:int}/{month:range(1,12)}.html")]
+        [Route("/{year:int}/{month:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month)
         {
             return await NewsByDate(year, month, null);
         }
 
-        [Route("/{year:int}/{month:range(1,12)}/page/{page:int}.html")]
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int page)
         {
             return await NewsByDate(year, month, null, page);
         }
 
-        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}.html")]
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day)
         {
             return await NewsByDate(year, month, day);
         }
 
-        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}/page/{page:int}.html")]
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int page)
         {
             return await NewsByDate(year, month, day, page);
@@ -225,7 +226,9 @@ namespace BioEngine.Site.Controllers
                 new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
-        [Route("/{year:int}/{month:range(1,12)}/{day:range(1,31)}/{url}.html")]
+        
+
+        [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
         public async Task<IActionResult> Show(int year, int month, int day, string url)
         {
             long dateStart;
@@ -265,6 +268,22 @@ namespace BioEngine.Site.Controllers
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
                 parent.DisplayTitle));
             return View(viewModel);
+        }
+
+        [Route("/{year:int}/{month:regex(^\\d{{1}}$)}/{day:regex(^\\d{{1}}$)}/{url}.html")]
+        [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{1}}$)}/{url}.html")]
+        [Route("/{year:int}/{month:regex(^\\d{{1}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
+        public IActionResult ShowOld(int year, int month, int day, string url)
+        {
+            var redirectUrl = Url.Action("show", "News",
+                                  new
+                                  {
+                                      year = year.ToString("D4"),
+                                      month = month.ToString("D2"),
+                                      day = day.ToString("D2"),
+                                      url
+                                  }, Request.Scheme);
+            return Redirect(redirectUrl);
         }
 
         [HttpGet("/rss.xml")]

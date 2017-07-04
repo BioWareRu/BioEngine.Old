@@ -21,7 +21,7 @@ namespace BioEngine.Site.Components.Url
         {
             var date = DateTimeOffset.FromUnixTimeSeconds(news.Date);
             return GetUrl("Show", "News",
-                new {year = date.Year, month = date.Month, day = date.Day, url = news.Url}, absolute);
+                new {year = date.Year.ToString("D4"), month = date.Month.ToString("D2"), day = date.Day.ToString("D2"), url = news.Url}, absolute);
         }
 
         public string IndexUrl()

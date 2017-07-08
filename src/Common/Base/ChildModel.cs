@@ -5,13 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Base
 {
     public class ChildModel<TPkType> : BaseModel<TPkType>, IChildModel
     {
+        [JsonProperty]
         public virtual int? GameId { get; set; }
+        [JsonProperty]
         public virtual int? DeveloperId { get; set; }
+        [JsonProperty]
         public virtual int? TopicId { get; set; }
 
         [ForeignKey(nameof(GameId))]

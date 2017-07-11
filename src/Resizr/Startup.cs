@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SixLabors.Primitives;
 
 namespace BioEngine.Resizr
 {
@@ -83,11 +84,11 @@ namespace BioEngine.Resizr
                             };
                             try
                             {
-                                using (var image = Image.Load(sourcePath))
+                                using (var image = Image.Load(sourcePath, out var mime))
                                 {
                                     image.Resize(resizeOptions)
                                         .Save(destPath);
-                                    context.Response.ContentType = image.CurrentImageFormat.MimeType;
+                                    context.Response.ContentType = mime.DefaultMimeType;
                                 }
                                 await context.Response.SendFileAsync(destPath);
                             }

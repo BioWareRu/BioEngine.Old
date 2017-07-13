@@ -8,11 +8,8 @@ namespace BioEngine.Common.DB
     [UsedImplicitly]
     public class BWContext : DbContext
     {
-        private readonly DBConfiguration _dbConfiguration;
-
-        public BWContext(DbContextOptions<BWContext> options, DBConfiguration dbConfiguration) : base(options)
+        public BWContext(DbContextOptions<BWContext> options) : base(options)
         {
-            _dbConfiguration = dbConfiguration;
         }
 
         public DbSet<News> News { get; set; }
@@ -35,11 +32,6 @@ namespace BioEngine.Common.DB
         public DbSet<AccessToken> AccessTokens { get; set; }
 
         public DbSet<Advertisement> Advertiesements { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            _dbConfiguration.Configure(optionsBuilder);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

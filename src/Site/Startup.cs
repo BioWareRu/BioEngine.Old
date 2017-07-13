@@ -31,6 +31,7 @@ using BioEngine.Site.Middlewares;
 using BioEngine.Site.Filters;
 using BioEngine.Prometheus.Core;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace BioEngine.Site
@@ -85,11 +86,11 @@ namespace BioEngine.Site
             });
 
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
-            services.AddDbContext<BWContext>();
+            var dbConfig = new MySqlDBConfiguration(Configuration);
+            services.AddDbContext<BWContext>(builder => dbConfig.Configure(builder));
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton(Configuration);
-            services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
 
             services.AddScoped<BannerProvider>();
             services.AddScoped<UrlManager>();

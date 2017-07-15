@@ -9,7 +9,6 @@
 @{
     ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
-    Model.ImageUrl = ContentHelper.GetImageUrl(Model.News.ShortText);
 }
 <div class="article__block">
     @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BioEngine.Site.Helpers;
 
 namespace BioEngine.Site.ViewModels.News
@@ -8,14 +9,23 @@ namespace BioEngine.Site.ViewModels.News
         public OneNewsViewModel(BaseViewModelConfig config, Common.Models.News news) : base(config)
         {
             News = news;
-            
-            Description = ContentHelper.GetDescription(news.ShortText);
         }
 
         public Common.Models.News News { get; private set; }
+
         public override Task<string> Title()
         {
             return Task.FromResult(News.Title);
+        }
+
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult(GetDescriptionFromHtml(News.ShortText));
+        }
+
+        public override Uri GetImageUrl()
+        {
+            return GetImageFromHtml(News.ShortText) ?? ImageUrl;
         }
     }
 }

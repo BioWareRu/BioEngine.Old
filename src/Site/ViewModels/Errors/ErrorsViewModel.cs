@@ -15,5 +15,10 @@ namespace BioEngine.Site.ViewModels.Errors
         {
             return Task.FromResult("Ошибка");
         }
+
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult("Error");
+        }
     }
 }

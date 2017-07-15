@@ -22,6 +22,13 @@ namespace BioEngine.Site.ViewModels.Files
             return title;
         }
 
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult(GetDescriptionFromHtml(!string.IsNullOrEmpty(File.Announce)
+                ? File.Announce
+                : File.Desc));
+        }
+
         public File File { get; }
 
         public DateTimeOffset Date => DateTimeOffset.FromUnixTimeSeconds(File.Date);

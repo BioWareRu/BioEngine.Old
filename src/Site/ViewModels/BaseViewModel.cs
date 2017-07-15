@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
+using HtmlAgilityPack;
 
 namespace BioEngine.Site.ViewModels
 {
@@ -28,11 +30,9 @@ namespace BioEngine.Site.ViewModels
         public string SiteTitle { get; set; }
 
         //public string Title { get; set; }
-        public abstract System.Threading.Tasks.Task<string> Title();
+        public abstract Task<string> Title();
 
-        public Uri ImageUrl { get; set; }
-
-        public string Description { get; protected set; }
+        protected Uri ImageUrl { get; set; }
 
         public List<BreadCrumbsItem> BreadCrumbs { get; private set; } = new List<BreadCrumbsItem>();
 
@@ -41,6 +41,32 @@ namespace BioEngine.Site.ViewModels
         public string GetSettingValue(string settingName)
         {
             return Settings.FirstOrDefault(x => x.Name == settingName)?.Value;
+        }
+
+        public abstract Task<string> GetDescription();
+
+        public virtual Uri GetImageUrl()
+        {
+            return ImageUrl;
+        }
+
+        protected static string GetDescriptionFromHtml(string html)
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            var contentBlock = htmlDoc.DocumentNode.Descendants("p").FirstOrDefault() ??
+                               htmlDoc.DocumentNode.Descendants("div").FirstOrDefault();
+            return contentBlock?.InnerText;
+        }
+
+        protected Uri GetImageFromHtml(string html)
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            var contentBlock = htmlDoc.DocumentNode.Descendants("img").FirstOrDefault();
+            return new Uri(contentBlock?.GetAttributeValue("src", ""));
         }
     }
 
@@ -51,7 +77,8 @@ namespace BioEngine.Site.ViewModels
         public readonly List<Settings> Settings;
         public readonly ParentEntityProvider ParentEntityProvider;
 
-        public BaseViewModelConfig(UrlManager urlManager, AppSettings appSettings, List<Settings> settings, ParentEntityProvider parentEntityProvider)
+        public BaseViewModelConfig(UrlManager urlManager, AppSettings appSettings, List<Settings> settings,
+            ParentEntityProvider parentEntityProvider)
         {
             UrlManager = urlManager;
             AppSettings = appSettings;

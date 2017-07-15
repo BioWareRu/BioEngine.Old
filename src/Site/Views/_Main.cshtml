@@ -26,23 +26,25 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#ffffff">
+
+    <!-- Facebook Markup -->
+    <meta property="og:title" content="@Html.Raw(await Model.Title())">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="@Html.Raw(Model.GetImageUrl())">
+    <meta property="og:url" content="@Html.Raw(Context.Request.AbsoluteUrl())">
+    <meta property="og:description" content="@Html.Raw(await Model.GetDescription())">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@Html.Raw(Model.SiteTitle)">
     <meta name="twitter:title" content="@Html.Raw(await Model.Title())">
-    <meta name="twitter:description" content="@Html.Raw(Model.Description)">
-    <meta property="twitter:image:src" content="@Html.Raw(Model.ImageUrl)">
+    <meta name="twitter:description" content="@Html.Raw(await Model.GetDescription())">
+    <meta property="twitter:image:src" content="@Html.Raw(Model.GetImageUrl())">
 
     <!-- G+ -->
     <meta itemprop="name" content="@Html.Raw(await Model.Title())">
-    <meta itemprop="description" content="@Html.Raw(Model.Description)">
-    <meta itemprop="image" content="@Html.Raw(Model.ImageUrl)">
-    <!-- Facebook Markup -->
-    <meta property="og:title" content="@Html.Raw(await Model.Title())">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="@Html.Raw(Model.ImageUrl)">
-    <meta property="og:url" content="@Html.Raw(Context.Request.AbsoluteUrl())">
-    <meta property="og:description" content="@Html.Raw(Model.Description)">
+    <meta itemprop="description" content="@Html.Raw(await Model.GetDescription())">
+    <meta itemprop="image" content="@Html.Raw(Model.GetImageUrl())">
+    
     <title>@Html.Raw(await Model.Title())</title>
     <link rel="stylesheet" href="/css/style_@(Model.ThemeName).css"
           id="stylesheet">

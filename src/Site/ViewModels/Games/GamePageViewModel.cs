@@ -16,7 +16,6 @@ namespace BioEngine.Site.ViewModels.Games
             LastFiles = lastFiles;
             LastPics = lastPics;
             //ImageUrl = new Uri(UrlManager.ParentIconUrl(game));
-            Description = game.Desc;
         }
 
         public Game Game { get; }
@@ -28,6 +27,11 @@ namespace BioEngine.Site.ViewModels.Games
         public override Task<string> Title()
         {
             return Task.FromResult(Game.Title);
+        }
+
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult($"Вся информация о игре {Game.DisplayTitle}");
         }
     }
 }

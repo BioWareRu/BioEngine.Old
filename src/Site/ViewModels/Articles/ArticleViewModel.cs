@@ -19,7 +19,20 @@ namespace BioEngine.Site.ViewModels.Articles
                 title += " - " + Article.Cat.Title;
             if (parent != null)
                 title += " - " + parent.DisplayTitle;
+
             return title;
+        }
+
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult(GetDescriptionFromHtml(!string.IsNullOrEmpty(Article.Announce)
+                ? Article.Announce
+                : Article.Text));
+        }
+
+        public override Uri GetImageUrl()
+        {
+            return GetImageFromHtml(Article.Text) ?? ImageUrl;
         }
 
         public Article Article { get; }

@@ -22,5 +22,10 @@ namespace BioEngine.Site.ViewModels.Gallery
         {
             return Task.FromResult($"{Parent.DisplayTitle} - Галерея");
         }
+
+        public override async Task<string> GetDescription()
+        {
+            return await Task.FromResult($"Картинки в разделе \"{Parent.DisplayTitle}\"");
+        }
     }
 }

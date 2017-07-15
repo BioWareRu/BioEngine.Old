@@ -28,6 +28,12 @@ namespace BioEngine.Site.ViewModels.Gallery
             return title;
         }
 
+        public override async Task<string> GetDescription()
+        {
+            var parent = await ParentEntityProvider.GetModelParent(GalleryCat);
+            return $"Картинки категории \"{GalleryCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
+        }
+
         public GalleryCat GalleryCat { get; }
 
         public IEnumerable<CatsTree<GalleryCat, GalleryPic>> Children { get; }

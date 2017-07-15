@@ -27,7 +27,14 @@ namespace BioEngine.Site.ViewModels.Files
             var parent = await ParentEntityProvider.GetModelParent(FileCat);
             if (parent != null)
                 title += " - " + parent.DisplayTitle;
+
             return title;
+        }
+
+        public override async Task<string> GetDescription()
+        {
+            var parent = await ParentEntityProvider.GetModelParent(FileCat);
+            return $"Статьи категории \"{FileCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
         }
 
         public IEnumerable<CatsTree<FileCat, File>> Children { get; }

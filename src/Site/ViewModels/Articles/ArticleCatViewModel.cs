@@ -26,6 +26,16 @@ namespace BioEngine.Site.ViewModels.Articles
             return title;
         }
 
+        public override async Task<string> GetDescription()
+        {
+            if (!string.IsNullOrEmpty(ArticleCat.Content))
+            {
+                return GetDescriptionFromHtml(ArticleCat.Content);
+            }
+            var parent = await ParentEntityProvider.GetModelParent(ArticleCat);
+            return $"Статьи категории \"{ArticleCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
+        }
+
         public ArticleCat ArticleCat { get; }
 
         public IEnumerable<CatsTree<ArticleCat, Article>> Children { get; }

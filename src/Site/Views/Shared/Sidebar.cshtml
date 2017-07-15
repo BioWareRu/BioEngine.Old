@@ -5,8 +5,12 @@
         <input class="search__input" type="search" placeholder="Поиск" name="query"/>
         <button class="search__magnifier"></button>
     </form>
-    <div class="sidebar__image">
-        <a href="https://www.patreon.com/bePatron?u=6790376" type="become-patron-button"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron" /></a>
+    <div class="sidebar__image" style="text-align: center; line-height: 1.5em;">
+        <a href="https://www.patreon.com/bePatron?u=6790376">
+            <img src="/img/patreon.png" alt="Become a Patron"/>
+        </a>
+        <br/>
+        <a href="https://www.bioware.ru/biowareru/articles/others/patreon.html">Подробнее</a>
     </div>
     @await Component.InvokeAsync(typeof(CounterViewComponent))
     @await Component.InvokeAsync(typeof(BannerViewComponent))

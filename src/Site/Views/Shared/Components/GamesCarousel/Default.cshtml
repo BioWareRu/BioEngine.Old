@@ -8,7 +8,7 @@
             {
                 <a class="slider__list-item" href="/@(gameItem.Url).html">
                     <span class="slider__image"
-                          style="background-image: url(/img/slider__@(gameItem.Key).png)">@(gameItem.Title)</span>
+                          style="background-image: url(/img/slider__@(gameItem.Key).png)">@Html.Raw(gameItem.Title)</span>
                     </a>
             }
         </div>

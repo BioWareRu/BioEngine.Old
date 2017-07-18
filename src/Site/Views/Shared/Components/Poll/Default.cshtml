@@ -19,7 +19,7 @@
         foreach (var opt in Model.Results)
         {
             <div>
-                @opt.Text
+                @Html.Raw(opt.Text)
                 <div class="sidebar__poll-result-item">
                     <span class="sidebar__result-number">@((opt.Result * 100).ToString(CultureInfo.InvariantCulture))%</span>
                     <div class="sidebar__poll-bar" style="width: @((opt.Result * 100 * multiplier).ToString(CultureInfo.InvariantCulture))%"></div>
@@ -44,7 +44,7 @@
                         {
                             <input class="sidebar__poll-input" type="radio" name="vote" value="@opt.Id" id="opt_@opt.Id"/>
                         }
-                        @opt.Text
+                        @Html.Raw(opt.Text)
                     </label>
                 }
             </fieldset>

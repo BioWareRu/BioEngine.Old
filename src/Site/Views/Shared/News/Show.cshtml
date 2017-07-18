@@ -64,7 +64,7 @@
 
         <div class="article-list__footer-controls">
             @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl)
-            <a class="article-list__comments" href="@Model.CommentsUrl">@(Localizer.Plural("Comments", Model.News.Comments))</a>
+            <a class="article-list__comments" href="@Model.CommentsUrl">@Html.Raw(Localizer.Plural("Comments", Model.News.Comments))</a>
         </div>
     </footer>
 </article>

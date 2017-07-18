@@ -52,11 +52,11 @@
             <a href="@url" class="@aClass">
                 @if (Model.Level > 0)
                 {
-                    @menuItem.Label
+                    @Html.Raw(menuItem.Label)
                 }
                 else
                 {
-                    <span class="@linkClass">@menuItem.Label</span>
+                    <span class="@linkClass">@Html.Raw(menuItem.Label)</span>
                 }
             </a>
             @if (menuItem.Children.Any())

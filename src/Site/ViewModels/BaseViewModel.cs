@@ -57,12 +57,12 @@ namespace BioEngine.Site.ViewModels
 
             string description = null;
 
-            foreach(var childNode in htmlDoc.DocumentNode.ChildNodes.Where(x=>x.Name=="p"||x.Name=="div"))
+            foreach (var childNode in htmlDoc.DocumentNode.ChildNodes.Where(x => x.Name == "p" || x.Name == "div"))
             {
-                if(!string.IsNullOrWhiteSpace(childNode.InnerText))
+                var childText = HtmlEntity.DeEntitize(childNode.InnerText.Trim('\r', '\n')).Trim();
+                if (!string.IsNullOrWhiteSpace(childText))
                 {
-                    description = HtmlEntity.DeEntitize(childNode.InnerText.Trim('\r', '\n').Trim());
-                    
+                    description = childText;
                     break;
                 }
             }

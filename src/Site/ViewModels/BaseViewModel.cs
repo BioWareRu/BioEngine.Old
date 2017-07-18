@@ -55,9 +55,18 @@ namespace BioEngine.Site.ViewModels
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
-            var contentBlock = htmlDoc.DocumentNode.Descendants("p").FirstOrDefault() ??
-                               htmlDoc.DocumentNode.Descendants("div").FirstOrDefault();
-            return contentBlock?.InnerText;
+            string description = null;
+
+            foreach(var childNode in htmlDoc.DocumentNode.ChildNodes.Where(x=>x.Name=="p"||x.Name=="div"))
+            {
+                if(!string.IsNullOrWhiteSpace(childNode.InnerText))
+                {
+                    description = childNode.InnerText.Trim('\r', '\n').Trim();
+                    break;
+                }
+            }
+
+            return description;
         }
 
         protected Uri GetImageFromHtml(string html)

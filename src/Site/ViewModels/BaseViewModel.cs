@@ -61,7 +61,8 @@ namespace BioEngine.Site.ViewModels
             {
                 if(!string.IsNullOrWhiteSpace(childNode.InnerText))
                 {
-                    description = childNode.InnerText.Trim('\r', '\n').Trim();
+                    description = HtmlEntity.DeEntitize(childNode.InnerText.Trim('\r', '\n').Trim());
+                    
                     break;
                 }
             }

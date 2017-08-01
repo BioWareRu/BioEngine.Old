@@ -21,22 +21,22 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public async Task<string> PublicUrl(GalleryPic picture)
+        public async Task<string> PublicUrl(GalleryPic picture, bool absolute = false)
         {
             await Poppulate(picture);
             var position = await GetPicPosition(picture);
             var page = (int) Math.Ceiling((double) position / GalleryCat.PicsOnPage);
-            return await CatPublicUrl(picture.Cat, page);
+            return await CatPublicUrl(picture.Cat, page, absolute);
         }
 
-        public async Task<string> CatPublicUrl(GalleryCat cat, int page = 1)
+        public async Task<string> CatPublicUrl(GalleryCat cat, int page = 1, bool absolute = false)
         {
             await Poppulate(cat);
             var url = CatUrl(cat);
             if (page > 1)
                 url += $"/page/{page}";
             return GetUrl("Cat", "Gallery",
-                new {parentUrl = await ParentUrl(cat), url});
+                new {parentUrl = await ParentUrl(cat), url}, absolute);
         }
 
         private async Task Poppulate(GalleryCat cat)
@@ -108,7 +108,7 @@ namespace BioEngine.Site.Components.Url
 
         public async Task<string> ThumbUrl(GalleryPic picture, int width = 100, int height = 0, int index = 0)
         {
-            await Poppulate(picture);            
+            await Poppulate(picture);
             var file = picture.Files[index];
             var fileName = Path.GetFileNameWithoutExtension(file.Name);
             var ext = Path.GetExtension(file.Name);

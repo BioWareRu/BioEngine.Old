@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Search;
 using BioEngine.Site.Components;
@@ -99,6 +100,13 @@ namespace BioEngine.Site
             services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
             services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
+            services.AddScoped<IContentHelperInterface, ContentHelper>();
+            services.AddSingleton(new IPBApiConfig()
+            {
+                ApiKey = Configuration["BE_IPB_API_KEY"],
+                ApiUrl = Configuration["BE_IPB_API_URL"],
+                NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
+            });
 
             if (_env.IsProduction())
             {

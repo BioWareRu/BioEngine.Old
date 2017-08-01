@@ -41,14 +41,14 @@ namespace BioEngine.Site.Components.Url
             Search = new SearchUrlManager(Settings, dbContext, urlHelper, parentEntityProvider);
         }
 
-        public string ParentUrl(IParentModel parent)
+        public string ParentUrl(IParentModel parent, bool absoluteUrl = false)
         {
             switch (parent.Type)
             {
                 case ParentType.Game:
-                    return Games.PublicUrl((Game) parent);
+                    return Games.PublicUrl((Game) parent, absoluteUrl);
                 case ParentType.Developer:
-                    return Developer.PublicUrl((Developer) parent);
+                    return Developer.PublicUrl((Developer) parent, absoluteUrl);
                 case ParentType.Topic:
                     return Topics.PublicUrl((Topic) parent);
                 default:

@@ -14,7 +14,6 @@ using BioEngine.Site.ViewModels.News;
 using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -226,7 +225,6 @@ namespace BioEngine.Site.Controllers
                 new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
-        
 
         [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
         public async Task<IActionResult> Show(int year, int month, int day, string url)
@@ -276,13 +274,13 @@ namespace BioEngine.Site.Controllers
         public IActionResult ShowOld(int year, int month, int day, string url)
         {
             var redirectUrl = Url.Action("show", "News",
-                                  new
-                                  {
-                                      year = year.ToString("D4"),
-                                      month = month.ToString("D2"),
-                                      day = day.ToString("D2"),
-                                      url
-                                  }, Request.Scheme);
+                new
+                {
+                    year = year.ToString("D4"),
+                    month = month.ToString("D2"),
+                    day = day.ToString("D2"),
+                    url
+                }, Request.Scheme);
             return Redirect(redirectUrl);
         }
 
@@ -351,10 +349,10 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            using (LogContext.PushProperties(logProperties.ToArray()))
+            using (LogContext.Push(logProperties.ToArray()))
             {
                 var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
-                if (result)
+                if (result.topicId > 0 && result.postId > 0)
                 {
                     Response.StatusCode = 200;
                     return new EmptyResult();
@@ -393,7 +391,7 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            using (LogContext.PushProperties(logProperties.ToArray()))
+            using (LogContext.Push(logProperties.ToArray()))
             {
                 var result = await ipbApiHelper.DeleteNewsTopic(news);
                 if (result)

@@ -18,12 +18,12 @@ namespace BioEngine.Site.Components.Url
         {
         }
 
-        public async Task<string> PublicUrl(File file)
+        public async Task<string> PublicUrl(File file, bool absolute = false)
         {
             await Poppulate(file);
             var url = CatUrl(file.Cat) + "/" + file.Url;
             return GetUrl("Show", "Files",
-                new {parentUrl = await ParentUrl(file), url});
+                new {parentUrl = await ParentUrl(file), url}, absolute);
             /*return _urlHelper.Action<FilesController>(x => x.Show(ParentUrl(file), CatUrl(file), file.Url));*/
         }
 

@@ -76,7 +76,7 @@ namespace BioEngine.Site.ViewModels
             htmlDoc.LoadHtml(html);
 
             var contentBlock = htmlDoc.DocumentNode.Descendants("img").FirstOrDefault();
-            return new Uri(contentBlock?.GetAttributeValue("src", ""));
+            return contentBlock != null ? new Uri(contentBlock.GetAttributeValue("src", "")) : null;
         }
     }
 

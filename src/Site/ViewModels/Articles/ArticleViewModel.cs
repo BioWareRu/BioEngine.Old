@@ -25,9 +25,9 @@ namespace BioEngine.Site.ViewModels.Articles
 
         public override async Task<string> GetDescription()
         {
-            return await Task.FromResult(GetDescriptionFromHtml(!string.IsNullOrEmpty(Article.Announce)
+            return await Task.FromResult(!string.IsNullOrEmpty(Article.Announce)
                 ? Article.Announce
-                : Article.Text));
+                : GetDescriptionFromHtml(Article.Text));
         }
 
         public override Uri GetImageUrl()

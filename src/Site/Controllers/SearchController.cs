@@ -19,10 +19,13 @@ namespace BioEngine.Site.Controllers
 {
     public class SearchController : BaseController
     {
+        private readonly IContentHelperInterface _contentHelper;
+
         public SearchController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
             IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
             : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
+            _contentHelper = contentHelper;
         }
 
         [HttpGet("/search.html")]
@@ -40,7 +43,7 @@ namespace BioEngine.Site.Controllers
                     var searchBlock = CreateSearchBlock("Игры", UrlManager.Search.BlockUrl("games", query), gamesCount,
                         games, x => x.Title,
                         x => Task.FromResult(UrlManager.Games.PublicUrl(x)),
-                        x => x.NewsDesc);
+                        x => _contentHelper.ReplacePlaceholders(x.NewsDesc));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -51,7 +54,7 @@ namespace BioEngine.Site.Controllers
                     var searchBlock = CreateSearchBlock("Новости", UrlManager.Search.BlockUrl("news", query), newsCount,
                         news, x => x.Title,
                         x => Task.FromResult(UrlManager.News.PublicUrl(x)),
-                        x => x.ShortText);
+                        x => _contentHelper.ReplacePlaceholders(x.ShortText));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -63,7 +66,7 @@ namespace BioEngine.Site.Controllers
                         articlesCount,
                         articles, x => x.Title,
                         async x => await UrlManager.Articles.PublicUrl(x),
-                        x => x.Announce);
+                        x => _contentHelper.ReplacePlaceholders(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -76,7 +79,7 @@ namespace BioEngine.Site.Controllers
                         articlesCatsCount,
                         articlesCats, x => x.Title,
                         async x => await UrlManager.Articles.CatPublicUrl(x),
-                        x => x.Descr);
+                        x => _contentHelper.ReplacePlaceholders(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -88,7 +91,7 @@ namespace BioEngine.Site.Controllers
                         filesCount,
                         files, x => x.Title,
                         async x => await UrlManager.Files.PublicUrl(x),
-                        x => x.Announce);
+                        x => _contentHelper.ReplacePlaceholders(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -101,7 +104,7 @@ namespace BioEngine.Site.Controllers
                         fileCatsCount,
                         fileCats, x => x.Title,
                         async x => await UrlManager.Files.CatPublicUrl(x),
-                        x => x.Descr);
+                        x => _contentHelper.ReplacePlaceholders(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -114,7 +117,7 @@ namespace BioEngine.Site.Controllers
                         galleryCatsCount,
                         galleryCats, x => x.Title,
                         async x => await UrlManager.Gallery.CatPublicUrl(x),
-                        x => x.Desc);
+                        x => _contentHelper.ReplacePlaceholders(x.Desc));
                     viewModel.AddBlock(await searchBlock);
                 }
             }
@@ -123,12 +126,12 @@ namespace BioEngine.Site.Controllers
 
         private async Task<SearchBlock> CreateSearchBlock<T>(string title, string url, long totalCount,
             IEnumerable<T> items,
-            Func<T, string> getTitle, Func<T, Task<string>> getUrl, Func<T, string> getDesc)
+            Func<T, string> getTitle, Func<T, Task<string>> getUrl, Func<T, Task<string>> getDesc)
         {
             var block = new SearchBlock(title, url, totalCount);
             foreach (var item in items)
             {
-                block.AddItem(getTitle(item), await getUrl(item), getDesc(item));
+                block.AddItem(getTitle(item), await getUrl(item), await getDesc(item));
             }
             return block;
         }

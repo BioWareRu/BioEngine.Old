@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
@@ -16,6 +17,9 @@ namespace BioEngine.Common.Ipb
         private readonly string _apiUrl;
         private readonly string _ipbNewsForumId;
         private readonly HttpClient _client;
+
+        private static readonly Regex BlockQuoteRegex =
+            new Regex("<blockquote>(.+?)<\\/blockquote>", RegexOptions.Singleline);
 
         public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext)
         {
@@ -110,10 +114,10 @@ namespace BioEngine.Common.Ipb
             return true;
         }
 
-        private static string GetPostContent(News news)
+        public static string GetPostContent(News news)
         {
             var postContent = news.ShortText;
-            if (news.AddText.Length > 0)
+            if (!string.IsNullOrEmpty(news.AddText))
             {
                 var addText = "<div class=\"ipsSpoiler\" data-ipsspoiler=\"\">" +
                               "<div class=\"ipsSpoiler_header\">" +
@@ -130,6 +134,8 @@ namespace BioEngine.Common.Ipb
             postContent = postContent.Replace("<ul>", "<ul class=\"bbc\">");
             postContent = postContent.Replace("<ol>", "<ul class=\"bbcol decimal\">");
             postContent = postContent.Replace("</ol>", "</ul>");
+            postContent = BlockQuoteRegex.Replace(postContent,
+                "<blockquote class=\"ipsQuote\" data-ipsquote=\"\"><div class=\"ipsQuote_citation\">Цитата</div><div class=\"ipsQuote_contents ipsClearfix\">$1</div></blockquote>");
 
             return postContent;
         }

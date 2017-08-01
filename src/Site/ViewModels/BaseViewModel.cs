@@ -56,7 +56,7 @@ namespace BioEngine.Site.ViewModels
                 description = await ContentHelper.ReplacePlaceholders(description);
             }
 
-            return description;
+            return ContentHelper.StripTags(description);
         }
 
         public virtual Uri GetImageUrl()

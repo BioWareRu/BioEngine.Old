@@ -61,6 +61,11 @@ namespace BioEngine.Site.Helpers
             return desc;
         }
 
+        public string StripTags(string html)
+        {
+            return StripTagsRegex.Replace(html, string.Empty).Trim();
+        }
+
         private readonly List<ContentPlaceholder> _placeholders;
 
 

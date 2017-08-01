@@ -4,37 +4,33 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Common.Ipb
 {
     public class IPBApiHelper
     {
-        private readonly BWContext _dbContext;
-        private readonly string _apiUrl;
-        private readonly string _ipbNewsForumId;
+        private readonly IPBApiConfig _ipbApiConfig;
+        private readonly IContentHelperInterface _contextHelper;
         private readonly HttpClient _client;
 
         private static readonly Regex BlockQuoteRegex =
             new Regex("<blockquote.*?>(.+?)<\\/blockquote>", RegexOptions.Singleline);
 
-        public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext)
+        public IPBApiHelper(IPBApiConfig ipbApiConfig, IContentHelperInterface contextHelper)
         {
-            _dbContext = dbContext;
-            var apiKey = configuration["BE_IPB_API_KEY"];
-            _apiUrl = configuration["BE_IPB_API_URL"];
-            _ipbNewsForumId = configuration["BE_IPB_NEWS_FORUM_ID"];
+            _ipbApiConfig = ipbApiConfig;
+            _contextHelper = contextHelper;
             _client = new HttpClient();
-            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(apiKey) + ":");
+            _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(_ipbApiConfig.ApiKey) + ":");
         }
 
         private async Task<HttpResponseMessage> DoApiRequest(string method,
             IEnumerable<KeyValuePair<string, string>> data)
         {
-            var url = _apiUrl + method;
+            var url = _ipbApiConfig.ApiUrl + method;
             var response = await _client.PostAsync(url,
                 new FormUrlEncodedContent(data));
             return response;
@@ -42,7 +38,7 @@ namespace BioEngine.Common.Ipb
 
         private async Task<HttpResponseMessage> DoDeleteApiRequest(string method)
         {
-            var url = _apiUrl + method;
+            var url = _ipbApiConfig.ApiUrl + method;
             var response = await _client.DeleteAsync(url);
             return response;
         }
@@ -53,31 +49,28 @@ namespace BioEngine.Common.Ipb
             return Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<bool> CreateOrUpdateNewsTopic(News news)
+        public async Task<(int topicId, int postId)> CreateOrUpdateNewsTopic(News news)
         {
+            (int topicId, int postId) result = (news.ForumTopicId, news.ForumPostId);
             if (news.ForumTopicId == 0)
             {
                 var topicCreateResponse = await DoApiRequest("/forums/topics",
                     new List<KeyValuePair<string, string>>()
                     {
-                        new KeyValuePair<string, string>("forum", _ipbNewsForumId),
+                        new KeyValuePair<string, string>("forum", _ipbApiConfig.NewsForumId),
                         new KeyValuePair<string, string>("author", news.AuthorId.ToString()),
                         new KeyValuePair<string, string>("title", news.Title),
                         new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
                         new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
-                        new KeyValuePair<string, string>("forum", _ipbNewsForumId),
-                        new KeyValuePair<string, string>("post", GetPostContent(news))
+                        new KeyValuePair<string, string>("post", await GetPostContent(news))
                     });
                 var response = await topicCreateResponse.Content.ReadAsStringAsync();
                 if (topicCreateResponse.IsSuccessStatusCode)
                 {
                     var topicCreateData =
                         JObject.Parse(response);
-                    news.ForumTopicId = topicCreateData.Value<int>("id");
-                    news.ForumPostId = topicCreateData["firstPost"].Value<int>("id");
-                    _dbContext.Update(news);
-                    await _dbContext.SaveChangesAsync();
-                    return true;
+                    result.topicId = topicCreateData.Value<int>("id");
+                    result.postId = topicCreateData["firstPost"].Value<int>("id");
                 }
                 throw new Exception($"Can't create topic: {response}");
             }
@@ -103,7 +96,7 @@ namespace BioEngine.Common.Ipb
                 var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
                     new List<KeyValuePair<string, string>>()
                     {
-                        new KeyValuePair<string, string>("post", GetPostContent(news))
+                        new KeyValuePair<string, string>("post", await GetPostContent(news))
                     });
                 if (!postUpdateResponse.IsSuccessStatusCode)
                 {
@@ -111,12 +104,12 @@ namespace BioEngine.Common.Ipb
                         $"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
                 }
             }
-            return true;
+            return result;
         }
 
-        public static string GetPostContent(News news)
+        public async Task<string> GetPostContent(News news)
         {
-            var postContent = news.ShortText;
+            var postContent = await _contextHelper.ReplacePlaceholders(news.ShortText);
             if (!string.IsNullOrEmpty(news.AddText))
             {
                 var addText = "<div class=\"ipsSpoiler\" data-ipsspoiler=\"\">" +
@@ -124,7 +117,7 @@ namespace BioEngine.Common.Ipb
                               "<span>Скрытый текст</span>" +
                               "</div>" +
                               "<div class=\"ipsSpoiler_contents\">" +
-                              $"{news.AddText}" +
+                              $"{await _contextHelper.ReplacePlaceholders(news.AddText)}" +
                               "</div>" +
                               "</div>";
 

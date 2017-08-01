@@ -4,23 +4,21 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Site.Components.Url;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Site.Helpers
 {
-    public class ContentHelper
+    public class ContentHelper : IContentHelperInterface
     {
         private readonly BWContext _dbContext;
         private readonly UrlManager _urlManager;
-        private readonly ILogger<ContentHelper> _logger;
 
-        public ContentHelper(BWContext dbContext, UrlManager urlManager, ILogger<ContentHelper> logger)
+        public ContentHelper(BWContext dbContext, UrlManager urlManager)
         {
             _dbContext = dbContext;
             _urlManager = urlManager;
-            _logger = logger;
 
             _placeholders = new List<ContentPlaceholder>()
             {
@@ -44,28 +42,7 @@ namespace BioEngine.Site.Helpers
             };
         }
 
-        private static readonly Regex ImgRegex = new Regex("<img.+?src=[\\\"\'](.+?)[\\\"\'].*?>",
-            RegexOptions.IgnoreCase);
-
         private static readonly Regex StripTagsRegex = new Regex("<.*?>");
-
-        public Uri GetImageUrl(string content)
-        {
-            Uri uri = null;
-            var result = ImgRegex.Match(content);
-            if (result.Success)
-            {
-                try
-                {
-                    uri = new Uri(result.Groups[1].Value);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning($"Bad image url in content: {ex.Message}");
-                }
-            }
-            return uri;
-        }
 
         public static string GetDescription(string content, int lenght = 20)
         {

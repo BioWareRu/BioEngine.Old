@@ -135,7 +135,7 @@ namespace BioEngine.Common.Ipb
             postContent = postContent.Replace("<ol>", "<ul class=\"bbcol decimal\">");
             postContent = postContent.Replace("</ol>", "</ul>");
             postContent = BlockQuoteRegex.Replace(postContent,
-                "<blockquote class=\"ipsQuote\" data-ipsquote=\"\"><div class=\"ipsQuote_citation\">Цитата</div><div class=\"ipsQuote_contents ipsClearfix\"><p>$1</p></div></blockquote>");
+                "<blockquote class=\"bioQuote\">$1</blockquote>");
 
             return postContent;
         }

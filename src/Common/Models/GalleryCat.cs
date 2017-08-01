@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
@@ -9,15 +10,15 @@ namespace BioEngine.Common.Models
     public class GalleryCat : ChildModel<int>, ICat<GalleryCat>
     {
         public const int PicsOnPage = 24;
-
+        [JsonProperty]
         public int Pid { get; set; }
 
         public string GameOld { get; set; }
-
+        [JsonProperty]
         public string Title { get; set; }
-
+        [JsonProperty]
         public string Desc { get; set; }
-
+        [JsonProperty]
         public string Url { get; set; }
 
         [ForeignKey(nameof(Pid))]

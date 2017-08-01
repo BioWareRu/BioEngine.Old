@@ -5,19 +5,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using BioEngine.Common.Base;
 using BioEngine.Common.Helpers;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_gallery")]
     public class GalleryPic : ChildModel<int>
     {
+        [JsonProperty]
         public int CatId { get; set; }
 
         [Column("files")]
+        [JsonProperty]
         public string FilesJson { get; set; }
 
+        [JsonProperty]
         public string Desc { get; set; }
 
+        [JsonProperty]
         public int Pub { get; set; }
 
         [ForeignKey(nameof(CatId))]
@@ -31,6 +36,7 @@ namespace BioEngine.Common.Models
 
         private List<GalleryPicFile> _files;
 
+        [JsonProperty]
         public List<GalleryPicFile> Files
         {
             get
@@ -74,9 +80,9 @@ namespace BioEngine.Common.Models
 
     public struct GalleryPicFile
     {
-        public string Name;
-        public long Size;
-        public string Resolution;
+        [JsonProperty] public string Name;
+        [JsonProperty] public long Size;
+        [JsonProperty] public string Resolution;
 
         public GalleryPicFile(string name, long size, string resolution)
         {

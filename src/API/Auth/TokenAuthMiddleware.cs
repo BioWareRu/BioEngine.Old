@@ -2,6 +2,7 @@
 using BioEngine.Common.DB;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -9,21 +10,25 @@ namespace BioEngine.API.Auth
 {
     public class TokenAuthMiddleware : AuthenticationMiddleware<TokenAuthOptions>
     {
-        private readonly TokenAuthOptions _options;
         private readonly ILoggerFactory _loggerFactory;
         private readonly BWContext _dbContext;
+        private readonly IConfigurationRoot _configuration;
 
-        public TokenAuthMiddleware(RequestDelegate next, IOptions<TokenAuthOptions> options, ILoggerFactory loggerFactory,
-            UrlEncoder encoder, BWContext dbContext) : base(next, options, loggerFactory, encoder)
+        public TokenAuthMiddleware(RequestDelegate next, IOptions<TokenAuthOptions> options,
+            ILoggerFactory loggerFactory,
+            UrlEncoder encoder, BWContext dbContext,
+            IConfigurationRoot configuration) : base(next, options, loggerFactory,
+            encoder)
         {
-            _options = options.Value;
             _loggerFactory = loggerFactory;
             _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         protected override AuthenticationHandler<TokenAuthOptions> CreateHandler()
         {
-            return new TokenAuthenticationHandler(_dbContext, _options, _loggerFactory.CreateLogger<TokenAuthenticationHandler>());
+            return new TokenAuthenticationHandler(_dbContext, _configuration, _loggerFactory
+                .CreateLogger<TokenAuthenticationHandler>());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using Newtonsoft.Json;
@@ -8,10 +9,6 @@ namespace BioEngine.Common.Models
     [Table("be_news")]
     public class News : ChildModel<int>
     {
-        [Key]
-        [JsonProperty]
-        public override int Id { get; set; }
-
         [JsonProperty]
         public string Url { get; set; }
 
@@ -30,6 +27,7 @@ namespace BioEngine.Common.Models
         public string AddText { get; set; }
 
         [Required]
+        [JsonProperty]
         public int AuthorId { get; set; }
 
         [Column("tid")]
@@ -45,10 +43,10 @@ namespace BioEngine.Common.Models
 
         [Required]
         [JsonProperty]
-        public int Date { get; set; }
+        public long Date { get; set; } = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         [JsonProperty]
-        public int LastChangeDate { get; set; }
+        public long LastChangeDate { get; set; } = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         [Required]
         [JsonProperty]

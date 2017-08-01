@@ -1,16 +1,16 @@
 ﻿using System.IO;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
-using BioEngine.API.Data;
+using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using JsonApiDotNetCore.Data;
-using JsonApiDotNetCore.Extensions;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -52,16 +52,18 @@ namespace BioEngine.API
 
             services.AddDbContext<BWContext>();
 
-            services.AddJsonApi<BWContext>(options =>
+            services.AddCors(options =>
             {
-                options.DefaultPageSize = 20;
-                options.IncludeTotalRecordCount = true;
+                // Define one or more CORS policies
+                options.AddPolicy("allorigins",
+                    corsBuilder =>
+                    {
+                        corsBuilder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod().AllowCredentials();
+                    });
             });
 
-            services.AddScoped<IEntityRepository<News, int>, NewsRepository>();
-
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>()); ;
         }
 
         public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
@@ -71,7 +73,8 @@ namespace BioEngine.API
         {
             ConfigureLogging(env, loggerFactory);
             app.UseMiddleware<TokenAuthMiddleware>();
-            app.UseJsonApi();
+            app.UseCors("allorigins");
+            app.UseMvc();
         }
 
         private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -2,24 +2,26 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
     [Table("be_files_cats")]
     public class FileCat : ChildModel<int>, ICat<FileCat>
     {
+        [JsonProperty]
         public int Pid { get; set; }
 
         
         public string GameOld { get; set; }
 
-        
+        [JsonProperty]
         public string Title { get; set; }
 
-        
+        [JsonProperty]
         public string Descr { get; set; }
 
-        
+        [JsonProperty]
         public string Url { get; set; }
 
         [ForeignKey(nameof(Pid))]

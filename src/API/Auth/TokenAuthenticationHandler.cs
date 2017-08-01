@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
+using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.API.Auth
@@ -14,13 +18,14 @@ namespace BioEngine.API.Auth
     public class TokenAuthenticationHandler : AuthenticationHandler<TokenAuthOptions>
     {
         private readonly BWContext _dbContext;
-        private readonly TokenAuthOptions _options;
+        private readonly IConfigurationRoot _configuration;
         private readonly ILogger<TokenAuthenticationHandler> _logger;
 
-        public TokenAuthenticationHandler(BWContext dbContext, TokenAuthOptions options, ILogger<TokenAuthenticationHandler> logger)
+        public TokenAuthenticationHandler(BWContext dbContext,
+            IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger)
         {
             _dbContext = dbContext;
-            _options = options;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -36,35 +41,76 @@ namespace BioEngine.API.Auth
                 {
                     var tokenString = headerString.Replace("Bearer ", "");
 
-                    var token =
-                        await _dbContext.AccessTokens.Where(
-                                x => x.Token == tokenString && x.Expires > DateTime.Now && x.ClientId == _options.ClientId)
-                            .Include(x => x.User)
-                            .ThenInclude(x => x.SiteTeamMember)
-                            .FirstOrDefaultAsync();
-                    if (token != null)
+                    if (!string.IsNullOrEmpty(tokenString))
                     {
-                        var identity = new ClaimsIdentity("tokenAuth");
-                        identity.AddClaim(new Claim(ClaimTypes.Name, token.User.Name));
-                        foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
+                        var user = await GetUser(tokenString);
+                        if (user != null)
                         {
-                            if (token.User.HasRight(userRight, token.User.SiteTeamMember))
+                            var identity = new ClaimsIdentity("tokenAuth");
+                            identity.AddClaim(new Claim(ClaimTypes.Name, user.Name));
+                            foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
                             {
-                                identity.AddClaim(new Claim(ClaimTypes.Role, userRight.ToString()));
+                                if (user.HasRight(userRight, user.SiteTeamMember))
+                                {
+                                    identity.AddClaim(new Claim(ClaimTypes.Role, userRight.ToString()));
+                                }
                             }
+                            var userTicket =
+                                new AuthenticationTicket(new ClaimsPrincipal(identity), null, "tokenAuth");
+                            result = AuthenticateResult.Success(userTicket);
                         }
-                        var userTicket = new AuthenticationTicket(new ClaimsPrincipal(identity), null, "tokenAuth");
-                        result = AuthenticateResult.Success(userTicket);
-                    }
-                    else
-                    {
-                        result = AuthenticateResult.Fail("Bad token");
+                        else
+                        {
+                            result = AuthenticateResult.Fail("Bad token");
+                        }
                     }
                 }
             }
             stopwatch.Stop();
             _logger.LogWarning($"Auth process: {stopwatch.ElapsedMilliseconds}");
             return result;
+        }
+
+        private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>();
+
+        private async Task<User> GetUser(string token)
+        {
+            var exists = TokenUsers.TryGetValue(token, out var user);
+            if (!exists)
+            {
+                var userInfo = await GetUserInformation(token);
+                if (userInfo.IsParsed)
+                {
+                    var id = int.Parse(userInfo.Id);
+                    user =
+                        await _dbContext.Users.Where(
+                                u => u.Id == id
+                            )
+                            .Include(x => x.SiteTeamMember)
+                            .FirstOrDefaultAsync();
+                    if (user != null)
+                    {
+                        TokenUsers.TryAdd(token, user);
+                    }
+                }
+            }
+            return user;
+        }
+
+        private async Task<IpbUserInfo> GetUserInformation(string token)
+        {
+            var userInformationEndpoint = _configuration["Data:OAuth:UserInformationEndpoint"];
+
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var stringTask = client.GetStringAsync(userInformationEndpoint);
+
+            var msg = await stringTask;
+
+            var userInformation = new IpbUserInfo(msg, _logger);
+
+            return userInformation;
         }
     }
 }

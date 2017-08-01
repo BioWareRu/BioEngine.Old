@@ -20,6 +20,7 @@ namespace BioEngine.Common.Models
 
         [Key]
         [Column("poll_id")]
+        [JsonProperty]
         public override int Id { get; set; }
 
         public string Question { get; set; }
@@ -33,12 +34,16 @@ namespace BioEngine.Common.Models
         [Column("votes")]
         public string VotesJson { get; set; }
 
+        [JsonProperty]
         public int NumChoices { get; set; }
+        [JsonProperty]
         public int Multiple { get; set; }
 
         [Column("onoff")]
+        [JsonProperty]
         public int OnOff { get; set; }
 
+        [JsonProperty]
         public List<PollResultsEntry> Results
         {
             get
@@ -62,6 +67,7 @@ namespace BioEngine.Common.Models
             }
         }
 
+        [JsonProperty]
         public List<PollOption> Options => JsonConvert.DeserializeObject<List<PollOption>>(OptionsJson);
 
         [NotMapped]

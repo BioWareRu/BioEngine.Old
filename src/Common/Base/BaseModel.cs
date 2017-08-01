@@ -14,6 +14,7 @@ namespace BioEngine.Common.Base
     {
         [Key]
         [Required]
+        [JsonProperty("id")]
         public virtual TPkType Id { get; set; }
 
         public override object GetId()

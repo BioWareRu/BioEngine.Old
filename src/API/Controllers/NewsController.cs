@@ -1,45 +1,27 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using BioEngine.API.Components.REST;
+using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using JsonApiDotNetCore.Controllers;
-using JsonApiDotNetCore.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.API.Controllers
 {
-    [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
-    public class NewsController : JsonApiController<News>
+    public class NewsController : RestController<News, int>
     {
-        private readonly IResourceService<News, int> _entityRepository;
-
-        public NewsController(IJsonApiContext jsonApiContext, IResourceService<News, int> entityRepository,
-            ILoggerFactory loggerFactory) : base(jsonApiContext, entityRepository, loggerFactory)
+        public NewsController(BWContext dbContext) : base(dbContext)
         {
-            _entityRepository = entityRepository;
         }
 
-        public override async Task<IActionResult> GetAsync()
+        protected override IQueryable<News> GetBaseQuery()
         {
-            if (HttpContext.User.IsInRole(UserRights.News.ToString()))
-            {
-                var result = await base.GetAsync();
-                return result;
-            }
-            return new ForbidResult();
+            return DBContext.News.Include(x => x.Game).Include(x => x.Developer).Include(x => x.Topic)
+                .Include(x => x.Author);
         }
 
-        [HttpPost("{id:int}/publish")]
-        public async Task<IActionResult> Publish(int id)
+        protected override Task<News> GetItem(int id)
         {
-            var news = await _entityRepository.GetAsync(id);
-            if (news != null)
-            {
-                news.Pub = 1;
-                //await _entityRepository.UpdateAsync(news.Id, news);
-                return Ok(news);
-            }
-            return NotFound();
+            return GetBaseQuery().FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

@@ -12,14 +12,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Interfaces;
 
 namespace BioEngine.Site.Controllers
 {
     public class SitemapController : BaseController
     {
         public SitemapController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-           IOptions<AppSettings> appSettingsOptions)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+           IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
         }
 

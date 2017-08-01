@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
@@ -18,8 +19,9 @@ namespace BioEngine.Site.Controllers
     public class PollsController : BaseController
     {
         public PollsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions) : base(context, parentEntityProvider, urlManager,
-            appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper) : base(context,
+            parentEntityProvider, urlManager,
+            appSettingsOptions, contentHelper)
         {
         }
 

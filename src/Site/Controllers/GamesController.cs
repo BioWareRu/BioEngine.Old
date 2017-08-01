@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
@@ -15,8 +16,8 @@ namespace BioEngine.Site.Controllers
     public class GamesController : BaseController
     {
         public GamesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
         }
 

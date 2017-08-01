@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Common.Search;
 using BioEngine.Site.Base;
@@ -19,8 +20,8 @@ namespace BioEngine.Site.Controllers
     public class SearchController : BaseController
     {
         public SearchController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
         }
 

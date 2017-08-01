@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
@@ -16,6 +17,7 @@ namespace BioEngine.Site.ViewModels
         protected readonly IEnumerable<Settings> Settings;
         public readonly UrlManager UrlManager;
         public readonly ParentEntityProvider ParentEntityProvider;
+        protected readonly IContentHelperInterface ContentHelper;
 
         protected BaseViewModel(BaseViewModelConfig config)
         {
@@ -23,6 +25,7 @@ namespace BioEngine.Site.ViewModels
             AppSettings = config.AppSettings;
             UrlManager = config.UrlManager;
             ParentEntityProvider = config.ParentEntityProvider;
+            ContentHelper = config.ContentHelper;
             SiteTitle = AppSettings.Title;
             ImageUrl = new Uri(AppSettings.SocialLogo);
         }
@@ -43,7 +46,18 @@ namespace BioEngine.Site.ViewModels
             return Settings.FirstOrDefault(x => x.Name == settingName)?.Value;
         }
 
-        public abstract Task<string> GetDescription();
+        protected abstract Task<string> GetDescription();
+
+        public async Task<string> GetPageDescription()
+        {
+            var description = await GetDescription();
+            if (!string.IsNullOrEmpty(description))
+            {
+                description = await ContentHelper.ReplacePlaceholders(description);
+            }
+
+            return description;
+        }
 
         public virtual Uri GetImageUrl()
         {
@@ -82,14 +96,16 @@ namespace BioEngine.Site.ViewModels
 
     public struct BaseViewModelConfig
     {
+        public IContentHelperInterface ContentHelper { get; }
         public readonly UrlManager UrlManager;
         public readonly AppSettings AppSettings;
         public readonly List<Settings> Settings;
         public readonly ParentEntityProvider ParentEntityProvider;
 
         public BaseViewModelConfig(UrlManager urlManager, AppSettings appSettings, List<Settings> settings,
-            ParentEntityProvider parentEntityProvider)
+            ParentEntityProvider parentEntityProvider, IContentHelperInterface contentHelper)
         {
+            ContentHelper = contentHelper;
             UrlManager = urlManager;
             AppSettings = appSettings;
             Settings = settings;

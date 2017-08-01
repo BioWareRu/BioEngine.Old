@@ -31,7 +31,7 @@ namespace BioEngine.Site.ViewModels.Files
             return title;
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             var parent = await ParentEntityProvider.GetModelParent(FileCat);
             return $"Статьи категории \"{FileCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";

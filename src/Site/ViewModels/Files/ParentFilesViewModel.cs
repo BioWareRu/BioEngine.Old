@@ -23,7 +23,7 @@ namespace BioEngine.Site.ViewModels.Files
             return Task.FromResult($"{Parent.DisplayTitle} - Файлы");
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult($"Файлы в разделе \"{Parent.DisplayTitle}\"");
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
@@ -29,8 +30,9 @@ namespace BioEngine.Site.Controllers
         private readonly ILogger<NewsController> _logger;
 
         public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, ILogger<NewsController> logger
-        ) : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, ILogger<NewsController> logger,
+            IContentHelperInterface contentHelper
+        ) : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
             _logger = logger;
         }

@@ -25,7 +25,7 @@ namespace BioEngine.Site.ViewModels.Search
             return Task.FromResult($"Поиск - {Query}");
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult($"Поиск по запросу {Query}");
         }

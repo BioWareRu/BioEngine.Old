@@ -23,7 +23,7 @@ namespace BioEngine.Site.ViewModels.Articles
             return title;
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult(!string.IsNullOrEmpty(Article.Announce)
                 ? Article.Announce

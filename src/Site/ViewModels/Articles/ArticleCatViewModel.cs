@@ -26,7 +26,7 @@ namespace BioEngine.Site.ViewModels.Articles
             return title;
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             if (!string.IsNullOrEmpty(ArticleCat.Content))
             {

@@ -22,7 +22,7 @@ namespace BioEngine.Site.ViewModels.Files
             return title;
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult(GetDescriptionFromHtml(!string.IsNullOrEmpty(File.Announce)
                 ? File.Announce

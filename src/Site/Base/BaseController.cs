@@ -26,14 +26,14 @@ namespace BioEngine.Site.Base
         protected readonly BaseViewModelConfig ViewModelConfig;
 
         protected BaseController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
         {
             UrlManager = urlManager;
             Context = context;
             ParentEntityProvider = parentEntityProvider;
             _settings = context.Settings.ToList();
             ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings,
-                parentEntityProvider);
+                parentEntityProvider, contentHelper);
         }
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();

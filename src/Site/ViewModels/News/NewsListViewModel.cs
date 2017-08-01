@@ -23,7 +23,7 @@ namespace BioEngine.Site.ViewModels.News
             return Task.FromResult(SiteTitle);
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult("Самые последние новости из мира BioWare");
         }

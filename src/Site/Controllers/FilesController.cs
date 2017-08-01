@@ -20,8 +20,8 @@ namespace BioEngine.Site.Controllers
     public class FilesController : BaseController
     {
         public FilesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions)
+            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
+            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
         {
         }
 

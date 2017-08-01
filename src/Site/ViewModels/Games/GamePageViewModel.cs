@@ -29,7 +29,7 @@ namespace BioEngine.Site.ViewModels.Games
             return Task.FromResult(Game.Title);
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult($"Вся информация о игре {Game.DisplayTitle}");
         }

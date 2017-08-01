@@ -26,26 +26,32 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#ffffff">
+    
+    @{
+        var title = Html.Raw(await Model.Title());
+        var imageUrl = Html.Raw(Model.GetImageUrl());
+        var description = Html.Raw(await Model.GetPageDescription());
+    }
 
     <!-- Facebook Markup -->
-    <meta property="og:title" content="@Html.Raw(await Model.Title())">
+    <meta property="og:title" content="@title">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="@Html.Raw(Model.GetImageUrl())">
+    <meta property="og:image" content="@imageUrl">
     <meta property="og:url" content="@Html.Raw(Context.Request.AbsoluteUrl())">
-    <meta property="og:description" content="@Html.Raw(await Model.GetDescription())">
+    <meta property="og:description" content="@description">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@Html.Raw(Model.SiteTitle)">
-    <meta name="twitter:title" content="@Html.Raw(await Model.Title())">
-    <meta name="twitter:description" content="@Html.Raw(await Model.GetDescription())">
-    <meta property="twitter:image:src" content="@Html.Raw(Model.GetImageUrl())">
+    <meta name="twitter:title" content="@title">
+    <meta name="twitter:description" content="@description">
+    <meta property="twitter:image:src" content="@imageUrl">
 
     <!-- G+ -->
-    <meta itemprop="name" content="@Html.Raw(await Model.Title())">
-    <meta itemprop="description" content="@Html.Raw(await Model.GetDescription())">
-    <meta itemprop="image" content="@Html.Raw(Model.GetImageUrl())">
+    <meta itemprop="name" content="@title">
+    <meta itemprop="description" content="@description">
+    <meta itemprop="image" content="@imageUrl">
     
-    <title>@Html.Raw(await Model.Title())</title>
+    <title>@title</title>
     <link rel="stylesheet" href="/css/style_@(Model.ThemeName).css?v=2"
           id="stylesheet">
     <script>

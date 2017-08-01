@@ -27,7 +27,7 @@ namespace BioEngine.Site.ViewModels.News
             return Task.FromResult($"{Parent.DisplayTitle} - Новости");
         }
 
-        public override async Task<string> GetDescription()
+        protected override async Task<string> GetDescription()
         {
             return await Task.FromResult($"Новости раздела ${Parent.DisplayTitle}");
         }

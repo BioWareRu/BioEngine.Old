@@ -19,7 +19,7 @@ namespace BioEngine.Common.Ipb
         private readonly HttpClient _client;
 
         private static readonly Regex BlockQuoteRegex =
-            new Regex("<blockquote>(.+?)<\\/blockquote>", RegexOptions.Singleline);
+            new Regex("<blockquote.*?>(.+?)<\\/blockquote>", RegexOptions.Singleline);
 
         public IPBApiHelper(IConfigurationRoot configuration, BWContext dbContext)
         {

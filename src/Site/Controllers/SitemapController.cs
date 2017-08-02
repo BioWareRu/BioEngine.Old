@@ -68,7 +68,7 @@ namespace BioEngine.Site.Controllers
                 .Include(x => x.Topic).ToListAsync();
             foreach (var news in allNews)
             {
-                nodes.Add(new SitemapNode(Url.News().PublicUrl(news, true))
+                nodes.Add(new SitemapNode(UrlManager.News.PublicUrl(news, true))
                 {
                     News = new SitemapNews(newsPublication: new NewsPublication(name: news.Title, language: "ru"),
                         publicationDate: DateTimeOffset.FromUnixTimeSeconds(news.Date).Date,

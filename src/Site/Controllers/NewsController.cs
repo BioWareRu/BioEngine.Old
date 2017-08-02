@@ -7,6 +7,7 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
+using BioEngine.Routing;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
@@ -37,14 +38,12 @@ namespace BioEngine.Site.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/")]
         [HttpGet("/index.html")]
         public async Task<IActionResult> Index()
         {
             return await NewsList();
         }
 
-        [HttpGet("/page/{page:int}.html")]
         public async Task<IActionResult> Index(int page)
         {
             return await NewsList(page);
@@ -53,15 +52,11 @@ namespace BioEngine.Site.Controllers
         private async Task<IActionResult> NewsList(int page = 1)
         {
             if (page < 1)
-            {
                 return BadRequest();
-            }
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
             var query = Context.News.AsQueryable();
             if (!canUserSeeUnpublishedNews)
-            {
                 query = query.Where(x => x.Pub == 1);
-            }
             var news =
                 await query
                     .OrderByDescending(x => x.Sticky)
@@ -78,37 +73,31 @@ namespace BioEngine.Site.Controllers
             return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
         }
 
-        [Route("/{year:int}.html", Order = 1)]
         public async Task<IActionResult> NewsByYear(int year)
         {
             return await NewsByDate(year, null, null);
         }
 
-        [Route("/{year:int}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYear(int year, int page)
         {
             return await NewsByDate(year, null, null, page);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month)
         {
             return await NewsByDate(year, month, null);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int page)
         {
             return await NewsByDate(year, month, null, page);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day)
         {
             return await NewsByDate(year, month, day);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int page)
         {
             return await NewsByDate(year, month, day, page);
@@ -117,9 +106,7 @@ namespace BioEngine.Site.Controllers
         private async Task<IActionResult> NewsByDate(int year, int? month, int? day, int page = 1)
         {
             if (page < 1)
-            {
                 return BadRequest();
-            }
             var monthStart = month ?? 1;
             var monthEnd = month ?? 12;
             var dayStart = day ?? 1;
@@ -158,15 +145,13 @@ namespace BioEngine.Site.Controllers
                 new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
         }
 
-        [HttpGet("/{parentUrl}/news.html")]
-        public async Task<IActionResult> NewsList(string parentUrl)
+        public async Task<IActionResult> ParentNews(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
         }
 
-        [HttpGet("/{parentUrl}/news/page/{page}.html")]
-        public async Task<IActionResult> NewsList(string parentUrl, int page)
+        public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
@@ -175,9 +160,7 @@ namespace BioEngine.Site.Controllers
         private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
         {
             if (page < 1)
-            {
                 return BadRequest();
-            }
             var query = Context.News.Where(x => x.Pub == 1 && x.GameId == game.Id).AsQueryable();
             var totalNews = await query.CountAsync();
             var news = await query
@@ -228,7 +211,6 @@ namespace BioEngine.Site.Controllers
         }
 
 
-        [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
         public async Task<IActionResult> Show(int year, int month, int day, string url)
         {
             long dateStart;
@@ -251,12 +233,10 @@ namespace BioEngine.Site.Controllers
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
-                    .Where(n => (n.Date >= dateStart) && (n.Date <= dateEnd) && (n.Url == url));
+                    .Where(n => n.Date >= dateStart && n.Date <= dateEnd && n.Url == url);
 
             if (!await HasRight(UserRights.News))
-            {
                 newsQuery = newsQuery.Where(x => x.Pub == 1);
-            }
 
             var news = await newsQuery.FirstOrDefaultAsync();
 
@@ -265,7 +245,7 @@ namespace BioEngine.Site.Controllers
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
             var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(Url.News().ParentNewsUrl((dynamic) parent),
                 parent.DisplayTitle));
             return View(viewModel);
         }
@@ -286,18 +266,12 @@ namespace BioEngine.Site.Controllers
             return Redirect(redirectUrl);
         }
 
-        [HttpGet("/rss.xml")]
-        [HttpGet("/rss")]
-        [HttpGet("/news/rss.xml")]
-        [HttpGet("/news/rss")]
         public async Task<IActionResult> Rss([FromServices] IEnumerable<IChannelProvider> channelProviders = null)
         {
             channelProviders = channelProviders ?? new List<IChannelProvider>();
             var list = channelProviders as List<IChannelProvider>;
             if (list?.Count == 0)
-            {
                 list.Add(new NullChannelProvider());
-            }
 
             var channelResolver = new DefaultChannelProviderResolver();
             var xmlFormatter = new DefaultXmlFormatter();
@@ -334,9 +308,7 @@ namespace BioEngine.Site.Controllers
                 return new EmptyResult();
             }
             if (newsId == 0)
-            {
                 return new BadRequestResult();
-            }
             var logProperties = new List<ILogEventEnricher>
             {
                 new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
@@ -347,9 +319,7 @@ namespace BioEngine.Site.Controllers
             var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
 
             if (news == null)
-            {
                 return new NotFoundResult();
-            }
 
             using (LogContext.Push(logProperties.ToArray()))
             {
@@ -376,9 +346,7 @@ namespace BioEngine.Site.Controllers
                 return new EmptyResult();
             }
             if (newsId == 0)
-            {
                 return new BadRequestResult();
-            }
             var logProperties = new List<ILogEventEnricher>
             {
                 new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
@@ -389,9 +357,7 @@ namespace BioEngine.Site.Controllers
             var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
 
             if (news == null)
-            {
                 return new NotFoundResult();
-            }
 
             using (LogContext.Push(logProperties.ToArray()))
             {

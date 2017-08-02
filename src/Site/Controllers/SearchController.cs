@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
+using BioEngine.Routing;
 
 namespace BioEngine.Site.Controllers
 {
@@ -53,7 +54,7 @@ namespace BioEngine.Site.Controllers
                     var newsCount = CountEntities<News>(query);
                     var searchBlock = CreateSearchBlock("Новости", UrlManager.Search.BlockUrl("news", query), newsCount,
                         news, x => x.Title,
-                        x => Task.FromResult(UrlManager.News.PublicUrl(x)),
+                            x => Task.FromResult(Url.News().PublicUrl(x)),
                         x => _contentHelper.ReplacePlaceholders(x.ShortText));
                     viewModel.AddBlock(await searchBlock);
                 }

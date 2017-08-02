@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using BioEngine.Common.Ipb;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -12,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Site.Helpers
 {
@@ -30,7 +26,7 @@ namespace BioEngine.Site.Helpers
         public static void UseIpbOAuthAuthentication(this IApplicationBuilder app, IConfigurationRoot configuration,
             ILogger ipbLogger)
         {
-            app.UseOAuthAuthentication(new OAuthOptions()
+            app.UseOAuthAuthentication(new OAuthOptions
             {
                 SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,
                 AuthenticationScheme = "IPB",
@@ -57,9 +53,7 @@ namespace BioEngine.Site.Helpers
                         var success = GetClaims(await response.Content.ReadAsStringAsync(), context.Identity,
                             context.Options.ClaimsIssuer, ipbLogger);
                         if (!success)
-                        {
                             throw new Exception("Can't parse ipb response");
-                        }
                     }
                 }
             });
@@ -68,28 +62,20 @@ namespace BioEngine.Site.Helpers
         public static void InsertClaims(IpbUserInfo userInfo, ClaimsIdentity identity, string claimsIssuer)
         {
             if (!string.IsNullOrEmpty(userInfo.Id))
-            {
                 identity.AddClaim(
                     new Claim(ClaimTypes.NameIdentifier, userInfo.Id, ClaimValueTypes.String, claimsIssuer));
-            }
 
             if (!string.IsNullOrEmpty(userInfo.UserName))
-            {
                 identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, userInfo.UserName,
                     ClaimValueTypes.String,
                     claimsIssuer));
-            }
 
             if (!string.IsNullOrEmpty(userInfo.ProfileUrl))
-            {
                 identity.AddClaim(new Claim(ClaimTypes.Webpage, userInfo.ProfileUrl, ClaimValueTypes.String,
                     claimsIssuer));
-            }
 
             if (!string.IsNullOrEmpty(userInfo.AvatarUrl))
-            {
                 identity.AddClaim(new Claim("avatarUrl", userInfo.AvatarUrl, ClaimValueTypes.String, claimsIssuer));
-            }
         }
     }
 }

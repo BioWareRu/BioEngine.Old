@@ -31,7 +31,7 @@ namespace BioEngine.Site.Middlewares
                     context.Request.Headers["user-agent"].ToString()));
             }
             logProperties.Add(new PropertyEnricher("FullUrl", context.Request.AbsoluteUrl()));
-            using (LogContext.PushProperties(logProperties.ToArray()))
+            using (LogContext.Push(logProperties.ToArray()))
             {
                 await _next.Invoke(context);
             }

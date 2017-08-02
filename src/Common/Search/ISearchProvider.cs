@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BioEngine.Common.Base;
 
 namespace BioEngine.Common.Search
 {

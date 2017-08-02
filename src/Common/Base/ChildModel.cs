@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
@@ -13,21 +11,37 @@ namespace BioEngine.Common.Base
     {
         [JsonProperty]
         public virtual int? GameId { get; set; }
+
         [JsonProperty]
         public virtual int? DeveloperId { get; set; }
+
         [JsonProperty]
         public virtual int? TopicId { get; set; }
 
         [ForeignKey(nameof(GameId))]
         public virtual Game Game { get; set; }
+
         [ForeignKey(nameof(DeveloperId))]
         public virtual Developer Developer { get; set; }
+
         [ForeignKey(nameof(TopicId))]
         public virtual Topic Topic { get; set; }
 
-        public async Task<IParentModel> Parent(ParentEntityProvider parentEntityProvider)
+        public IParentModel Parent()
         {
-            return await parentEntityProvider.GetModelParent(this);
+            if (GameId > 0)
+            {
+                return Game;
+            }
+            if (DeveloperId > 0)
+            {
+                return Developer;
+            }
+            if (TopicId > 0)
+            {
+                return Topic;
+            }
+            throw new Exception("No parent!");
         }
     }
 }

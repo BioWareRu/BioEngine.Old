@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace BioEngine.API.Components
 {
@@ -64,14 +62,6 @@ namespace BioEngine.API.Components
                 : source.OrderBy(sortQuery.Name);
         }
 
-        private static IOrderedQueryable<TSource> Sort<TSource>(this IOrderedQueryable<TSource> source,
-            SortQuery sortQuery)
-        {
-            return sortQuery.SortDirection == SortDirection.Descending
-                ? source.ThenByDescending(sortQuery.Name)
-                : source.ThenBy(sortQuery.Name);
-        }
-
         public static IOrderedQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> source, string propertyName)
         {
             return CallGenericOrderMethod(source, propertyName, "OrderBy");
@@ -109,9 +99,9 @@ namespace BioEngine.API.Components
             var orderByMethod = typeof(Queryable).GetTypeInfo().GetMethods()
                 .First(x => x.Name == method && x.GetParameters().Length == 2);
             var orderByGeneric = orderByMethod.MakeGenericMethod(typeof(TSource), property.Type);
-            var result = orderByGeneric.Invoke(null, new object[] { source, lambda });
+            var result = orderByGeneric.Invoke(null, new object[] {source, lambda});
 
-            return (IOrderedQueryable<TSource>)result;
+            return (IOrderedQueryable<TSource>) result;
         }
 
         private static Dictionary<Type, ModelStructure> models = new Dictionary<Type, ModelStructure>();

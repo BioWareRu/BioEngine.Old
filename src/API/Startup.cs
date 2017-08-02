@@ -3,14 +3,12 @@ using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.DB;
-using BioEngine.Common.Models;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -20,6 +18,8 @@ namespace BioEngine.API
 {
     public class Startup
     {
+        public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -28,9 +28,7 @@ namespace BioEngine.API
                 .AddEnvironmentVariables();
 
             if (env.IsDevelopment())
-            {
                 builder.AddUserSecrets<Startup>();
-            }
 
             Configuration = builder.Build();
         }
@@ -63,10 +61,8 @@ namespace BioEngine.API
             });
 
             // Add framework services.
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>()); ;
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>());
         }
-
-        public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -92,7 +88,7 @@ namespace BioEngine.API
             else
             {
                 loggerConfiguration = loggerConfiguration
-                    .WriteTo.Graylog(new GraylogSinkOptions()
+                    .WriteTo.Graylog(new GraylogSinkOptions
                     {
                         HostnameOrAdress = Configuration["BE_GELF_HOST"],
                         Port = int.Parse(Configuration["BE_GELF_PORT"]),

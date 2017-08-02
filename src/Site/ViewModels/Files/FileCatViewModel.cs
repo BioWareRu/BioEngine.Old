@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
 namespace BioEngine.Site.ViewModels.Files
 {
     public class FileCatViewModel : BaseViewModel
     {
-        public FileCatViewModel(BaseViewModelConfig config, FileCat fileCat,
-            IEnumerable<CatsTree<FileCat, File>> children,
-            IEnumerable<File> lastFiles, int currentPage, int totalFiles)
+        public FileCatViewModel(BaseViewModelConfig config, FileCat fileCat,int totalFiles,
+            int currentPage)
             : base(config)
         {
             FileCat = fileCat;
-            Children = children;
-            LastFiles = lastFiles;
             CurrentPage = currentPage;
             TotalFiles = totalFiles;
         }
+
+        public int TotalFiles { get; }
 
         public FileCat FileCat { get; }
 
@@ -32,14 +30,10 @@ namespace BioEngine.Site.ViewModels.Files
 
         protected override Task<string> GetDescription()
         {
-            return Task.FromResult($"Статьи категории \"{FileCat.Title}\" в разделе \"{FileCat.Parent?.DisplayTitle}\"");
+            return Task.FromResult(
+                $"Статьи категории \"{FileCat.Title}\" в разделе \"{FileCat.Parent?.DisplayTitle}\"");
         }
 
-        public IEnumerable<CatsTree<FileCat, File>> Children { get; }
-
-        public IEnumerable<File> LastFiles { get; }
-
         public int CurrentPage { get; }
-        public int TotalFiles { get; }
     }
 }

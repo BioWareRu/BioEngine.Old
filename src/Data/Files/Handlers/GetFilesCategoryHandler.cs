@@ -1,24 +1,23 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Core;
+using BioEngine.Data.Files.Requests;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Data.Articles.Handlers
+namespace BioEngine.Data.Files.Handlers
 {
-    public class GetArticlesCategoryHandler : RequestHandlerBase<GetArticlesCategoryRequest, ArticleCat>
+    public class GetFilesCategoryHandler : RequestHandlerBase<GetFilesCategoryRequest, FileCat>
     {
-        public GetArticlesCategoryHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFilesCategoryHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<ArticleCat> Handle(GetArticlesCategoryRequest message)
+        public override async Task<FileCat> Handle(GetFilesCategoryRequest message)
         {
-            var catQuery = DBContext.ArticleCats.AsQueryable();
+            var catQuery = DBContext.FileCats.AsQueryable();
 
             if (!string.IsNullOrEmpty(message.Url))
             {
@@ -42,7 +41,7 @@ namespace BioEngine.Data.Articles.Handlers
             var cat = await catQuery.FirstOrDefaultAsync();
             if (cat != null)
             {
-                cat = await Mediator.Send(new ArticleCategoryProcessRequest(cat, message));
+                cat = await Mediator.Send(new FileCategoryProcessRequest(cat, message));
             }
             return cat;
         }

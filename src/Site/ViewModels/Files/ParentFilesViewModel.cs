@@ -7,11 +7,11 @@ namespace BioEngine.Site.ViewModels.Files
 {
     public class ParentFilesViewModel : BaseViewModel
     {
-        public List<CatsTree<FileCat, File>> Cats;
+        public IEnumerable<FileCat> Cats;
         public IParentModel Parent;
 
         public ParentFilesViewModel(BaseViewModelConfig config, IParentModel parent,
-            List<CatsTree<FileCat, File>> cats) : base(config)
+            IEnumerable<FileCat> cats) : base(config)
         {
             Parent = parent;
             Cats = cats;

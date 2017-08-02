@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Core;
+using BioEngine.Data.Files.Requests;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Data.Articles.Handlers
+namespace BioEngine.Data.Files.Handlers
 {
-    public class GetArticlesCategoriesHandler : RequestHandlerBase<GetArticlesCategoriesRequest,
-        IEnumerable<ArticleCat>>
+    public class GetFilesCategoriesHandler : RequestHandlerBase<GetFilesCategoriesRequest, IEnumerable<FileCat>
+    >
     {
-        public GetArticlesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFilesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<IEnumerable<ArticleCat>> Handle(GetArticlesCategoriesRequest message)
+        public override async Task<IEnumerable<FileCat>> Handle(GetFilesCategoriesRequest message)
         {
-            var query = DBContext.ArticleCats.AsQueryable();
+            var query = DBContext.FileCats.AsQueryable();
             if (message.Parent != null)
             {
                 query = ApplyParentCondition(query, message.Parent);
@@ -38,7 +39,7 @@ namespace BioEngine.Data.Articles.Handlers
             var cats = await query.ToListAsync();
             foreach (var cat in cats)
             {
-                await Mediator.Send(new ArticleCategoryProcessRequest(cat, message));
+                await Mediator.Send(new FileCategoryProcessRequest(cat, message));
             }
 
             return cats;

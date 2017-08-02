@@ -88,6 +88,8 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Articles().ParentArticlesUrl(parent), "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
+                var catArticles = await Mediator.Send(new GetCategoryArticlesRequest(category, 0));
+                category.Items = catArticles.articles;
                 var viewModel = new ArticleCatViewModel(ViewModelConfig, category);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);

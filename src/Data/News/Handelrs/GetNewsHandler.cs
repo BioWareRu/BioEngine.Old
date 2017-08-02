@@ -20,6 +20,13 @@ namespace BioEngine.Data.News.Handelrs
             var query = DBContext.News.AsQueryable();
             if (!message.WithUnPublishedNews)
                 query = query.Where(x => x.Pub == 1);
+            if (message.Parent != null)
+            {
+                query = ApplyParentCondition(query, message.Parent);
+            }
+
+            var totalNews = await query.CountAsync();
+
             var news =
                 await query
                     .OrderByDescending(x => x.Sticky)
@@ -28,10 +35,10 @@ namespace BioEngine.Data.News.Handelrs
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
-                    .Skip((message.Page - 1) * 20)
-                    .Take(20)
+                    .Skip((message.Page - 1) * message.PageSize)
+                    .Take(message.PageSize)
                     .ToListAsync();
-            var totalNews = await DBContext.News.CountAsync();
+            
 
             return (news, totalNews);
         }

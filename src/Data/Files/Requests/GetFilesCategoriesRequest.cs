@@ -3,11 +3,11 @@ using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
-namespace BioEngine.Data.Articles.Requests
+namespace BioEngine.Data.Files.Requests
 {
-    public class GetArticlesCategoriesRequest : RequestBase<IEnumerable<ArticleCat>>, ICategoryRequest<ArticleCat>
+    public class GetFilesCategoriesRequest : RequestBase<IEnumerable<FileCat>>, ICategoryRequest<FileCat>
     {
-        public GetArticlesCategoriesRequest(IParentModel parent = null, ArticleCat parentCat = null,
+        public GetFilesCategoriesRequest(IParentModel parent = null, FileCat parentCat = null,
             string url = null, bool loadChildren = false, int? loadLastItems = null, bool onlyRoot = false)
         {
             Url = url;
@@ -21,7 +21,7 @@ namespace BioEngine.Data.Articles.Requests
         public bool OnlyRoot { get; }
         public IParentModel Parent { get; }
         public bool LoadChildren { get; }
-        public ArticleCat ParentCat { get; }
+        public FileCat ParentCat { get; }
         public int? LoadLastItems { get; }
         public string Url { get; }
     }

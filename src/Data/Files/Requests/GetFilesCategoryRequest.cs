@@ -1,12 +1,15 @@
-﻿using BioEngine.Common.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
-namespace BioEngine.Data.Articles.Requests
+namespace BioEngine.Data.Files.Requests
 {
-    public class GetArticlesCategoryRequest : RequestBase<ArticleCat>, ICategoryRequest<ArticleCat>
+    public class GetFilesCategoryRequest : RequestBase<FileCat>, ICategoryRequest<FileCat>
     {
-        public GetArticlesCategoryRequest(IParentModel parent = null, ArticleCat parentCat = null,
+        public GetFilesCategoryRequest(IParentModel parent = null, FileCat parentCat = null,
             bool loadChildren = false,
             int? loadLastItems = null, string url = null)
         {
@@ -19,7 +22,7 @@ namespace BioEngine.Data.Articles.Requests
 
         public IParentModel Parent { get; }
         public bool LoadChildren { get; }
-        public ArticleCat ParentCat { get; }
+        public FileCat ParentCat { get; }
         public int? LoadLastItems { get; }
         public string Url { get; }
     }

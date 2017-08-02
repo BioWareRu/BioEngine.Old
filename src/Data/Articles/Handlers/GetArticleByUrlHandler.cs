@@ -41,6 +41,9 @@ namespace BioEngine.Data.Articles.Handlers
                 }
                 if (article != null)
                 {
+                    article.Cat =
+                        await Mediator.Send(new ArticleCategoryProcessRequest(article.Cat,
+                            new GetArticlesCategoryRequest(message.Parent)));
                     return article;
                 }
             }

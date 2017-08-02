@@ -50,7 +50,7 @@
         </div>
         <div class="files">
             <ul class="files__list">
-                @foreach (var file in Model.LastFiles)
+                @foreach (var file in Model.FileCat.Items)
                 {
                     <li class="files__item">
                         <a class="files__link" href="@Url.Files().PublicUrl(file)">@Html.Raw(file.Title)</a>

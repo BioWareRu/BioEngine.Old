@@ -1,16 +1,17 @@
 ﻿using BioEngine.Common.Interfaces;
-using BioEngine.Common.Models;
 
-namespace BioEngine.Data.Articles.Requests
+namespace BioEngine.Data.Core
 {
-    public interface IGetArticlesCategoryRequest
+    public interface ICategoryRequest<out T> where T : class, ICat
     {
         IParentModel Parent { get; }
 
         bool LoadChildren { get; }
 
-        ArticleCat ParentCat { get; }
+        T ParentCat { get; }
 
         int? LoadLastItems { get; }
+
+        string Url { get; }
     }
 }

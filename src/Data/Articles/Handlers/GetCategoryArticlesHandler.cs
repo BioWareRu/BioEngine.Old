@@ -23,13 +23,14 @@ namespace BioEngine.Data.Articles.Handlers
             var articlesQuery = DBContext.Articles.Where(x => x.CatId == message.Cat.Id && x.Pub == 1)
                 .OrderByDescending(x => x.Id).AsQueryable();
 
-            if (message.Count > 0)
+            var count = await articlesQuery.CountAsync();
+
+            if (message.Page > 0)
             {
-                articlesQuery = articlesQuery.Take(message.Count);
+                articlesQuery = articlesQuery.Skip(message.Page - 1 * message.PageSize).Take(message.PageSize);
             }
 
             var articles = await articlesQuery.ToListAsync();
-            var count = await DBContext.Articles.CountAsync(x => x.CatId == message.Cat.Id);
 
             return (articles, count);
         }

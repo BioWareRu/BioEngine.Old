@@ -2,11 +2,11 @@
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
-namespace BioEngine.Data.Articles.Requests
+namespace BioEngine.Data.Gallery.Requests
 {
-    public class GetCategoryArticlesRequest : RequestBase<(IEnumerable<Article> articles, int count)>
+    public class GetCategoryPicsRequest : RequestBase<(IEnumerable<GalleryPic> pics, int count)>
     {
-        public GetCategoryArticlesRequest(ArticleCat cat, int page = 1)
+        public GetCategoryPicsRequest(GalleryCat cat, int page = 1)
         {
             Cat = cat;
             Page = page;
@@ -14,7 +14,7 @@ namespace BioEngine.Data.Articles.Requests
 
         public int PageSize { get; set; } = 20;
 
-        public ArticleCat Cat { get; }
+        public GalleryCat Cat { get; }
         public int Page { get; }
     }
 }

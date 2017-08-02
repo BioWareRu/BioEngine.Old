@@ -10,18 +10,14 @@ using MediatR;
 
 namespace BioEngine.Data.Core
 {
-    public abstract class RequestHandlerBase<TRequest, TResponse> : IAsyncRequestHandler<TRequest, TResponse>
+    public abstract class RequestHandlerBase<TRequest, TResponse> : HandlerBase,
+        IAsyncRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         public abstract Task<TResponse> Handle(TRequest message);
 
-        protected readonly BWContext DBContext;
-        protected readonly IMediator Mediator;
-
-        protected RequestHandlerBase(IMediator mediator, BWContext dbContext)
+        protected RequestHandlerBase(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
-            DBContext = dbContext;
-            Mediator = mediator;
         }
 
         protected IQueryable<T> ApplyParentCondition<T>(IQueryable<T> query, IParentModel parent) where T : IChildModel

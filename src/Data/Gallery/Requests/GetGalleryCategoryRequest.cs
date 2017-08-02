@@ -2,11 +2,11 @@
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
-namespace BioEngine.Data.Articles.Requests
+namespace BioEngine.Data.Gallery.Requests
 {
-    public class GetArticlesCategoryRequest : RequestBase<ArticleCat>, ICategoryRequest<ArticleCat>
+    public class GetGalleryCategoryRequest : RequestBase<GalleryCat>, ICategoryRequest<GalleryCat>
     {
-        public GetArticlesCategoryRequest(IParentModel parent = null, ArticleCat parentCat = null,
+        public GetGalleryCategoryRequest(IParentModel parent = null, GalleryCat parentCat = null,
             bool loadChildren = false,
             int? loadLastItems = null, string url = null)
         {
@@ -19,7 +19,7 @@ namespace BioEngine.Data.Articles.Requests
 
         public IParentModel Parent { get; }
         public bool LoadChildren { get; }
-        public ArticleCat ParentCat { get; }
+        public GalleryCat ParentCat { get; }
         public int? LoadLastItems { get; }
         public string Url { get; }
     }

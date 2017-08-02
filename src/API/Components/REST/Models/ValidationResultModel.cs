@@ -30,7 +30,7 @@ namespace BioEngine.API.Components.REST.Models
         }
     }
 
-    public class ValidationError : ErrorInterface
+    public class ValidationError : IErrorInterface
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Field { get; }

@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BioEngine.API.Components.REST.Models
 {
     public abstract class RestResult
     {
-        public int Code { get; }
-
-        public IEnumerable<ErrorInterface> Errors { get; protected set; }
-
         public RestResult(int code)
         {
             Code = code;
         }
+
+        public int Code { get; }
+
+        public IEnumerable<IErrorInterface> Errors { get; protected set; }
     }
 
-    public interface ErrorInterface
+    public interface IErrorInterface
     {
         string Message { get; }
     }

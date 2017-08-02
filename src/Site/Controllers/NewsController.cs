@@ -7,7 +7,6 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
-using BioEngine.Routing;
 using BioEngine.Site.Base;
 using BioEngine.Site.Components;
 using BioEngine.Site.Components.Url;
@@ -245,7 +244,7 @@ namespace BioEngine.Site.Controllers
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
             var parent = await ParentEntityProvider.GetModelParent(news);
             viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(Url.News().ParentNewsUrl((dynamic) parent),
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(await UrlManager.News.ParentNewsUrl((dynamic) parent),
                 parent.DisplayTitle));
             return View(viewModel);
         }

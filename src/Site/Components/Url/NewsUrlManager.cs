@@ -42,7 +42,7 @@ namespace BioEngine.Site.Components.Url
 
         public async Task<string> ParentNewsUrl<T>(T parentModel) where T : IParentModel
         {
-            return await Task.FromResult(UrlHelper.Action<NewsController>(x => x.NewsList(parentModel.ParentUrl)));
+            return await Task.FromResult(UrlHelper.Action<NewsController>(x => x.ParentNews(parentModel.ParentUrl)));
         }
     }
 }

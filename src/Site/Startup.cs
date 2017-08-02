@@ -3,13 +3,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Search;
+using BioEngine.Routing;
 using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
@@ -32,8 +33,10 @@ using BioEngine.Site.Middlewares;
 using BioEngine.Site.Filters;
 using BioEngine.Prometheus.Core;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using BioEngine.Content.Helpers;
+using BioEngine.Data.Core;
+using MediatR;
 
 namespace BioEngine.Site
 {
@@ -91,22 +94,25 @@ namespace BioEngine.Site
             services.AddDbContext<BWContext>(builder => dbConfig.Configure(builder));
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+            services.AddBioEngineRouting();
+
             services.AddSingleton(Configuration);
 
             services.AddScoped<BannerProvider>();
-            services.AddScoped<UrlManager>();
             services.AddScoped<ParentEntityProvider>();
-            services.AddScoped<ContentHelper>();
+            services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
             services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
-            services.AddScoped<IContentHelperInterface, ContentHelper>();
-            services.AddSingleton(new IPBApiConfig()
+            services.AddSingleton(new IPBApiConfig
             {
                 ApiKey = Configuration["BE_IPB_API_KEY"],
                 ApiUrl = Configuration["BE_IPB_API_URL"],
                 NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
             });
+
+            services.AddMediatR(typeof(RequestBase<>).GetTypeInfo().Assembly);
 
             if (_env.IsProduction())
             {
@@ -189,6 +195,7 @@ namespace BioEngine.Site
                 routes.MapRoute(
                     "default",
                     "{controller=Index}/{action=Index}/{id?}");
+                routes.UseBioEngineRouting();
             });
         }
 

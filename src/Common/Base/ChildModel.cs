@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using Newtonsoft.Json;
@@ -27,21 +26,41 @@ namespace BioEngine.Common.Base
         [ForeignKey(nameof(TopicId))]
         public virtual Topic Topic { get; set; }
 
-        public IParentModel Parent()
+        public IParentModel Parent
         {
-            if (GameId > 0)
+            get
             {
-                return Game;
+                if (GameId > 0 && Game != null)
+                {
+                    return Game;
+                }
+                if (DeveloperId > 0 && Developer != null)
+                {
+                    return Developer;
+                }
+                if (TopicId > 0 && Topic != null)
+                {
+                    return Topic;
+                }
+                throw new Exception("No parent!");
             }
-            if (DeveloperId > 0)
+            set
             {
-                return Developer;
+                switch (value.Type)
+                {
+                    case ParentType.Game:
+                        Game = (Game) value;
+                        break;
+                    case ParentType.Developer:
+                        Developer = (Developer) value;
+                        break;
+                    case ParentType.Topic:
+                        Topic = (Topic) value;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-            if (TopicId > 0)
-            {
-                return Topic;
-            }
-            throw new Exception("No parent!");
         }
     }
 }

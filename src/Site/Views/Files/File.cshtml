@@ -1,16 +1,14 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
 @using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Files.FileViewModel
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
-    var parent = await ParentEntityProvider.GetModelParent(Model.File);
+    var parent = Model.File.Parent;
 }
 
 <div class="article__block">
@@ -20,7 +18,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => UrlManager.Files.ParentFilesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
         @if (!string.IsNullOrEmpty(Model.File.YtId))
         {
@@ -47,7 +45,7 @@
                 @Html.Raw(Model.File.Desc)
             </div>
             <div class="file__download">
-                <a class="file__download-btn" href="@await UrlManager.Files.DownloadUrl(Model.File)">
+                <a class="file__download-btn" href="@Url.Files().DownloadUrl(Model.File)">
                     Скачать
                     <small>(@(Model.File.SizeInMb)Mb)</small>
                 </a>

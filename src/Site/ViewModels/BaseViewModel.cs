@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using HtmlAgilityPack;
 
 namespace BioEngine.Site.ViewModels
@@ -15,16 +13,12 @@ namespace BioEngine.Site.ViewModels
     {
         protected readonly AppSettings AppSettings;
         protected readonly IEnumerable<Settings> Settings;
-        public readonly UrlManager UrlManager;
-        public readonly ParentEntityProvider ParentEntityProvider;
         protected readonly IContentHelperInterface ContentHelper;
 
         protected BaseViewModel(BaseViewModelConfig config)
         {
             Settings = config.Settings;
             AppSettings = config.AppSettings;
-            UrlManager = config.UrlManager;
-            ParentEntityProvider = config.ParentEntityProvider;
             ContentHelper = config.ContentHelper;
             SiteTitle = AppSettings.Title;
             ImageUrl = new Uri(AppSettings.SocialLogo);
@@ -33,7 +27,7 @@ namespace BioEngine.Site.ViewModels
         public string SiteTitle { get; set; }
 
         //public string Title { get; set; }
-        public abstract Task<string> Title();
+        public abstract string Title();
 
         protected Uri ImageUrl { get; set; }
 
@@ -97,19 +91,15 @@ namespace BioEngine.Site.ViewModels
     public struct BaseViewModelConfig
     {
         public IContentHelperInterface ContentHelper { get; }
-        public readonly UrlManager UrlManager;
         public readonly AppSettings AppSettings;
         public readonly List<Settings> Settings;
-        public readonly ParentEntityProvider ParentEntityProvider;
 
-        public BaseViewModelConfig(UrlManager urlManager, AppSettings appSettings, List<Settings> settings,
-            ParentEntityProvider parentEntityProvider, IContentHelperInterface contentHelper)
+        public BaseViewModelConfig(AppSettings appSettings, List<Settings> settings,
+            IContentHelperInterface contentHelper)
         {
             ContentHelper = contentHelper;
-            UrlManager = urlManager;
             AppSettings = appSettings;
             Settings = settings;
-            ParentEntityProvider = parentEntityProvider;
         }
     }
 

@@ -1,6 +1,6 @@
-﻿using BioEngine.Site.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BioEngine.Content.Helpers;
 
 namespace BioEngine.Site.ViewModels.Search
 {
@@ -20,9 +20,9 @@ namespace BioEngine.Site.ViewModels.Search
             Blocks.Add(block);
         }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult($"Поиск - {Query}");
+            return $"Поиск - {Query}";
         }
 
         protected override async Task<string> GetDescription()

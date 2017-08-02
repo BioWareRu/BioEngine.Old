@@ -1,4 +1,6 @@
-﻿namespace BioEngine.Site.Components
+﻿using BioEngine.Common.Interfaces;
+
+namespace BioEngine.Site.Components
 {
     public class AppSettings
     {

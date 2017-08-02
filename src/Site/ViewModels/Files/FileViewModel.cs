@@ -11,14 +11,13 @@ namespace BioEngine.Site.ViewModels.Files
             File = file;
         }
 
-        public override async Task<string> Title()
+        public override string Title()
         {
-            var parent = await ParentEntityProvider.GetModelParent(File);
             var title = File.Title;
             if (File.Cat != null)
                 title += " - " + File.Cat.Title;
-            if (parent != null)
-                title += " - " + parent.DisplayTitle;
+            if (File.Parent != null)
+                title += " - " + File.Parent.DisplayTitle;
             return title;
         }
 

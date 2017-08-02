@@ -2,9 +2,10 @@
 
 namespace BioEngine.Common.Interfaces
 {
-    public interface ICat<TCat> : IChildModel
+    public interface ICat<TCat, TEntity> : IChildModel
     {
         int Id { get; set; }
         List<TCat> Children { get; set; }
+        IEnumerable<TEntity> Items { get; set; }
     }
 }

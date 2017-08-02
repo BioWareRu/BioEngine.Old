@@ -2,9 +2,8 @@
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels.Errors;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,8 +11,8 @@ namespace BioEngine.Site.Controllers
 {
     public class ErrorsController : BaseController
     {
-        public ErrorsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper) : base(context, parentEntityProvider, urlManager,
+        public ErrorsController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper) : base(mediator,
             appSettingsOptions, contentHelper)
         {
         }

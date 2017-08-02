@@ -1,15 +1,14 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
 @using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
-@using BioEngine.Site.Helpers
+@using BioEngine.Common.Interfaces
+@using BioEngine.Routing
 @using BioEngine.Site.Extensions
 @using BioEngine.Site.ViewModels
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
-@inject ContentHelper ContentHelper
+@inject IContentHelperInterface ContentHelper
 @model BioEngine.Site.ViewModels.News.ShowNewsViewModel
 
 <article class="@(!Model.ShowFull ? "article-list__item" : "article")">
@@ -21,7 +20,7 @@
                     if (Model.News.Sticky > 0)
                     {
                         <text>Важно!&nbsp;</text>
-    }
+                    }
                     @Html.Raw(Model.News.Title)
                 }
                 else
@@ -44,7 +43,7 @@
                   datetime="@Model.Date.DateTime.ToString("yyyy-MM-dd hh:mm:ss")">
                 @Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),&nbsp;@Model.News.Author.Name</time>
         </div>
-        @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(await ParentEntityProvider.GetModelParent(Model.News), x => UrlManager.News.ParentNewsUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
+        @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.News.Parent, x => Url.News().ParentNewsUrl(Model.News), x => Url.Base().ParentIconUrl(Model.News)))
     </header>
 
     <div class="b-text">

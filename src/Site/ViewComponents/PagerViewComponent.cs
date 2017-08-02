@@ -16,38 +16,38 @@ namespace BioEngine.Site.ViewComponents
     {
         public int CurrentPage { get; }
         public int PageCount { get; }
-        private Func<int, Task<string>> UrlGenerator { get; }
+        private Func<int, string> UrlGenerator { get; }
 
-        public PagerModel(int currentPage, int totalCount, Func<int, Task<string>> urlGenerator, int itemsPerPage = 10)
+        public PagerModel(int currentPage, int totalCount, Func<int, string> urlGenerator, int itemsPerPage = 10)
         {
             CurrentPage = currentPage;
             PageCount = (int) Math.Ceiling((double) totalCount/itemsPerPage);
             UrlGenerator = urlGenerator;
         }
 
-        public async Task<string> FirstLink()
+        public string FirstLink()
         {
-            return await PageLink(1);
+            return PageLink(1);
         }
 
-        public async Task<string> LastLink()
+        public string LastLink()
         {
-            return await PageLink(PageCount);
+            return PageLink(PageCount);
         }
 
-        public async Task<string> PrevLink()
+        public string PrevLink()
         {
-            return CurrentPage > 1 ? await PageLink(CurrentPage - 1) : null;
+            return CurrentPage > 1 ? PageLink(CurrentPage - 1) : null;
         }
 
-        public async Task<string> NextLink()
+        public string NextLink()
         {
-            return CurrentPage < PageCount ? await PageLink(CurrentPage + 1) : null;
+            return CurrentPage < PageCount ? PageLink(CurrentPage + 1) : null;
         }
 
-        public async Task<string> PageLink(int page)
+        public string PageLink(int page)
         {
-            return await UrlGenerator(page);
+            return UrlGenerator(page);
         }
     }
 }

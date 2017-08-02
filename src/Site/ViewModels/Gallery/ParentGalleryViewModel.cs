@@ -15,12 +15,11 @@ namespace BioEngine.Site.ViewModels.Gallery
         {
             Parent = parent;
             Cats = cats;
-            BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(Parent), Parent.DisplayTitle));
         }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult($"{Parent.DisplayTitle} - Галерея");
+            return $"{Parent.DisplayTitle} - Галерея";
         }
 
         protected override async Task<string> GetDescription()

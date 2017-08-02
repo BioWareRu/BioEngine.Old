@@ -7,17 +7,21 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_gallery_cats")]
-    public class GalleryCat : ChildModel<int>, ICat<GalleryCat>
+    public class GalleryCat : ChildModel<int>, ICat<GalleryCat, GalleryPic>
     {
         public const int PicsOnPage = 24;
+
         [JsonProperty]
         public int Pid { get; set; }
 
         public string GameOld { get; set; }
+
         [JsonProperty]
         public string Title { get; set; }
+
         [JsonProperty]
         public string Desc { get; set; }
+
         [JsonProperty]
         public string Url { get; set; }
 
@@ -26,6 +30,8 @@ namespace BioEngine.Common.Models
 
         [InverseProperty(nameof(ParentCat))]
         public List<GalleryCat> Children { get; set; }
+
+        public IEnumerable<GalleryPic> Items { get; set; }
 
         [NotMapped]
         public override int? TopicId { get; set; }

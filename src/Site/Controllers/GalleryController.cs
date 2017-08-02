@@ -6,11 +6,12 @@ using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
+using BioEngine.Data.Base.Requests;
+using BioEngine.Routing;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Gallery;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,9 +20,9 @@ namespace BioEngine.Site.Controllers
 {
     public class GalleryController : BaseController
     {
-        public GalleryController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+        public GalleryController(IMediator mediator,
             IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+            : base(mediator, appSettingsOptions, contentHelper)
         {
         }
 
@@ -29,8 +30,8 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/gallery/{*url}")]
         public async Task<IActionResult> Cat(string parentUrl, string url)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            if (parent==null)
+            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            if (parent == null)
             {
                 return new NotFoundResult();
             }
@@ -46,12 +47,12 @@ namespace BioEngine.Site.Controllers
                 var parentCat = category.ParentCat;
                 while (parentCat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.CatPublicUrl(parentCat),
+                    breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().CatPublicUrl(parentCat),
                         parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Gallery.ParentGalleryUrl((dynamic) parent), "Галерея"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().ParentGalleryUrl(parent), "Галерея"));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
 
@@ -89,13 +90,13 @@ namespace BioEngine.Site.Controllers
             switch (parent.Type)
             {
                 case ParentType.Game:
-                    catQuery = catQuery.Where(x => x.GameId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.GameId == (int) parent.GetId());
                     break;
                 case ParentType.Developer:
-                    catQuery = catQuery.Where(x => x.DeveloperId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.DeveloperId == (int) parent.GetId());
                     break;
                 case ParentType.Topic:
-                    catQuery = catQuery.Where(x => x.TopicId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.TopicId == (int) parent.GetId());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -109,7 +110,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/gallery/{parentUrl}/")]
         public async Task<IActionResult> ParentGallery(string parentUrl)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = Mediator.Send(new GetParentByUrlRequest(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();

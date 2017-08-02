@@ -11,14 +11,13 @@ namespace BioEngine.Site.ViewModels.Articles
             Article = article;
         }
 
-        public override async Task<string> Title()
+        public override string Title()
         {
             var title = Article.Title;
-            var parent = await ParentEntityProvider.GetModelParent(Article);
             if (Article.Cat != null)
                 title += " - " + Article.Cat.Title;
-            if (parent != null)
-                title += " - " + parent.DisplayTitle;
+            if (Article.Parent != null)
+                title += " - " + Article.Parent.DisplayTitle;
 
             return title;
         }

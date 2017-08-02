@@ -4,9 +4,8 @@ using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels.Games;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,9 +14,9 @@ namespace BioEngine.Site.Controllers
 {
     public class GamesController : BaseController
     {
-        public GamesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+        public GamesController(IMediator mediator,
             IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+            : base(mediator, appSettingsOptions, contentHelper)
         {
         }
 

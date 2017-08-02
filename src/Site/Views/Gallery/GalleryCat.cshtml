@@ -1,12 +1,10 @@
 ﻿@using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Gallery.GalleryCatViewModel
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 
@@ -17,7 +15,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.GalleryCat.Title</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(await ParentEntityProvider.GetModelParent(Model.GalleryCat), x => UrlManager.Gallery.ParentGalleryUrl((dynamic)x), x => UrlManager.ParentIconUrl((dynamic)x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.GalleryCat.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
         <div id="nanoGallery">
             @foreach (var pic in Model.Pictures)
@@ -26,11 +24,11 @@
                 for (var i = 0; i < pic.Files.Count; i++)
                 {
                     var file = pic.Files[i];
-                    desc += $"&nbsp;<a target='_blank' href='{await Model.UrlManager.Gallery.FullUrl(pic, i)}'>{file.Resolution}</a>";
+                    desc += $"&nbsp;<a target='_blank' href='{Url.Gallery().FullUrl(pic, i)}'>{file.Resolution}</a>";
                 }
-                <a data-ngthumb="@await Model.UrlManager.Gallery.ThumbUrl(pic, 180, 140)"
+                <a data-ngthumb="@Url.Gallery().ThumbUrl(pic, 180, 140)"
                    data-ngID="@pic.Id"
-                   href="@await Model.UrlManager.Gallery.FullUrl(pic)"
+                   href="@Url.Gallery().FullUrl(pic)"
                    data-ngdesc="@Html.Raw(desc)">
                 </a>
             }
@@ -38,6 +36,6 @@
     </article>
     @(await Component.InvokeAsync<PagerViewComponent>(new
       {
-          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalPictures, page => Model.UrlManager.Gallery.CatPublicUrl(Model.GalleryCat, page), 24)
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalPictures, page => Url.Gallery().CatPublicUrl(Model.GalleryCat, page), 24)
       }))
 </div>

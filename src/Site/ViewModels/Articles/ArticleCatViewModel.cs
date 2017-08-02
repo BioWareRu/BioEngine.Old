@@ -6,41 +6,31 @@ namespace BioEngine.Site.ViewModels.Articles
 {
     public class ArticleCatViewModel : BaseViewModel
     {
-        public ArticleCatViewModel(BaseViewModelConfig config, ArticleCat articleCat,
-            IEnumerable<CatsTree<ArticleCat, Article>> children,
-            IEnumerable<Article> lastArticles)
+        public ArticleCatViewModel(BaseViewModelConfig config, ArticleCat articleCat)
             : base(config)
         {
             ArticleCat = articleCat;
-            Children = children;
-            LastArticles = lastArticles;
         }
 
-        public override async Task<string> Title()
+        public override string Title()
         {
-            var parent = await ParentEntityProvider.GetModelParent(ArticleCat);
             var title = ArticleCat.Title;
             title += " - Статьи";
-            if (parent != null)
-                title += " - " + parent.DisplayTitle;
+            if (ArticleCat.Parent != null)
+                title += " - " + ArticleCat.Parent.DisplayTitle;
             return title;
         }
 
-        protected override async Task<string> GetDescription()
+        protected override Task<string> GetDescription()
         {
             if (!string.IsNullOrEmpty(ArticleCat.Content))
             {
-                return GetDescriptionFromHtml(ArticleCat.Content);
+                return Task.FromResult(GetDescriptionFromHtml(ArticleCat.Content));
             }
-            var parent = await ParentEntityProvider.GetModelParent(ArticleCat);
-            return $"Статьи категории \"{ArticleCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
+            return Task.FromResult($"Статьи категории \"{ArticleCat.Title}\" в разделе \"{ArticleCat.Parent?.DisplayTitle}\"");
         }
 
         public ArticleCat ArticleCat { get; }
-
-        public IEnumerable<CatsTree<ArticleCat, Article>> Children { get; }
-
-        public IEnumerable<Article> LastArticles { get; }
 
         public int CurrentPage { get; set; }
         public int TotalArticles { get; set; }

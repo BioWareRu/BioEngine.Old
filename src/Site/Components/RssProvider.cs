@@ -4,10 +4,12 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BioEngine.Common.Base;
 using BioEngine.Common.DB;
-using BioEngine.Site.Components.Url;
+using BioEngine.Routing;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -17,12 +19,12 @@ namespace BioEngine.Site.Components
     public class RssProvider : IChannelProvider
     {
         private readonly BWContext _dbContext;
-        private readonly UrlManager _urlManager;
+        private readonly IUrlHelper _urlHelper;
 
-        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, UrlManager urlManager)
+        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, IUrlHelper urlHelper)
         {
             _dbContext = dbContext;
-            _urlManager = urlManager;
+            _urlHelper = urlHelper;
             _appSettings = options.Value;
         }
 
@@ -57,7 +59,7 @@ namespace BioEngine.Site.Components
                 {
                     var newsDate = DateTimeOffset.FromUnixTimeSeconds(news.LastChangeDate).Date;
                     if (newsDate > mostRecentPubDate) mostRecentPubDate = newsDate;
-                    var newsUrl = _urlManager.News.PublicUrl(news, true);
+                    var newsUrl = _urlHelper.News().PublicUrl(news, true);
                     var item = new RssItem
                     {
                         Title = news.Title,

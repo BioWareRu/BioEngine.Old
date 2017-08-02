@@ -1,9 +1,7 @@
-﻿@using BioEngine.Site.Components.Url
+﻿@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.Games.GamePageViewModel
-@inject UrlManager UrlManager
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 <div class="article__block">
@@ -22,7 +20,7 @@
             </h3>
 
             <div class="game-info">
-                <img src="@UrlManager.Games.LogoUrl(Model.Game)"
+                <img src="@Url.Base().GameLogoUrl(Model.Game)"
                      alt="@Model.Game.Title"
                      class="game-info__img"/>
                 <table class="game-info__table">
@@ -66,11 +64,11 @@
                     @foreach (var news in Model.LastNews)
                     {
                         <p>
-                            <a href="@UrlManager.News.PublicUrl(news)">@news.Title</a>
+                            <a href="@Url.News().PublicUrl(news)">@news.Title</a>
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@await UrlManager.News.ParentNewsUrl(Model.Game)">Все новости</a>
+                        <a href="@Url.News().ParentNewsUrl(Model.Game)">Все новости</a>
                     </p>
                 </div>
                 <div class="game-info__links">
@@ -78,11 +76,11 @@
                     @foreach (var file in Model.LastFiles)
                     {
                         <p>
-                            <a href="@await UrlManager.Files.PublicUrl(file)">@file.Title</a>
+                            <a href="@Url.Files().PublicUrl(file)">@file.Title</a>
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@await UrlManager.Files.ParentFilesUrl(Model.Game)">Все файлы</a>
+                        <a href="@Url.Files().ParentFilesUrl(Model.Game)">Все файлы</a>
                     </p>
                 </div>
             </div>
@@ -93,11 +91,11 @@
                     @foreach (var article in Model.LastArticles)
                     {
                         <p>
-                            <a href="@await UrlManager.Articles.PublicUrl(article)">@article.Title</a>
+                            <a href="@Url.Articles().PublicUrl(article)">@article.Title</a>
                         </p>
                     }
                     <p class="game-info__all">
-                        <a href="@await UrlManager.Articles.ParentArticlesUrl(Model.Game)">Все статьи</a>
+                        <a href="@Url.Articles().ParentArticlesUrl(Model.Game)">Все статьи</a>
                     </p>
                 </div>
                 <div class="game-info__links">
@@ -105,14 +103,14 @@
                     <div>
                         @foreach (var picture in Model.LastPics)
                         {
-                            <a href="@await UrlManager.Gallery.PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
-                                <img src="@await Model.UrlManager.Gallery.ThumbUrl(picture, 115, 115)"
+                            <a href="@Url.Gallery().PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
+                                <img src="@Url.Gallery().ThumbUrl(picture, 115, 115)"
                                      alt=""/>
                             </a>
                         }
                     </div>
                     <p class="game-info__all">
-                        <a href="@await UrlManager.Gallery.ParentGalleryUrl(Model.Game)">Все картинки</a>
+                        <a href="@Url.Gallery().ParentGalleryUrl(Model.Game)">Все картинки</a>
                     </p>
                 </div>
             </div>
@@ -121,7 +119,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", UrlManager.Games.PublicUrl(Model.Game))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", Url.Base().PublicUrl(Model.Game))
             </div>
         </footer>
     </article>

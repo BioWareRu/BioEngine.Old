@@ -1,15 +1,13 @@
 ﻿@using System.Threading.Tasks
 @using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Articles.ArticleCatViewModel
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
-    var parent = await ParentEntityProvider.GetModelParent(Model.ArticleCat);
+    var parent = Model.ArticleCat.Parent;
 }
 
 <div class="article__block">
@@ -19,25 +17,25 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.ArticleCat.Title</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => UrlManager.Articles.ParentArticlesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Articles().ParentArticlesUrl(Model.ArticleCat), x => Url.Base().ParentIconUrl(x)))
         </header>
         @if (string.IsNullOrEmpty(Model.ArticleCat.Content))
         {
             <div class="files">
-                @foreach (var child in Model.Children)
+                @foreach (var child in Model.ArticleCat.Children)
                 {
                     <div class="files__cat">
                         <ul class="files__list">
                             <li class="files__item">
                                 <h2 class="files__title">
-                                    <a class="files__link" href="@await UrlManager.Articles.CatPublicUrl(child.Cat)">@child.Cat.Title</a>
+                                    <a class="files__link" href="@Url.Articles().CatPublicUrl(child)">@child.Title</a>
                                 </h2>
                                 <ul class="files__list">
-                                    @foreach (var article in child.LastEntities)
+                                    @foreach (var article in child.Items)
                                     {
                                         <li class="files__item">
                                             <a class="files__link"
-                                               href="@await UrlManager.Articles.PublicUrl(article)">
+                                               href="@Url.Articles().PublicUrl(article)">
                                                 @article.Title
                                             </a><br>
                                             @Html.Raw(article.Announce)
@@ -52,10 +50,10 @@
             </div>
             <div class="files">
                 <ul class="files__list">
-                    @foreach (var article in Model.LastArticles)
+                    @foreach (var article in Model.ArticleCat.Items)
                     {
                         <li class="files__item">
-                            <a class="files__link" href="@await UrlManager.Articles.PublicUrl(article)">@article.Title</a>
+                            <a class="files__link" href="@Url.Articles().PublicUrl(article)">@article.Title</a>
                         </li>
                     }
                 </ul>
@@ -69,6 +67,6 @@
     </article>
     @(await Component.InvokeAsync<PagerViewComponent>(new
       {
-          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalArticles, page => UrlManager.Articles.CatPublicUrl(Model.ArticleCat, page), 20)
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalArticles, page => Url.Articles().CatPublicUrl(Model.ArticleCat, page), 20)
       }))
 </div>

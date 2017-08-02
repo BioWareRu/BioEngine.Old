@@ -1,15 +1,13 @@
 ﻿@using System.Threading.Tasks
 @using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Files.FileCatViewModel
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
-    var parent = await ParentEntityProvider.GetModelParent(Model.FileCat);
+    var parent = Model.FileCat.Parent;
 }
 
 <div class="article__block">
@@ -19,7 +17,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.FileCat.Title</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => UrlManager.Files.ParentFilesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <div class="files">
@@ -30,14 +28,14 @@
                     <ul class="files__list">
                         <li class="files__item">
                             <h2 class="files__title">
-                                <a class="files__link" href="@await UrlManager.Files.CatPublicUrl(child.Cat)">@child.Cat.Title</a>
+                                <a class="files__link" href="@Url.Files().CatPublicUrl(child.Cat)">@child.Cat.Title</a>
                             </h2>
                             <ul class="files__list">
                                 @foreach (var article in child.LastEntities)
                                 {
                                     <li class="files__item">
                                         <a class="files__link"
-                                           href="@await UrlManager.Files.PublicUrl(article)">
+                                           href="@Url.Files().PublicUrl(article)">
                                             @article.Title
                                         </a><br>
                                         @Html.Raw(article.Announce)
@@ -55,7 +53,7 @@
                 @foreach (var file in Model.LastFiles)
                 {
                     <li class="files__item">
-                        <a class="files__link" href="@await UrlManager.Files.PublicUrl(file)">@Html.Raw(file.Title)</a>
+                        <a class="files__link" href="@Url.Files().PublicUrl(file)">@Html.Raw(file.Title)</a>
                     </li>
                 }
             </ul>
@@ -64,6 +62,6 @@
     </article>
     @(await Component.InvokeAsync<PagerViewComponent>(new
       {
-          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalFiles, page => UrlManager.Files.CatPublicUrl(Model.FileCat, page), 20)
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalFiles, page => Url.Files().CatPublicUrl(Model.FileCat, page), 20)
       }))
 </div>

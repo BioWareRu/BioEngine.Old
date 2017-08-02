@@ -18,20 +18,18 @@ namespace BioEngine.Site.ViewModels.Gallery
             CurrentPage = currentPage;
         }
 
-        public override async Task<string> Title()
+        public override string Title()
         {
-            var parent = await ParentEntityProvider.GetModelParent(GalleryCat);
             var title = GalleryCat.Title;
             title += " - Галерея";
-            if (parent != null)
-                title += " - " + parent.DisplayTitle;
+            if (GalleryCat.Parent != null)
+                title += " - " + GalleryCat.Parent.DisplayTitle;
             return title;
         }
 
-        protected override async Task<string> GetDescription()
+        protected override Task<string> GetDescription()
         {
-            var parent = await ParentEntityProvider.GetModelParent(GalleryCat);
-            return $"Картинки категории \"{GalleryCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
+            return Task.FromResult($"Картинки категории \"{GalleryCat.Title}\" в разделе \"{GalleryCat.Parent?.DisplayTitle}\"");
         }
 
         public GalleryCat GalleryCat { get; }

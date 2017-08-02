@@ -17,5 +17,8 @@ namespace BioEngine.Common.Interfaces
 
         [ForeignKey(nameof(TopicId))]
         Topic Topic { get; set; }
+
+        IParentModel Parent { get; set; }
+
     }
 }

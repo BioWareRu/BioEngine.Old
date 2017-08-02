@@ -1,13 +1,11 @@
 ﻿@using System.Threading.Tasks
 @using BioEngine.Common.Base
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Files.FileViewModel
-@inject UrlManager UrlManager
 @inject ParentEntityProvider ParentEntityProvider
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
     Context.Response.Headers.Add("Refresh", $"5, url={Model.File.Link}");
 }
@@ -20,7 +18,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(await ParentEntityProvider.GetModelParent(Model.File), x => UrlManager.Files.ParentFilesUrl((dynamic) x), x => UrlManager.ParentIconUrl((dynamic) x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.File.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <p>

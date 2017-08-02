@@ -1,19 +1,18 @@
 ﻿@using System.Threading.Tasks
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @model BioEngine.Site.ViewModels.CatsTree<BioEngine.Common.Models.FileCat, BioEngine.Common.Models.File>
-@inject UrlManager UrlManager
 <div class="files__cat">
     <ul class="files__list">
         <li class="files__item">
             <h2 class="files__title">
-                <a class="files__link" href="@await UrlManager.Files.CatPublicUrl(Model.Cat)">@Html.Raw(Model.Cat.Title)</a>
+                <a class="files__link" href="@Url.Files().CatPublicUrl(Model.Cat)">@Html.Raw(Model.Cat.Title)</a>
             </h2>
             <ul class="files__list">
                 @foreach (var file in Model.LastEntities)
                 {
                     <li class="files__item">
                         <a class="files__link"
-                           href="@await UrlManager.Files.PublicUrl(file)">
+                           href="@Url.Files().PublicUrl(file)">
                             @Html.Raw(file.Title)
                         </a><br>
                         @Html.Raw(file.Announce)

@@ -4,36 +4,29 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using BioEngine.Data.Users.Requests;
+using MediatR;
 
 namespace BioEngine.Site.Base
 {
     public abstract class BaseController : Controller
     {
-        protected readonly UrlManager UrlManager;
+        protected readonly IMediator Mediator;
         private readonly List<Settings> _settings;
-        protected readonly BWContext Context;
-        protected readonly ParentEntityProvider ParentEntityProvider;
         protected readonly BaseViewModelConfig ViewModelConfig;
 
-        protected BaseController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
+        protected BaseController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper)
         {
-            UrlManager = urlManager;
-            Context = context;
-            ParentEntityProvider = parentEntityProvider;
-            _settings = context.Settings.ToList();
-            ViewModelConfig = new BaseViewModelConfig(UrlManager, appSettingsOptions.Value, _settings,
-                parentEntityProvider, contentHelper);
+            Mediator = mediator;
+            //_settings = context.Settings.ToList();
+            ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, _settings, contentHelper);
         }
 
         protected IEnumerable<Settings> Settings => _settings.AsReadOnly();
@@ -89,7 +82,7 @@ namespace BioEngine.Site.Base
             return false;
         }
 
-        protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(IParentModel parent,
+        /*protected async Task<List<CatsTree<TCat, TEntity>>> LoadCatsTree<TCat, TEntity>(IParentModel parent,
             DbSet<TCat> dbSet,
             Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
@@ -98,13 +91,13 @@ namespace BioEngine.Site.Base
             switch (parent.Type)
             {
                 case ParentType.Game:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == (int)parent.GetId());
+                    rootCatsQuery = rootCatsQuery.Where(x => x.GameId == (int) parent.GetId());
                     break;
                 case ParentType.Developer:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == (int)parent.GetId());
+                    rootCatsQuery = rootCatsQuery.Where(x => x.DeveloperId == (int) parent.GetId());
                     break;
                 case ParentType.Topic:
-                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == (int)parent.GetId());
+                    rootCatsQuery = rootCatsQuery.Where(x => x.TopicId == (int) parent.GetId());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -123,14 +116,14 @@ namespace BioEngine.Site.Base
             Func<ICat<TCat>, Task<List<TEntity>>> getLast)
             where TCat : class, ICat<TCat> where TEntity : IChildModel
         {
-            await Context.Entry(cat).Collection(x => x.Children).LoadAsync();
+            await Mediator.Send(new LoadCatChildrenRequest<TCat>(cat));
             var children = new List<CatsTree<TCat, TEntity>>();
             foreach (var child in cat.Children)
             {
                 children.Add(await LoadCatChildren(child, getLast));
             }
             return new CatsTree<TCat, TEntity>(cat, await getLast(cat), children);
-        }
+        }*/
 
         private User _user;
 
@@ -142,7 +135,7 @@ namespace BioEngine.Site.Base
                 return null;
             }
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            _user = await Context.Users.Where(x => x.Id == userId).Include(x => x.SiteTeamMember).FirstOrDefaultAsync();
+            _user = await Mediator.Send(new GetUserByIdRequest(userId));
             return _user;
         }
 

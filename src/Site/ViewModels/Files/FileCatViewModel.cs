@@ -20,21 +20,19 @@ namespace BioEngine.Site.ViewModels.Files
 
         public FileCat FileCat { get; }
 
-        public override async Task<string> Title()
+        public override string Title()
         {
             var title = FileCat.Title;
             title += " - Файлы";
-            var parent = await ParentEntityProvider.GetModelParent(FileCat);
-            if (parent != null)
-                title += " - " + parent.DisplayTitle;
+            if (FileCat.Parent != null)
+                title += " - " + FileCat.Parent.DisplayTitle;
 
             return title;
         }
 
-        protected override async Task<string> GetDescription()
+        protected override Task<string> GetDescription()
         {
-            var parent = await ParentEntityProvider.GetModelParent(FileCat);
-            return $"Статьи категории \"{FileCat.Title}\" в разделе \"{parent?.DisplayTitle}\"";
+            return Task.FromResult($"Статьи категории \"{FileCat.Title}\" в разделе \"{FileCat.Parent?.DisplayTitle}\"");
         }
 
         public IEnumerable<CatsTree<FileCat, File>> Children { get; }

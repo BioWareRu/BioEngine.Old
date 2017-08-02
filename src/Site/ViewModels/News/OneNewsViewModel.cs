@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BioEngine.Site.Helpers;
 
 namespace BioEngine.Site.ViewModels.News
 {
@@ -11,11 +10,11 @@ namespace BioEngine.Site.ViewModels.News
             News = news;
         }
 
-        public Common.Models.News News { get; private set; }
+        public Common.Models.News News { get; }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult(News.Title);
+            return News.Title;
         }
 
         protected override async Task<string> GetDescription()

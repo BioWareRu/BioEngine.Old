@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BioEngine.Site.ViewModels.News
 {
@@ -19,7 +18,7 @@ namespace BioEngine.Site.ViewModels.News
             Day = day;
         }
 
-        public override Task<string> Title()
+        public override string Title()
         {
             var monthStart = Month ?? 1;
             var dayStart = Day ?? 1;
@@ -35,7 +34,7 @@ namespace BioEngine.Site.ViewModels.News
                 dateStringBuilder.Append(Month != null ? date.ToString("MMMM yyyy года") : $"{Year} год");
             }
 
-            return Task.FromResult(SiteTitle + $" - Новости за {dateStringBuilder}");
+            return SiteTitle + $" - Новости за {dateStringBuilder}";
         }
     }
 }

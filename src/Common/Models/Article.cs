@@ -14,7 +14,7 @@ namespace BioEngine.Common.Models
         public string Source { get; set; }
 
         [JsonProperty]
-        public int CatId { get; set; }
+        public int? CatId { get; set; }
 
         [JsonProperty]
         public string Title { get; set; }

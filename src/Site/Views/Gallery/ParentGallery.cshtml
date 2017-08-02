@@ -1,12 +1,11 @@
 ﻿@using System.Threading.Tasks
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Gallery.ParentGalleryViewModel
-@inject UrlManager UrlManager
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
+    Model.BreadCrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(Model.Parent), Model.Parent.DisplayTitle));
 }
 
 <div class="article__block">
@@ -16,7 +15,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">Галерея</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => UrlManager.Gallery.ParentGalleryUrl((dynamic)x), x => UrlManager.ParentIconUrl((dynamic)x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <div class="files">
@@ -26,13 +25,13 @@
                     <ul class="files__list">
                         <li class="files__item">
                             <h2 class="files__title">
-                                <a class="files__link" href="@await Model.UrlManager.Gallery.CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
+                                <a class="files__link" href="@Url.Gallery().CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
                             </h2>
                             <div>
                                 @foreach (var pic in cat.LastEntities)
                                 {
-                                    <a href="@await UrlManager.Gallery.PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
-                                        <img src="@await UrlManager.Gallery.ThumbUrl(pic, 115, 115)"
+                                    <a href="@Url.Gallery().PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
+                                        <img src="@Url.Gallery().ThumbUrl(pic, 115, 115)"
                                              alt=""/>
                                     </a>
                                 }
@@ -43,7 +42,7 @@
                                     <li class="files__item">
                                         <h3 class="files__title">
                                             <a class="files__link"
-                                               href="@await Model.UrlManager.Gallery.CatPublicUrl(childCat.Cat)">
+                                               href="@Url.Gallery().CatPublicUrl(childCat.Cat)">
                                                 >@childCat.Cat.Title
                                             </a>
                                         </h3>

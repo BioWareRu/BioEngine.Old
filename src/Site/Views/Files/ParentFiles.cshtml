@@ -1,12 +1,11 @@
 ﻿@using System.Threading.Tasks
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
 @using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Files.ParentFilesViewModel
-@inject UrlManager UrlManager
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
+    Model.BreadCrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(Model.Parent), Model.Parent.DisplayTitle));
 }
 
 <div class="article__block">
@@ -16,7 +15,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">Файлы</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => UrlManager.Files.ParentFilesUrl((dynamic)x), x => UrlManager.ParentIconUrl((dynamic)x)))
+            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <div class="files">

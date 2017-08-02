@@ -7,14 +7,14 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
+using BioEngine.Data.News.Requests;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.News;
 using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,47 +30,34 @@ namespace BioEngine.Site.Controllers
     {
         private readonly ILogger<NewsController> _logger;
 
-        public NewsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
+        public NewsController(IMediator mediator,
             IOptions<AppSettings> appSettingsOptions, ILogger<NewsController> logger,
             IContentHelperInterface contentHelper
-        ) : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+        ) : base(mediator, appSettingsOptions, contentHelper)
         {
             _logger = logger;
         }
 
         [HttpGet("/index.html")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromServices] IMediator mediatr)
         {
-            return await NewsList();
+            return await NewsList(mediatr);
         }
 
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index([FromServices] IMediator mediatr, int page)
         {
-            return await NewsList(page);
+            return await NewsList(mediatr, page);
         }
 
-        private async Task<IActionResult> NewsList(int page = 1)
+        private async Task<IActionResult> NewsList(IMediator mediatr, int page = 1)
         {
             if (page < 1)
                 return BadRequest();
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
-            var query = Context.News.AsQueryable();
-            if (!canUserSeeUnpublishedNews)
-                query = query.Where(x => x.Pub == 1);
-            var news =
-                await query
-                    .OrderByDescending(x => x.Sticky)
-                    .ThenByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic)
-                    .Skip((page - 1) * 20)
-                    .Take(20)
-                    .ToListAsync();
-            var totalNews = await Context.News.CountAsync();
 
-            return View(new NewsListViewModel(ViewModelConfig, news, totalNews, page));
+            var response = await mediatr.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page));
+
+            return View(new NewsListViewModel(ViewModelConfig, response.news, response.count, page));
         }
 
         public async Task<IActionResult> NewsByYear(int year)
@@ -243,10 +230,8 @@ namespace BioEngine.Site.Controllers
             if (news == null) return StatusCode(404);
 
             var viewModel = new OneNewsViewModel(ViewModelConfig, news);
-            var parent = await ParentEntityProvider.GetModelParent(news);
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.News.IndexUrl(), "Новости"));
-            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(Url.News().ParentNewsUrl((dynamic) parent),
-                parent.DisplayTitle));
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(Url.News().IndexUrl(), "Новости"));
+            viewModel.BreadCrumbs.Add(new BreadCrumbsItem(Url.News().ParentNewsUrl(news), news.Parent.DisplayTitle));
             return View(viewModel);
         }
 

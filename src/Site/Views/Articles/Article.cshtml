@@ -1,11 +1,10 @@
 ﻿@using System.Globalization
 @using System.Threading.Tasks
-@using BioEngine.Site.Components.Url
+@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model BioEngine.Site.ViewModels.Articles.ArticleViewModel
-@inject UrlManager UrlManager
 @{
-    ViewBag.Title = await Model.Title();
     Layout = "~/Views/_Main.cshtml";
 }
 
@@ -28,7 +27,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", await UrlManager.Articles.PublicUrl(Model.Article))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", Url.Articles().PublicUrl(Model.Article))
             </div>
         </footer>
     </article>

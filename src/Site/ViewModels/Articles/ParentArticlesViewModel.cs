@@ -7,20 +7,19 @@ namespace BioEngine.Site.ViewModels.Articles
 {
     public class ParentArticlesViewModel : BaseViewModel
     {
-        public readonly List<CatsTree<ArticleCat, Article>> Cats;
+        public readonly IEnumerable<ArticleCat> Cats;
         public readonly IParentModel Parent;
 
         public ParentArticlesViewModel(BaseViewModelConfig config, IParentModel parent,
-            List<CatsTree<ArticleCat, Article>> cats) : base(config)
+            IEnumerable<ArticleCat> cats) : base(config)
         {
             Parent = parent;
             Cats = cats;
-            BreadCrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(Parent), Parent.DisplayTitle));
         }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult($"{Parent.DisplayTitle} - Статьи");
+            return $"{Parent.DisplayTitle} - Статьи";
         }
 
         protected override async Task<string> GetDescription()

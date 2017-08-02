@@ -7,8 +7,7 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,9 +17,8 @@ namespace BioEngine.Site.Controllers
 {
     public class PollsController : BaseController
     {
-        public PollsController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper) : base(context,
-            parentEntityProvider, urlManager,
+        public PollsController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper) : base(mediator,
             appSettingsOptions, contentHelper)
         {
         }

@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_articles_cats")]
-    public class ArticleCat : ChildModel<int>, ICat<ArticleCat>
+    public class ArticleCat : ChildModel<int>, ICat<ArticleCat, Article>
     {
-        public int Pid { get; set; }
+        public int? Pid { get; set; }
 
         [JsonProperty]
         public string Title { get; set; }
@@ -34,5 +34,7 @@ namespace BioEngine.Common.Models
         
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
+
+        public IEnumerable<Article> Items { get; set; }
     }
 }

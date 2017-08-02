@@ -5,20 +5,21 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
-using BioEngine.Site.Components.Url;
+using BioEngine.Routing;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Site.Helpers
+namespace BioEngine.Content.Helpers
 {
     public class ContentHelper : IContentHelperInterface
     {
         private readonly BWContext _dbContext;
-        private readonly UrlManager _urlManager;
+        private readonly IUrlHelper _urlHelper;
 
-        public ContentHelper(BWContext dbContext, UrlManager urlManager)
+        public ContentHelper(BWContext dbContext, IUrlHelper urlHelper)
         {
             _dbContext = dbContext;
-            _urlManager = urlManager;
+            _urlHelper = urlHelper;
 
             _placeholders = new List<ContentPlaceholder>()
             {
@@ -92,7 +93,7 @@ namespace BioEngine.Site.Helpers
             var gameUrl = match.Groups[1].Value;
             var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Url == gameUrl);
             if (game == null) return null;
-            var url = _urlManager.ParentUrl(game, true);
+            var url = _urlHelper.Base().ParentUrl(game, true);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
         }
 
@@ -101,7 +102,7 @@ namespace BioEngine.Site.Helpers
             var developerUrl = match.Groups[1].Value;
             var developer = await _dbContext.Developers.FirstOrDefaultAsync(x => x.Url == developerUrl);
             if (developer == null) return null;
-            var url = _urlManager.ParentUrl(developer, true);
+            var url = _urlHelper.Base().ParentUrl(developer, true);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
         }
 
@@ -111,7 +112,7 @@ namespace BioEngine.Site.Helpers
             if (newsId <= 0) return null;
             var news = await _dbContext.News.FirstOrDefaultAsync(x => x.Id == newsId);
             if (news == null) return null;
-            var url = _urlManager.News.PublicUrl(news, true);
+            var url = _urlHelper.News().PublicUrl(news, true);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
         }
 
@@ -160,12 +161,12 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             if (pic == null) return null;
 
 
-            var picUrl = _urlManager.Gallery.PublicUrl(pic, true) + "#nanogallery/nanoGallery/0/" + pic.Id;
+            var picUrl = _urlHelper.Gallery().PublicUrl(pic, true) + "#nanogallery/nanoGallery/0/" + pic.Id;
             if (urlOnly)
             {
                 return picUrl;
             }
-            var thumbUrl = await _urlManager.Gallery.ThumbUrl(pic, width, height);
+            var thumbUrl = _urlHelper.Gallery().ThumbUrl(pic, width, height);
             return $"<a href='{picUrl}' title='{pic.Desc}'><img src='{thumbUrl}' alt='{pic.Desc}' /></a>";
         }
 
@@ -175,7 +176,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             if (articleId <= 0) return null;
             var article = await _dbContext.Articles.FirstOrDefaultAsync(x => x.Id == articleId);
             if (article == null) return null;
-            var url = await _urlManager.Articles.PublicUrl(article, true);
+            var url = _urlHelper.Articles().PublicUrl(article, true);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
         }
 
@@ -185,7 +186,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             if (fileId <= 0) return null;
             var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
             if (file == null) return null;
-            var url = await _urlManager.Files.PublicUrl(file, true);
+            var url = _urlHelper.Files().PublicUrl(file, true);
             return urlOnly ? url : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";
         }
     }

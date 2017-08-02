@@ -1,7 +1,7 @@
 ﻿@using BioEngine.Site.Extensions
 @using BioEngine.Site.ViewComponents
 @model BioEngine.Site.ViewModels.BaseViewModel
-@if (string.IsNullOrEmpty(await Model.Title()))
+@if (string.IsNullOrEmpty(Model.Title()))
 {
     throw new ArgumentNullException(nameof(Model.Title));
 }
@@ -28,7 +28,7 @@
     <meta name="theme-color" content="#ffffff">
     
     @{
-        var title = Html.Raw(await Model.Title());
+        var title = Html.Raw(Model.Title());
         var imageUrl = Html.Raw(Model.GetImageUrl());
         var description = Html.Raw(await Model.GetPageDescription());
     }

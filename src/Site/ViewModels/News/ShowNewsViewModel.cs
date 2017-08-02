@@ -1,25 +1,27 @@
 ﻿using System;
-using BioEngine.Site.Components.Url;
+using BioEngine.Routing;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site.ViewModels.News
 {
     public class ShowNewsViewModel
     {
-        public ShowNewsViewModel(Common.Models.News news, bool showFull, UrlManager urlManager)
+        private readonly IUrlHelper _urlHelper;
+
+        public ShowNewsViewModel(Common.Models.News news, bool showFull, IUrlHelper urlHelper)
         {
+            _urlHelper = urlHelper;
             News = news;
             ShowFull = showFull;
-            UrlManager = urlManager;
         }
 
         public Common.Models.News News { get; }
         public bool ShowFull { get; }
-        private UrlManager UrlManager { get; }
 
         public DateTimeOffset Date => DateTimeOffset.FromUnixTimeSeconds(News.Date);
 
-        public string CommentsUrl => UrlManager.News.CommentsUrl(News);
+        public string CommentsUrl => _urlHelper.News().CommentsUrl(News);
 
-        public string NewsUrl => UrlManager.News.PublicUrl(News, true);
+        public string NewsUrl => _urlHelper.News().PublicUrl(News, true);
     }
 }

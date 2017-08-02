@@ -36,6 +36,9 @@ namespace BioEngine.Common.Models
 
         private List<GalleryPicFile> _files;
 
+        [NotMapped]
+        public int Position { get; set; }
+
         [JsonProperty]
         public List<GalleryPicFile> Files
         {

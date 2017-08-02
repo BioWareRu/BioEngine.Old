@@ -24,9 +24,9 @@ namespace BioEngine.Site.ViewModels.Games
         public IEnumerable<File> LastFiles { get; }
         public IEnumerable<GalleryPic> LastPics { get; }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult(Game.Title);
+            return Game.Title;
         }
 
         protected override async Task<string> GetDescription()

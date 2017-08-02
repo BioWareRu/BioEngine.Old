@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\AppSettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\img\article-list__balloon.png" />
     <Content Include="wwwroot\img\article-list__bg.png" />
     <Content Include="wwwroot\img\article-list__bg2.png" />
@@ -109,6 +113,7 @@
   <ItemGroup>
     <PackageReference Include="BundlerMinifier.Core" Version="2.4.337" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.Redis" Version="0.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="1.1.2" />
@@ -161,6 +166,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
+    <ProjectReference Include="..\Content\BioEngine.Content.csproj" />
+    <ProjectReference Include="..\Data\BioEngine.Data.csproj" />
+    <ProjectReference Include="..\Routing\BioEngine.Routing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

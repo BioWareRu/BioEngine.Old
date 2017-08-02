@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
+using BioEngine.Data.Base.Requests;
+using BioEngine.Routing;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Files;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
 {
     public class FilesController : BaseController
     {
-        public FilesController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+        public FilesController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper)
+            : base(mediator, appSettingsOptions, contentHelper)
         {
         }
 
@@ -30,7 +29,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/files/{parentUrl}/")]
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -52,7 +51,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/download/{*url}")]
         public async Task<IActionResult> Download(string parentUrl, string url)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = Mediator.Send(new GetParentByUrlRequest(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -74,12 +73,12 @@ namespace BioEngine.Site.Controllers
                 var cat = file.Cat.ParentCat;
                 while (cat != null)
                 {
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(Url.Files().CatPublicUrl(cat), cat.Title));
                     cat = cat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent), "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Files().CatPublicUrl(file.Cat), file.Cat.Title));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Files().ParentFilesUrl(parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
                 var viewModel = new FileViewModel(ViewModelConfig, file);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -93,7 +92,7 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find file
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
+            var parent = Mediator.Send(new GetParentByUrlRequest(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -108,13 +107,13 @@ namespace BioEngine.Site.Controllers
                     var cat = file.Cat.ParentCat;
                     while (cat != null)
                     {
-                        breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(cat), cat.Title));
+                        breadcrumbs.Add(new BreadCrumbsItem(Url.Files().CatPublicUrl(cat), cat.Title));
                         cat = cat.ParentCat;
                     }
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(file.Cat), file.Cat.Title));
-                    breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent),
+                    breadcrumbs.Add(new BreadCrumbsItem(Url.Files().CatPublicUrl(file.Cat), file.Cat.Title));
+                    breadcrumbs.Add(new BreadCrumbsItem(Url.Files().ParentFilesUrl(parent),
                         "Файлы"));
-                    breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                    breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
                     var viewModel = new FileViewModel(ViewModelConfig, file);
                     breadcrumbs.Reverse();
                     viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -136,11 +135,11 @@ namespace BioEngine.Site.Controllers
                 while (parentCat != null)
                 {
                     breadcrumbs.Add(
-                        new BreadCrumbsItem(await UrlManager.Files.CatPublicUrl(parentCat), parentCat.Title));
+                        new BreadCrumbsItem(Url.Files().CatPublicUrl(parentCat), parentCat.Title));
                     parentCat = parentCat.ParentCat;
                 }
-                breadcrumbs.Add(new BreadCrumbsItem(await UrlManager.Files.ParentFilesUrl((dynamic)parent), "Файлы"));
-                breadcrumbs.Add(new BreadCrumbsItem(UrlManager.ParentUrl(parent), parent.DisplayTitle));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Files().ParentFilesUrl(parent), "Файлы"));
+                breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
                 await Context.Entry(category).Collection(x => x.Children).LoadAsync();
 
@@ -151,7 +150,8 @@ namespace BioEngine.Site.Controllers
                 }
 
                 var filesCount = await Context.Files.CountAsync(x => x.CatId == category.Id);
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, children, await GetLastFiles(category, filesCount),
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, children,
+                    await GetLastFiles(category, filesCount),
                     page,
                     filesCount);
                 breadcrumbs.Reverse();
@@ -169,13 +169,13 @@ namespace BioEngine.Site.Controllers
             switch (parent.Type)
             {
                 case ParentType.Game:
-                    catQuery = catQuery.Where(x => x.GameId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.GameId == (int) parent.GetId());
                     break;
                 case ParentType.Developer:
-                    catQuery = catQuery.Where(x => x.DeveloperId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.DeveloperId == (int) parent.GetId());
                     break;
                 case ParentType.Topic:
-                    catQuery = catQuery.Where(x => x.TopicId == (int)parent.GetId());
+                    catQuery = catQuery.Where(x => x.TopicId == (int) parent.GetId());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -198,13 +198,13 @@ namespace BioEngine.Site.Controllers
                 switch (parent.Type)
                 {
                     case ParentType.Game:
-                        query = query.Where(x => x.GameId == (int)parent.GetId());
+                        query = query.Where(x => x.GameId == (int) parent.GetId());
                         break;
                     case ParentType.Developer:
-                        query = query.Where(x => x.DeveloperId == (int)parent.GetId());
+                        query = query.Where(x => x.DeveloperId == (int) parent.GetId());
                         break;
                     case ParentType.Topic:
-                        query = query.Where(x => x.TopicId == (int)parent.GetId());
+                        query = query.Where(x => x.TopicId == (int) parent.GetId());
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

@@ -1,8 +1,6 @@
 ﻿using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,14 +12,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Routing;
+using MediatR;
 
 namespace BioEngine.Site.Controllers
 {
     public class SitemapController : BaseController
     {
-        public SitemapController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-           IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+        public SitemapController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper)
+            : base(mediator, appSettingsOptions, contentHelper)
         {
         }
 
@@ -30,12 +29,12 @@ namespace BioEngine.Site.Controllers
         {
             List<SitemapIndexNode> sitemapIndexNodes = new List<SitemapIndexNode>
             {
-                new SitemapIndexNode(Url.Action("Main","Sitemap")),
-                new SitemapIndexNode(Url.Action("News","Sitemap")),
-                new SitemapIndexNode(Url.Action("Games","Sitemap")),
-                new SitemapIndexNode(Url.Action("Articles","Sitemap")),
-                new SitemapIndexNode(Url.Action("Files","Sitemap")),
-                new SitemapIndexNode(Url.Action("Gallery","Sitemap")),
+                new SitemapIndexNode(Url.Action("Main", "Sitemap")),
+                new SitemapIndexNode(Url.Action("News", "Sitemap")),
+                new SitemapIndexNode(Url.Action("Games", "Sitemap")),
+                new SitemapIndexNode(Url.Action("Articles", "Sitemap")),
+                new SitemapIndexNode(Url.Action("Files", "Sitemap")),
+                new SitemapIndexNode(Url.Action("Gallery", "Sitemap")),
             };
 
             return new SitemapProvider().CreateSitemapIndex(new SitemapIndexModel(sitemapIndexNodes));
@@ -62,18 +61,18 @@ namespace BioEngine.Site.Controllers
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
             var allNews = await Context.News.Where(x => x.Pub == 1)
-                    .OrderByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic).ToListAsync();
+                .OrderByDescending(x => x.Date)
+                .Include(x => x.Author)
+                .Include(x => x.Game)
+                .Include(x => x.Developer)
+                .Include(x => x.Topic).ToListAsync();
             foreach (var news in allNews)
             {
                 nodes.Add(new SitemapNode(Url.News().PublicUrl(news, true))
                 {
                     News = new SitemapNews(newsPublication: new NewsPublication(name: news.Title, language: "ru"),
-                           publicationDate: DateTimeOffset.FromUnixTimeSeconds(news.Date).Date,
-                           title: news.Title),
+                        publicationDate: DateTimeOffset.FromUnixTimeSeconds(news.Date).Date,
+                        title: news.Title),
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M
                 });
@@ -88,7 +87,7 @@ namespace BioEngine.Site.Controllers
             List<SitemapNode> nodes = new List<SitemapNode>();
             foreach (var game in await Context.Games.ToListAsync())
             {
-                nodes.Add(new SitemapNode(UrlManager.Games.PublicUrl(game, true))
+                nodes.Add(new SitemapNode(Url.Base().PublicUrl(game, true))
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     LastModificationDate = DateTime.UtcNow,
@@ -105,7 +104,7 @@ namespace BioEngine.Site.Controllers
             List<SitemapNode> nodes = new List<SitemapNode>();
             foreach (var articleCat in await Context.ArticleCats.ToListAsync())
             {
-                nodes.Add(new SitemapNode(await UrlManager.Articles.CatPublicUrl(articleCat))
+                nodes.Add(new SitemapNode(Url.Articles().CatPublicUrl(articleCat))
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M
@@ -113,7 +112,7 @@ namespace BioEngine.Site.Controllers
             }
             foreach (var article in await Context.Articles.Where(x => x.Pub == 1).ToListAsync())
             {
-                nodes.Add(new SitemapNode(await UrlManager.Articles.PublicUrl(article))
+                nodes.Add(new SitemapNode(Url.Articles().PublicUrl(article))
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(article.Date).Date,
@@ -130,7 +129,7 @@ namespace BioEngine.Site.Controllers
             List<SitemapNode> nodes = new List<SitemapNode>();
             foreach (var fileCat in await Context.FileCats.ToListAsync())
             {
-                nodes.Add(new SitemapNode(await UrlManager.Files.CatPublicUrl(fileCat))
+                nodes.Add(new SitemapNode(Url.Files().CatPublicUrl(fileCat))
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M
@@ -138,7 +137,7 @@ namespace BioEngine.Site.Controllers
             }
             foreach (var file in await Context.Files.ToListAsync())
             {
-                nodes.Add(new SitemapNode(await UrlManager.Files.PublicUrl(file))
+                nodes.Add(new SitemapNode(Url.Files().PublicUrl(file))
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(file.Date).Date,
@@ -155,7 +154,7 @@ namespace BioEngine.Site.Controllers
             List<SitemapNode> nodes = new List<SitemapNode>();
             foreach (var galleryCat in await Context.GalleryCats.ToListAsync())
             {
-                nodes.Add(new SitemapNode(await UrlManager.Gallery.CatPublicUrl(galleryCat))
+                nodes.Add(new SitemapNode(Url.Gallery().CatPublicUrl(galleryCat))
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M

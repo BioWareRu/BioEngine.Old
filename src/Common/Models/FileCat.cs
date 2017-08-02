@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace BioEngine.Common.Models
 {
     [Table("be_files_cats")]
-    public class FileCat : ChildModel<int>, ICat<FileCat>
+    public class FileCat : ChildModel<int>, ICat<FileCat, File>
     {
         [JsonProperty]
         public int Pid { get; set; }
@@ -29,6 +29,8 @@ namespace BioEngine.Common.Models
 
         [InverseProperty(nameof(ParentCat))]
         public List<FileCat> Children { get; set; }
+
+        public IEnumerable<File> Items { get; set; }
 
         [NotMapped]
         public override int? TopicId { get; set; }

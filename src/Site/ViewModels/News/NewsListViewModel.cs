@@ -18,9 +18,9 @@ namespace BioEngine.Site.ViewModels.News
         public int TotalNews { get; }
         public int CurrentPage { get; }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult(SiteTitle);
+            return SiteTitle;
         }
 
         protected override async Task<string> GetDescription()

@@ -7,14 +7,13 @@ using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Common.Search;
 using BioEngine.Site.Base;
-using BioEngine.Site.Components;
-using BioEngine.Site.Components.Url;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
+using MediatR;
 
 namespace BioEngine.Site.Controllers
 {
@@ -22,9 +21,9 @@ namespace BioEngine.Site.Controllers
     {
         private readonly IContentHelperInterface _contentHelper;
 
-        public SearchController(BWContext context, ParentEntityProvider parentEntityProvider, UrlManager urlManager,
-            IOptions<AppSettings> appSettingsOptions, IContentHelperInterface contentHelper)
-            : base(context, parentEntityProvider, urlManager, appSettingsOptions, contentHelper)
+        public SearchController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
+            IContentHelperInterface contentHelper)
+            : base(mediator, appSettingsOptions, contentHelper)
         {
             _contentHelper = contentHelper;
         }
@@ -41,9 +40,9 @@ namespace BioEngine.Site.Controllers
                 {
                     var games = SearchEntities<Game>(query, limit);
                     var gamesCount = CountEntities<Game>(query);
-                    var searchBlock = CreateSearchBlock("Игры", UrlManager.Search.BlockUrl("games", query), gamesCount,
+                    var searchBlock = CreateSearchBlock("Игры", Url.Search().BlockUrl("games", query), gamesCount,
                         games, x => x.Title,
-                        x => Task.FromResult(UrlManager.Games.PublicUrl(x)),
+                        x => Url.Base().PublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.NewsDesc));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -52,9 +51,9 @@ namespace BioEngine.Site.Controllers
                 {
                     var news = SearchEntities<News>(query, limit);
                     var newsCount = CountEntities<News>(query);
-                    var searchBlock = CreateSearchBlock("Новости", UrlManager.Search.BlockUrl("news", query), newsCount,
+                    var searchBlock = CreateSearchBlock("Новости", Url.Search().BlockUrl("news", query), newsCount,
                         news, x => x.Title,
-                            x => Task.FromResult(Url.News().PublicUrl(x)),
+                        x => Url.News().PublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.ShortText));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -63,10 +62,10 @@ namespace BioEngine.Site.Controllers
                 {
                     var articles = SearchEntities<Article>(query, limit);
                     var articlesCount = CountEntities<Article>(query);
-                    var searchBlock = CreateSearchBlock("Статьи", UrlManager.Search.BlockUrl("articles", query),
+                    var searchBlock = CreateSearchBlock("Статьи", Url.Search().BlockUrl("articles", query),
                         articlesCount,
                         articles, x => x.Title,
-                        async x => await UrlManager.Articles.PublicUrl(x),
+                        x => Url.Articles().PublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -76,10 +75,10 @@ namespace BioEngine.Site.Controllers
                     var articlesCats = SearchEntities<ArticleCat>(query, limit);
                     var articlesCatsCount = CountEntities<ArticleCat>(query);
                     var searchBlock = CreateSearchBlock("Категории статей",
-                        UrlManager.Search.BlockUrl("articlesCats", query),
+                        Url.Search().BlockUrl("articlesCats", query),
                         articlesCatsCount,
                         articlesCats, x => x.Title,
-                        async x => await UrlManager.Articles.CatPublicUrl(x),
+                        x => Url.Articles().CatPublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -88,10 +87,10 @@ namespace BioEngine.Site.Controllers
                 {
                     var files = SearchEntities<File>(query, limit);
                     var filesCount = CountEntities<File>(query);
-                    var searchBlock = CreateSearchBlock("Файлы", UrlManager.Search.BlockUrl("files", query),
+                    var searchBlock = CreateSearchBlock("Файлы", Url.Search().BlockUrl("files", query),
                         filesCount,
                         files, x => x.Title,
-                        async x => await UrlManager.Files.PublicUrl(x),
+                        x => Url.Files().PublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -101,10 +100,10 @@ namespace BioEngine.Site.Controllers
                     var fileCats = SearchEntities<FileCat>(query, limit);
                     var fileCatsCount = CountEntities<FileCat>(query);
                     var searchBlock = CreateSearchBlock("Категории файлов",
-                        UrlManager.Search.BlockUrl("filesCat", query),
+                        Url.Search().BlockUrl("filesCat", query),
                         fileCatsCount,
                         fileCats, x => x.Title,
-                        async x => await UrlManager.Files.CatPublicUrl(x),
+                        x => Url.Files().CatPublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -114,10 +113,10 @@ namespace BioEngine.Site.Controllers
                     var galleryCats = SearchEntities<GalleryCat>(query, limit);
                     var galleryCatsCount = CountEntities<GalleryCat>(query);
                     var searchBlock = CreateSearchBlock("Категории картинок",
-                        UrlManager.Search.BlockUrl("galleryCats", query),
+                        Url.Search().BlockUrl("galleryCats", query),
                         galleryCatsCount,
                         galleryCats, x => x.Title,
-                        async x => await UrlManager.Gallery.CatPublicUrl(x),
+                        x => Url.Gallery().CatPublicUrl(x),
                         x => _contentHelper.ReplacePlaceholders(x.Desc));
                     viewModel.AddBlock(await searchBlock);
                 }
@@ -127,12 +126,12 @@ namespace BioEngine.Site.Controllers
 
         private async Task<SearchBlock> CreateSearchBlock<T>(string title, string url, long totalCount,
             IEnumerable<T> items,
-            Func<T, string> getTitle, Func<T, Task<string>> getUrl, Func<T, Task<string>> getDesc)
+            Func<T, string> getTitle, Func<T, string> getUrl, Func<T, Task<string>> getDesc)
         {
             var block = new SearchBlock(title, url, totalCount);
             foreach (var item in items)
             {
-                block.AddItem(getTitle(item), await getUrl(item), await getDesc(item));
+                block.AddItem(getTitle(item), getUrl(item), await getDesc(item));
             }
             return block;
         }

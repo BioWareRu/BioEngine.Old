@@ -11,9 +11,9 @@ namespace BioEngine.Site.ViewModels.Errors
             ErrorCode = errorCode;
         }
 
-        public override Task<string> Title()
+        public override string Title()
         {
-            return Task.FromResult("Ошибка");
+            return "Ошибка";
         }
 
         protected override async Task<string> GetDescription()

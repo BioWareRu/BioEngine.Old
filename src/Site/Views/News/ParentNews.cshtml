@@ -19,6 +19,6 @@
 
     @(await Component.InvokeAsync<PagerViewComponent>(new
       {
-          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (page) => Task.FromResult(Url.Action<NewsController>(x => x.NewsList(Model.Parent.ParentUrl, page))), 20)
+          pagerModel = new PagerModel(Model.CurrentPage, Model.TotalNews, (page) => Task.FromResult(Url.Action<NewsController>(x => x.ParentNewsWithPage(Model.Parent.ParentUrl, page))), 20)
       }))
 </div>

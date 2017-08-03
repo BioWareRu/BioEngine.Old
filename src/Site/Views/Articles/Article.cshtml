@@ -2,6 +2,7 @@
 @using System.Threading.Tasks
 @using BioEngine.Site.Components.Url
 @using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Articles.ArticleViewModel
 @inject UrlManager UrlManager
 @{
@@ -28,7 +29,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", await UrlManager.Articles.PublicUrl(Model.Article))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(new Uri(await UrlManager.Articles.PublicUrl(Model.Article)), Model.Description, Model.Image, Model.Article.Title))
             </div>
         </footer>
     </article>

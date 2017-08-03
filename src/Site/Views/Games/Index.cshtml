@@ -122,7 +122,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(new Uri(UrlManager.Games.PublicUrl(Model.Game)), Model.Game.Desc, new Uri(UrlManager.Games.LogoUrl(Model.Game)), Model.Game.Title))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(new Uri(UrlManager.Games.PublicUrl(Model.Game, true)), Model.Game.Desc, new Uri(UrlManager.Games.LogoUrl(Model.Game)), Model.Game.Title))
             </div>
         </footer>
     </article>

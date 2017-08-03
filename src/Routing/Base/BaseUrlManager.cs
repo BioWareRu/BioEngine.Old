@@ -14,22 +14,22 @@ namespace BioEngine.Routing.Base
         {
         }
 
-        public string PublicUrl(Game game, bool absolute = false)
+        public Uri PublicUrl(Game game, bool absolute = false)
         {
             return GetUrl(BaseRoutesEnum.GamePage, new {gameUrl = game.Url}, absolute);
         }
 
-        public string PublicUrl(Developer developer, bool absolute = false)
+        public Uri PublicUrl(Developer developer, bool absolute = false)
         {
             return UrlHelper.News().ParentNewsUrl(developer, absolute: absolute);
         }
 
-        public string PublicUrl(Topic topic, bool absolute = false)
+        public Uri PublicUrl(Topic topic, bool absolute = false)
         {
-            return "#";
+            return null;
         }
 
-        public string ParentUrl(IParentModel parent, bool absoluteUrl = false)
+        public Uri ParentUrl(IParentModel parent, bool absoluteUrl = false)
         {
             switch (parent.Type)
             {
@@ -44,34 +44,34 @@ namespace BioEngine.Routing.Base
             }
         }
 
-        public string ParentIconUrl(IChildModel child)
+        public Uri ParentIconUrl(IChildModel child)
         {
             return ParentIconUrl((dynamic) child.Parent);
         }
 
-        public string ParentIconUrl(IParentModel parent)
+        public Uri ParentIconUrl(IParentModel parent)
         {
             return ParentIconUrl((dynamic) parent);
         }
 
-        public string ParentIconUrl(Developer developer)
+        public Uri ParentIconUrl(Developer developer)
         {
-            return Settings.AssetsDomain + Settings.DevelopersImagesPath + developer.Icon;
+            return new Uri(Settings.AssetsDomain + Settings.DevelopersImagesPath + developer.Icon);
         }
 
-        public string ParentIconUrl(Game game)
+        public Uri ParentIconUrl(Game game)
         {
-            return Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon;
+            return new Uri(Settings.AssetsDomain + Settings.GamesImagesPath + "small/" + game.Icon);
         }
 
-        public string ParentIconUrl(Topic topic)
+        public Uri ParentIconUrl(Topic topic)
         {
-            return Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon;
+            return new Uri(Settings.AssetsDomain + Settings.TopicsImagesPath + topic.Icon);
         }
 
-        public string GameLogoUrl(Game game)
+        public Uri GameLogoUrl(Game game)
         {
-            return Settings.AssetsDomain + Settings.GamesImagesPath + "big/" + game.Logo;
+            return new Uri(Settings.AssetsDomain + Settings.GamesImagesPath + "big/" + game.Logo);
         }
     }
 }

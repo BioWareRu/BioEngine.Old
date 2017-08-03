@@ -5,8 +5,8 @@ namespace BioEngine.Site.ViewModels
 {
     public class ParentHeaderViewModel
     {
-        public ParentHeaderViewModel(IParentModel parent, Func<IParentModel, string> getUrl,
-            Func<IParentModel, string> getIconUrl)
+        public ParentHeaderViewModel(IParentModel parent, Func<IParentModel, Uri> getUrl,
+            Func<IParentModel, Uri> getIconUrl)
         {
             Parent = parent;
             GetUrl = getUrl;
@@ -15,7 +15,7 @@ namespace BioEngine.Site.ViewModels
 
         public IParentModel Parent { get; }
 
-        public readonly Func<IParentModel, string> GetUrl;
-        public readonly Func<IParentModel, string> GetIconUrl;
+        public readonly Func<IParentModel, Uri> GetUrl;
+        public readonly Func<IParentModel, Uri> GetIconUrl;
     }
 }

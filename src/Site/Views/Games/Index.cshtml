@@ -4,6 +4,7 @@
 @model BioEngine.Site.ViewModels.Games.GamePageViewModel
 @{
     Layout = "~/Views/_Main.cshtml";
+    Model.SetImageUrl(Url.Base().GameLogoUrl(Model.Game));
 }
 <div class="article__block">
     @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
@@ -162,8 +163,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", Url.Base().PublicUrl(Model.Game))
-                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(new Uri(Url.Base().PublicUrl(Model.Game)), Model.Game.Desc, new Uri(UrlManager.Games.LogoUrl(Model.Game)), Model.Game.Title))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Url.Base().PublicUrl(Model.Game), Model.Game.Desc, Url.Base().GameLogoUrl(Model.Game), Model.Game.Title))
             </div>
         </footer>
     </article>

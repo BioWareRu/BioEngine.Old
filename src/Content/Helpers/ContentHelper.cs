@@ -94,7 +94,7 @@ namespace BioEngine.Content.Helpers
             var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Url == gameUrl);
             if (game == null) return null;
             var url = _urlHelper.Base().ParentUrl(game, true);
-            return urlOnly ? url : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
+            return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
         }
 
         private async Task<string> ReplaceDeveloper(Match match, bool urlOnly)
@@ -103,7 +103,7 @@ namespace BioEngine.Content.Helpers
             var developer = await _dbContext.Developers.FirstOrDefaultAsync(x => x.Url == developerUrl);
             if (developer == null) return null;
             var url = _urlHelper.Base().ParentUrl(developer, true);
-            return urlOnly ? url : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
+            return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
         }
 
         private async Task<string> ReplaceNews(Match match, bool urlOnly)
@@ -113,7 +113,7 @@ namespace BioEngine.Content.Helpers
             var news = await _dbContext.News.FirstOrDefaultAsync(x => x.Id == newsId);
             if (news == null) return null;
             var url = _urlHelper.News().PublicUrl(news, true);
-            return urlOnly ? url : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
+            return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
         }
 
         private async Task<string> ReplaceTwitter(Match match, bool urlOnly)
@@ -177,7 +177,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             var article = await _dbContext.Articles.FirstOrDefaultAsync(x => x.Id == articleId);
             if (article == null) return null;
             var url = _urlHelper.Articles().PublicUrl(article, true);
-            return urlOnly ? url : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
+            return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
         }
 
         private async Task<string> ReplaceFile(Match match, bool urlOnly)
@@ -187,7 +187,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
             if (file == null) return null;
             var url = _urlHelper.Files().PublicUrl(file, true);
-            return urlOnly ? url : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";
+            return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";
         }
     }
 

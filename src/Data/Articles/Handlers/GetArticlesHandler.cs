@@ -27,6 +27,12 @@ namespace BioEngine.Data.Articles.Handlers
                 query = ApplyParentCondition(query, message.Parent);
             }
             var totalArticles = await query.CountAsync();
+            if (message.Page != null && message.Page > 0)
+            {
+                query = query.Skip(((int)message.Page - 1) * message.PageSize)
+                    .Take(message.PageSize);
+            }
+
             var articles =
                 await query
                     .OrderByDescending(x => x.Date)
@@ -35,8 +41,6 @@ namespace BioEngine.Data.Articles.Handlers
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
                     .Include(x => x.Cat)
-                    .Skip((message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize)
                     .ToListAsync();
 
             foreach (var article in articles)

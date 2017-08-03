@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
-    class GetGalleryPicsHandler : RequestHandlerBase<GetGalleryPicsRequest, (IEnumerable<Common.Models.GalleryPic>
+    public class GetGalleryPicsHandler : RequestHandlerBase<GetGalleryPicsRequest, (
+        IEnumerable<Common.Models.GalleryPic>
         pics, int count)>
     {
         public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
@@ -27,6 +28,13 @@ namespace BioEngine.Data.Gallery.Handlers
                 query = ApplyParentCondition(query, message.Parent);
             }
             var totalPics = await query.CountAsync();
+
+            if (message.Page != null && message.Page > 0)
+            {
+                query = query.Skip(((int) message.Page - 1) * message.PageSize)
+                    .Take(message.PageSize);
+            }
+
             var pics =
                 await query
                     .OrderByDescending(x => x.Id)
@@ -34,8 +42,6 @@ namespace BioEngine.Data.Gallery.Handlers
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
                     .Include(x => x.Cat)
-                    .Skip((message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize)
                     .ToListAsync();
 
             foreach (var article in pics)

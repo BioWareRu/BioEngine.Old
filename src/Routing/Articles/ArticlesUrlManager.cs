@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
@@ -16,14 +17,14 @@ namespace BioEngine.Routing.Articles
         {
         }
 
-        public string PublicUrl(Article article, bool absoluteUrl = false)
+        public Uri PublicUrl(Article article, bool absoluteUrl = false)
         {
             var url = CatUrl(article.Cat) + "/" + article.Url;
             return GetUrl(ArticlesRoutesEnum.ArticlePage, new {parentUrl = article.Parent.ParentUrl, url}, absoluteUrl);
         }
 
 
-        public string CatPublicUrl(ArticleCat cat, int page = 1)
+        public Uri CatPublicUrl(ArticleCat cat, int page = 1)
         {
             var url = CatUrl(cat) + "/" + cat.Url;
             if (page > 1)
@@ -31,12 +32,12 @@ namespace BioEngine.Routing.Articles
             return GetUrl(ArticlesRoutesEnum.ArticlePage, new {parentUrl = cat.Parent.ParentUrl, url});
         }
 
-        public string ParentArticlesUrl(IChildModel childModel, bool absolute = false)
+        public Uri ParentArticlesUrl(IChildModel childModel, bool absolute = false)
         {
             return ParentArticlesUrl(childModel.Parent, absolute);
         }
 
-        public string ParentArticlesUrl(IParentModel parentModel, bool absolute = false)
+        public Uri ParentArticlesUrl(IParentModel parentModel, bool absolute = false)
         {
             return GetUrl(ArticlesRoutesEnum.ArticlesByParent, new {parentUrl = parentModel.ParentUrl}, absolute);
         }

@@ -8,5 +8,5 @@
 }
 <div class="article__block">
     @(await Component.InvokeAsync<BreadcrumbsViewComponent>(Model.BreadCrumbs))
-    @Html.Partial("~/Views/Shared/News/Show.cshtml", new ShowNewsViewModel(Model.News, true, Url, UrlManager, Model.GetImageUrl()))
+    @Html.Partial("~/Views/Shared/News/Show.cshtml", new ShowNewsViewModel(Model.News, true, Url, Model.GetImageUrl()))
 </div>

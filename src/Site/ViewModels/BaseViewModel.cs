@@ -58,6 +58,11 @@ namespace BioEngine.Site.ViewModels
             return ImageUrl;
         }
 
+        public void SetImageUrl(Uri imageUrl)
+        {
+            ImageUrl = imageUrl;
+        }
+
         public static string GetDescriptionFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
@@ -115,10 +120,10 @@ namespace BioEngine.Site.ViewModels
 
     public struct BreadCrumbsItem
     {
-        public string Url { get; }
+        public Uri Url { get; }
         public string Title { get; }
 
-        public BreadCrumbsItem(string url, string title)
+        public BreadCrumbsItem(Uri url, string title)
         {
             Url = url;
             Title = title;

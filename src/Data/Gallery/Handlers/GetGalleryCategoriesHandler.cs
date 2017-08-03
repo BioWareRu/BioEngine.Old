@@ -4,22 +4,21 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Gallery.Requests;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Data.Files.Handlers
+namespace BioEngine.Data.Gallery.Handlers
 {
-    public class GetFilesCategoriesHandler : RequestHandlerBase<GetFilesCategoriesRequest, IEnumerable<FileCat>
-    >
+    public class GetGalleryCategoriesHandler : RequestHandlerBase<GetGalleryCategoriesRequest, IEnumerable<GalleryCat>>
     {
-        public GetFilesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetGalleryCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<IEnumerable<FileCat>> Handle(GetFilesCategoriesRequest message)
+        public override async Task<IEnumerable<GalleryCat>> Handle(GetGalleryCategoriesRequest message)
         {
-            var query = DBContext.FileCats.AsQueryable();
+            var query = DBContext.GalleryCats.AsQueryable();
             if (message.Parent != null)
             {
                 query = ApplyParentCondition(query, message.Parent);
@@ -38,7 +37,7 @@ namespace BioEngine.Data.Files.Handlers
             var cats = await query.ToListAsync();
             foreach (var cat in cats)
             {
-                await Mediator.Send(new FileCategoryProcessRequest(cat, message));
+                await Mediator.Send(new GalleryCategoryProcessRequest(cat, message));
             }
 
             return cats;

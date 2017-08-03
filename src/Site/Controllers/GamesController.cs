@@ -5,6 +5,7 @@ using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Base.Requests;
 using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Gallery.Requests;
 using BioEngine.Data.News.Requests;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Games;
@@ -44,7 +45,7 @@ namespace BioEngine.Site.Controllers
 
             var canUserSeeUnpublishedGalleryPics = await HasRight(UserRights.Gallery);
             var lastPics =
-                await (await Mediator.Send(new GetGalleryPicsRequest(canUserSeeUnpublishedGalleryPics, 1, game) { PageSize = 5 })).pics;
+                (await Mediator.Send(new GetGalleryPicsRequest(canUserSeeUnpublishedGalleryPics, 1, game) { PageSize = 5 })).pics;
 
             var view = new GamePageViewModel(ViewModelConfig, game, lastNews, lastArticles, lastFiles, lastPics);
             return View(view);

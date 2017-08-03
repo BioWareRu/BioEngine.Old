@@ -17,13 +17,13 @@ namespace BioEngine.Routing.Gallery
         {
         }
 
-        public string PublicUrl(GalleryPic picture, bool absolute = false)
+        public Uri PublicUrl(GalleryPic picture, bool absolute = false)
         {
             var page = (int) Math.Ceiling((double) picture.Position / GalleryCat.PicsOnPage);
             return CatPublicUrl(picture.Cat, page, absolute);
         }
 
-        public string CatPublicUrl(GalleryCat cat, int page = 1, bool absolute = false)
+        public Uri CatPublicUrl(GalleryCat cat, int page = 1, bool absolute = false)
         {
             var url = CatUrl(cat);
             if (page > 1)
@@ -45,30 +45,31 @@ namespace BioEngine.Routing.Gallery
             return string.Join("/", urls.Reverse().Select(x => x.Value).ToArray());
         }
 
-        public string ParentGalleryUrl(IChildModel childModel, bool absolute = false)
+        public Uri ParentGalleryUrl(IChildModel childModel, bool absolute = false)
         {
             return ParentGalleryUrl(childModel.Parent, absolute);
         }
 
-        public string ParentGalleryUrl(IParentModel parentModel, bool absolute = false)
+        public Uri ParentGalleryUrl(IParentModel parentModel, bool absolute = false)
         {
             return GetUrl(GalleryRoutesEnum.ParentPage, new {parentUrl = parentModel.ParentUrl}, absolute);
         }
 
-        public string ThumbUrl(GalleryPic picture, int width = 100, int height = 0, int index = 0)
+        public Uri ThumbUrl(GalleryPic picture, int width = 100, int height = 0, int index = 0)
         {
             var file = picture.Files[index];
             var fileName = Path.GetFileNameWithoutExtension(file.Name);
             var ext = Path.GetExtension(file.Name);
             return
-                $"{Settings.ImagesDomain}{picture.Parent.ParentUrl}/{CatUrl(picture.Cat)}/{fileName}.{width}x{height}{ext}";
+                new Uri(
+                    $"{Settings.ImagesDomain}{picture.Parent.ParentUrl}/{CatUrl(picture.Cat)}/{fileName}.{width}x{height}{ext}");
         }
 
-        public string FullUrl(GalleryPic picture, int index = 0)
+        public Uri FullUrl(GalleryPic picture, int index = 0)
         {
             var file = picture.Files[index];
             return
-                $"{Settings.ImagesDomain}{picture.Parent.ParentUrl}/{CatUrl(picture.Cat)}/{file.Name}";
+                new Uri($"{Settings.ImagesDomain}{picture.Parent.ParentUrl}/{CatUrl(picture.Cat)}/{file.Name}");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace BioEngine.Common.Models
         public const int PicsOnPage = 24;
 
         [JsonProperty]
-        public int Pid { get; set; }
+        public int? Pid { get; set; }
 
         public string GameOld { get; set; }
 

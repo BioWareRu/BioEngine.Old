@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Common.Search;
+using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.News.Requests;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
 using MediatR;
 
@@ -124,9 +126,9 @@ namespace BioEngine.Site.Controllers
             return View(viewModel);
         }
 
-        private async Task<SearchBlock> CreateSearchBlock<T>(string title, string url, long totalCount,
+        private async Task<SearchBlock> CreateSearchBlock<T>(string title, Uri url, long totalCount,
             IEnumerable<T> items,
-            Func<T, string> getTitle, Func<T, string> getUrl, Func<T, Task<string>> getDesc)
+            Func<T, string> getTitle, Func<T, Uri> getUrl, Func<T, Task<string>> getDesc)
         {
             var block = new SearchBlock(title, url, totalCount);
             foreach (var item in items)
@@ -156,13 +158,13 @@ namespace BioEngine.Site.Controllers
 
         public async Task<string> Reindex()
         {
-            AddEntities(await Context.Games.ToListAsync());
-            AddEntities(await Context.News.ToListAsync());
-            AddEntities(await Context.Articles.ToListAsync());
-            AddEntities(await Context.ArticleCats.ToListAsync());
-            AddEntities(await Context.Files.ToListAsync());
-            AddEntities(await Context.FileCats.ToListAsync());
-            AddEntities(await Context.GalleryCats.ToListAsync());
+            AddEntities(await Mediator.Send(new GetGamesRequest()));
+            AddEntities((await Mediator.Send(new GetNewsRequest())).news);
+            AddEntities((await Mediator.Send(new GetArticlesRequest())).articles);
+            AddEntities(await Mediator.Send(new GetArticlesCategoriesRequest()));
+            AddEntities((await Mediator.Send(new GetFilesRequest())).files);
+            AddEntities(await Mediator.Send(new GetFilesCategoriesRequest()));
+            AddEntities(await Mediator.Send(new GetGalleryCategoriesRequest()));
             return "done";
         }
     }

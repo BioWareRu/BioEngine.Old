@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Content.Helpers;
 
@@ -40,16 +41,16 @@ namespace BioEngine.Site.ViewModels.Search
         public int Count { get; private set; }
         public long TotalCount { get; }
 
-        public string Url { get; }
+        public Uri Url { get; }
 
-        public SearchBlock(string title, string url, long totalCount)
+        public SearchBlock(string title, Uri url, long totalCount)
         {
             Title = title;
             Url = url;
             TotalCount = totalCount;
         }
 
-        public void AddItem(string title, string url, string text)
+        public void AddItem(string title, Uri url, string text)
         {
             Items.Add(new SearchBlockItem(title, url, text));
             Count++;
@@ -59,10 +60,10 @@ namespace BioEngine.Site.ViewModels.Search
     public struct SearchBlockItem
     {
         public string Title { get; }
-        public string Url { get; }
+        public Uri Url { get; }
         public string Text { get; }
 
-        public SearchBlockItem(string title, string url, string text)
+        public SearchBlockItem(string title, Uri url, string text)
         {
             Title = title;
             Text = ContentHelper.GetDescription(text, 250);

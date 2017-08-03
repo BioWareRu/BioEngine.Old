@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
 using MediatR;

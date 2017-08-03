@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
+using BioEngine.Data.Base.Requests;
 using BioEngine.Data.News.Requests;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
@@ -16,7 +15,6 @@ using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -118,92 +116,41 @@ namespace BioEngine.Site.Controllers
                 return new BadRequestResult();
             }
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
-            var query = Context.News.Where(x => (canUserSeeUnpublishedNews || x.Pub == 1)
-                                                && x.Date >= new DateTimeOffset(dateStart).ToUnixTimeSeconds()
-                                                && x.Date <= new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
-                )
-                .OrderByDescending(x => x.Sticky)
-                .ThenByDescending(x => x.Date)
-                .Include(x => x.Author)
-                .Include(x => x.Game)
-                .Include(x => x.Developer)
-                .Include(x => x.Topic);
-            var news =
-                await query
-                    .Skip((page - 1) * 20)
-                    .Take(20)
-                    .ToListAsync();
-            var totalNews = await query.CountAsync();
+
+            var newsResult = await Mediator.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page,
+                dateStart: new DateTimeOffset(dateStart).ToUnixTimeSeconds(),
+                dateEnd: new DateTimeOffset(dateEnd).ToUnixTimeSeconds()));
 
             return View("ListByDate",
-                new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
+                new NewsListByDateViewModel(ViewModelConfig, newsResult.news, newsResult.count, page, year, month,
+                    day));
         }
 
         [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> ParentNews(string parentUrl)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
+            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            return parent != null ? await ParentNewsList(parent) : StatusCode(404);
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int page)
         {
-            var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
-            return parent != null ? await ParentNewsList((dynamic) parent, page) : Task.FromResult(StatusCode(404));
+            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            return parent != null ? await ParentNewsList(parent, page) : StatusCode(404);
         }
 
-        private async Task<IActionResult> ParentNewsList(Game game, int page = 1)
+        private async Task<IActionResult> ParentNewsList(IParentModel parent, int page = 1)
         {
             if (page < 1)
                 return BadRequest();
-            var query = Context.News.Where(x => x.Pub == 1 && x.GameId == game.Id).AsQueryable();
-            var totalNews = await query.CountAsync();
-            var news = await query
-                .OrderByDescending(x => x.Sticky)
-                .ThenByDescending(x => x.Date)
-                .Include(x => x.Author)
-                .Include(x => x.Game)
-                .Skip((page - 1) * 20)
-                .Take(20)
-                .ToListAsync();
+
+            var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
+
+            var newsResult = await Mediator.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page, parent));
 
             return View("ParentNews",
-                new ParentNewsListViewModel(ViewModelConfig, game, news, totalNews, page));
-        }
-
-        private async Task<IActionResult> ParentNewsList(Developer developer, int page = 1)
-        {
-            var query = Context.News.Where(x => x.Pub == 1 && x.DeveloperId == developer.Id).AsQueryable();
-            var totalNews = await query.CountAsync();
-            var news = await query
-                .OrderByDescending(x => x.Sticky)
-                .ThenByDescending(x => x.Date)
-                .Include(x => x.Author)
-                .Include(x => x.Developer)
-                .Skip((page - 1) * 20)
-                .Take(20)
-                .ToListAsync();
-
-            return View("ParentNews",
-                new ParentNewsListViewModel(ViewModelConfig, developer, news, totalNews, page));
-        }
-
-        private async Task<IActionResult> ParentNewsList(Topic topic, int page = 1)
-        {
-            var query = Context.News.Where(x => x.Pub == 1 && x.TopicId == topic.Id).AsQueryable();
-            var totalNews = await query.CountAsync();
-            var news = await query
-                .OrderByDescending(x => x.Sticky)
-                .ThenByDescending(x => x.Date)
-                .Include(x => x.Author)
-                .Include(x => x.Topic)
-                .Skip((page - 1) * 20)
-                .Take(20)
-                .ToListAsync();
-
-            return View("ParentNews",
-                new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
+                new ParentNewsListViewModel(ViewModelConfig, parent, newsResult.news, newsResult.count, page));
         }
 
         [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
@@ -224,17 +171,8 @@ namespace BioEngine.Site.Controllers
                 return new BadRequestResult();
             }
 
-            var newsQuery =
-                Context.News.Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic)
-                    .Where(n => n.Date >= dateStart && n.Date <= dateEnd && n.Url == url);
-
-            if (!await HasRight(UserRights.News))
-                newsQuery = newsQuery.Where(x => x.Pub == 1);
-
-            var news = await newsQuery.FirstOrDefaultAsync();
+            var news = await Mediator.Send(
+                new GetOneNewsRequest(url, await HasRight(UserRights.News), dateStart, dateEnd));
 
             if (news == null) return StatusCode(404);
 
@@ -314,7 +252,7 @@ namespace BioEngine.Site.Controllers
                 new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
             };
 
-            var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
+            var news = await Mediator.Send(new GetNewsByIdRequest(newsId));
 
             if (news == null)
                 return new NotFoundResult();
@@ -352,7 +290,7 @@ namespace BioEngine.Site.Controllers
                 new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
             };
 
-            var news = await Context.News.FirstOrDefaultAsync(x => x.Id == newsId);
+            var news = await Mediator.Send(new GetNewsByIdRequest(newsId));
 
             if (news == null)
                 return new NotFoundResult();

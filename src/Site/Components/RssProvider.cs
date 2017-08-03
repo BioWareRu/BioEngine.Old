@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
+using BioEngine.Data.News.Requests;
 using BioEngine.Routing;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Components
@@ -18,12 +17,12 @@ namespace BioEngine.Site.Components
     [UsedImplicitly]
     public class RssProvider : IChannelProvider
     {
-        private readonly BWContext _dbContext;
+        private readonly IMediator _mediator;
         private readonly IUrlHelper _urlHelper;
 
-        public RssProvider(IOptions<AppSettings> options, BWContext dbContext, IUrlHelper urlHelper)
+        public RssProvider(IOptions<AppSettings> options, IMediator mediator, IUrlHelper urlHelper)
         {
-            _dbContext = dbContext;
+            _mediator = mediator;
             _urlHelper = urlHelper;
             _appSettings = options.Value;
         }
@@ -43,19 +42,14 @@ namespace BioEngine.Site.Components
                     TimeToLive = 60,
                     LastBuildDate = DateTime.Now,
                     Image =
-                        new RssImage(new Uri(_appSettings.SiteDomain), _appSettings.Title, new Uri(_appSettings.SocialLogo))
+                        new RssImage(new Uri(_appSettings.SiteDomain), _appSettings.Title,
+                            new Uri(_appSettings.SocialLogo))
                 };
 
-                var latestNews =
-                    await _dbContext.News.OrderByDescending(x => x.Sticky)
-                        .ThenByDescending(x => x.Id)
-                        .Where(x => x.Pub == 1)
-                        .Include(x => x.Author)
-                        .Take(20)
-                        .ToListAsync(cancellationToken);
+                var newsResult = await _mediator.Send(new GetNewsRequest(page: 1), cancellationToken);
                 var mostRecentPubDate = DateTime.MinValue;
                 var items = new List<RssItem>();
-                foreach (var news in latestNews)
+                foreach (var news in newsResult.news)
                 {
                     var newsDate = DateTimeOffset.FromUnixTimeSeconds(news.LastChangeDate).Date;
                     if (newsDate > mostRecentPubDate) mostRecentPubDate = newsDate;
@@ -64,10 +58,10 @@ namespace BioEngine.Site.Components
                     {
                         Title = news.Title,
                         Description = news.ShortText,
-                        Link = new Uri(newsUrl),
+                        Link = newsUrl,
                         PublicationDate = newsDate,
                         Author = news.Author.Name,
-                        Guid = new RssGuid(newsUrl, true)
+                        Guid = new RssGuid(newsUrl.ToString(), true)
                     };
 
                     items.Add(item);

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
-    internal class GetFileByUrlHandler : RequestHandlerBase<GetFileByUrlRequest, File>
+    public class GetFileByUrlHandler : RequestHandlerBase<GetFileByUrlRequest, File>
     {
         public GetFileByUrlHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {

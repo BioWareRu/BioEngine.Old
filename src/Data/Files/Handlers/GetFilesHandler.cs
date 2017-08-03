@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
-using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
 using MediatR;
@@ -12,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
-    class GetFilesHandler : RequestHandlerBase<GetFilesRequest, (IEnumerable<Common.Models.File>
+    public class GetFilesHandler : RequestHandlerBase<GetFilesRequest, (IEnumerable<Common.Models.File>
         files, int count)>
     {
         public GetFilesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
@@ -28,6 +25,13 @@ namespace BioEngine.Data.Files.Handlers
                 query = ApplyParentCondition(query, message.Parent);
             }
             var totalFiles = await query.CountAsync();
+
+            if (message.Page != null && message.Page > 0)
+            {
+                query = query.Skip(((int)message.Page - 1) * message.PageSize)
+                    .Take(message.PageSize);
+            }
+
             var files =
                 await query
                     .OrderByDescending(x => x.Date)
@@ -36,8 +40,6 @@ namespace BioEngine.Data.Files.Handlers
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
                     .Include(x => x.Cat)
-                    .Skip((message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize)
                     .ToListAsync();
 
             foreach (var file in files)

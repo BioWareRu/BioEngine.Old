@@ -1,16 +1,18 @@
 ﻿using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Site.Base;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SimpleMvcSitemap;
 using SimpleMvcSitemap.News;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
+using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.News.Requests;
 using BioEngine.Routing;
 using MediatR;
 
@@ -45,7 +47,7 @@ namespace BioEngine.Site.Controllers
         {
             List<SitemapNode> nodes = new List<SitemapNode>
             {
-                new SitemapNode(Url.Action("Index", "News"))
+                new SitemapNode(Url.News().IndexUrl().ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Daily,
                     LastModificationDate = DateTime.UtcNow,
@@ -60,15 +62,10 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> News()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            var allNews = await Context.News.Where(x => x.Pub == 1)
-                .OrderByDescending(x => x.Date)
-                .Include(x => x.Author)
-                .Include(x => x.Game)
-                .Include(x => x.Developer)
-                .Include(x => x.Topic).ToListAsync();
+            var allNews = (await Mediator.Send(new GetNewsRequest())).news;
             foreach (var news in allNews)
             {
-                nodes.Add(new SitemapNode(UrlManager.News.PublicUrl(news, true))
+                nodes.Add(new SitemapNode(Url.News().PublicUrl(news, true).ToString())
                 {
                     News = new SitemapNews(newsPublication: new NewsPublication(name: news.Title, language: "ru"),
                         publicationDate: DateTimeOffset.FromUnixTimeSeconds(news.Date).Date,
@@ -85,9 +82,9 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Games()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var game in await Context.Games.ToListAsync())
+            foreach (var game in await Mediator.Send(new GetGamesRequest()))
             {
-                nodes.Add(new SitemapNode(Url.Base().PublicUrl(game, true))
+                nodes.Add(new SitemapNode(Url.Base().PublicUrl(game, true).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     LastModificationDate = DateTime.UtcNow,
@@ -102,17 +99,17 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Articles()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var articleCat in await Context.ArticleCats.ToListAsync())
+            foreach (var articleCat in await Mediator.Send(new GetArticlesCategoriesRequest()))
             {
-                nodes.Add(new SitemapNode(Url.Articles().CatPublicUrl(articleCat))
+                nodes.Add(new SitemapNode(Url.Articles().CatPublicUrl(articleCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M
                 });
             }
-            foreach (var article in await Context.Articles.Where(x => x.Pub == 1).ToListAsync())
+            foreach (var article in (await Mediator.Send(new GetArticlesRequest())).articles)
             {
-                nodes.Add(new SitemapNode(Url.Articles().PublicUrl(article))
+                nodes.Add(new SitemapNode(Url.Articles().PublicUrl(article).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(article.Date).Date,
@@ -127,17 +124,17 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Files()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var fileCat in await Context.FileCats.ToListAsync())
+            foreach (var fileCat in await Mediator.Send(new GetFilesCategoriesRequest()))
             {
-                nodes.Add(new SitemapNode(Url.Files().CatPublicUrl(fileCat))
+                nodes.Add(new SitemapNode(Url.Files().CatPublicUrl(fileCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M
                 });
             }
-            foreach (var file in await Context.Files.ToListAsync())
+            foreach (var file in (await Mediator.Send(new GetFilesRequest())).files)
             {
-                nodes.Add(new SitemapNode(Url.Files().PublicUrl(file))
+                nodes.Add(new SitemapNode(Url.Files().PublicUrl(file).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(file.Date).Date,
@@ -152,9 +149,9 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Gallery()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var galleryCat in await Context.GalleryCats.ToListAsync())
+            foreach (var galleryCat in await Mediator.Send(new GetGalleryCategoriesRequest()))
             {
-                nodes.Add(new SitemapNode(Url.Gallery().CatPublicUrl(galleryCat))
+                nodes.Add(new SitemapNode(Url.Gallery().CatPublicUrl(galleryCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
                     Priority = 0.9M

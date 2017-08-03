@@ -21,24 +21,24 @@
         </header>
 
         <div class="files">
-            @foreach (var child in Model.Children)
+            @foreach (var child in Model.FileCat.Children)
             {
                 <h3>Подкатегории</h3>
                 <div class="files__cat">
                     <ul class="files__list">
                         <li class="files__item">
                             <h2 class="files__title">
-                                <a class="files__link" href="@Url.Files().CatPublicUrl(child.Cat)">@child.Cat.Title</a>
+                                <a class="files__link" href="@Url.Files().CatPublicUrl(child)">@child.Title</a>
                             </h2>
                             <ul class="files__list">
-                                @foreach (var article in child.LastEntities)
+                                @foreach (var file in child.Items)
                                 {
                                     <li class="files__item">
                                         <a class="files__link"
-                                           href="@Url.Files().PublicUrl(article)">
-                                            @article.Title
+                                           href="@Url.Files().PublicUrl(file)">
+                                            @file.Title
                                         </a><br>
-                                        @Html.Raw(article.Announce)
+                                        @Html.Raw(file.Announce)
                                     </li>
                                 }
                             </ul>

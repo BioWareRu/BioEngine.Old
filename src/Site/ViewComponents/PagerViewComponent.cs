@@ -16,36 +16,36 @@ namespace BioEngine.Site.ViewComponents
     {
         public int CurrentPage { get; }
         public int PageCount { get; }
-        private Func<int, string> UrlGenerator { get; }
+        private Func<int, Uri> UrlGenerator { get; }
 
-        public PagerModel(int currentPage, int totalCount, Func<int, string> urlGenerator, int itemsPerPage = 10)
+        public PagerModel(int currentPage, int totalCount, Func<int, Uri> urlGenerator, int itemsPerPage = 10)
         {
             CurrentPage = currentPage;
             PageCount = (int) Math.Ceiling((double) totalCount/itemsPerPage);
             UrlGenerator = urlGenerator;
         }
 
-        public string FirstLink()
+        public Uri FirstLink()
         {
             return PageLink(1);
         }
 
-        public string LastLink()
+        public Uri LastLink()
         {
             return PageLink(PageCount);
         }
 
-        public string PrevLink()
+        public Uri PrevLink()
         {
             return CurrentPage > 1 ? PageLink(CurrentPage - 1) : null;
         }
 
-        public string NextLink()
+        public Uri NextLink()
         {
             return CurrentPage < PageCount ? PageLink(CurrentPage + 1) : null;
         }
 
-        public string PageLink(int page)
+        public Uri PageLink(int page)
         {
             return UrlGenerator(page);
         }

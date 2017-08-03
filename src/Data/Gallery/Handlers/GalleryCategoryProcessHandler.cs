@@ -9,7 +9,7 @@ using MediatR;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
-    class GalleryCategoryProcessHandler : CategoryProcessHandlerBase<GalleryCat, GalleryPic>
+    public class GalleryCategoryProcessHandler : CategoryProcessHandlerBase<GalleryCat, GalleryPic>
     {
         protected GalleryCategoryProcessHandler(IMediator mediator, BWContext dbContext,
             ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)

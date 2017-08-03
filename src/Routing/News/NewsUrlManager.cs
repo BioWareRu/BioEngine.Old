@@ -13,7 +13,7 @@ namespace BioEngine.Routing.News
         {
         }
 
-        public string PublicUrl(Common.Models.News news, bool absolute = false)
+        public Uri PublicUrl(Common.Models.News news, bool absolute = false)
         {
             var date = DateTimeOffset.FromUnixTimeSeconds(news.Date);
             return GetUrl(NewsRoutesEnum.NewsPage,
@@ -26,60 +26,60 @@ namespace BioEngine.Routing.News
                 }, absolute);
         }
 
-        public string IndexUrl()
+        public Uri IndexUrl()
         {
             return GetUrl(NewsRoutesEnum.Index);
         }
 
-        public string IndexUrl(int page)
+        public Uri IndexUrl(int page)
         {
             return GetUrl(NewsRoutesEnum.IndexWithPage, new {page});
         }
 
-        public string NewsByYear(int year)
+        public Uri NewsByYear(int year)
         {
             return GetUrl(NewsRoutesEnum.NewsByYear, new {year});
         }
 
-        public string NewsByYear(int year, int page)
+        public Uri NewsByYear(int year, int page)
         {
             return GetUrl(NewsRoutesEnum.NewsByYearWithPage, new {year, page});
         }
 
-        public string NewsByMonth(int year, int? month)
+        public Uri NewsByMonth(int year, int? month)
         {
             return GetUrl(NewsRoutesEnum.NewsByMonth, new {year, month});
         }
 
-        public string NewsByMonth(int year, int? month, int page)
+        public Uri NewsByMonth(int year, int? month, int page)
         {
             return GetUrl(NewsRoutesEnum.NewsByMonthWithPage, new {year, month, page});
         }
 
-        public string NewsByDay(int year, int? month, int? day)
+        public Uri NewsByDay(int year, int? month, int? day)
         {
             return GetUrl(NewsRoutesEnum.NewsByDay, new {year, month, day,});
         }
 
-        public string NewsByDay(int year, int? month, int? day, int page)
+        public Uri NewsByDay(int year, int? month, int? day, int page)
         {
             return GetUrl(NewsRoutesEnum.NewsByDayWithPage, new {year, month, day, page});
         }
 
-        public string ParentNewsUrl(IChildModel news, int? page = null, bool absolute = false)
+        public Uri ParentNewsUrl(IChildModel news, int? page = null, bool absolute = false)
         {
             return ParentNewsUrl(news.Parent, page, absolute);
         }
 
-        public string ParentNewsUrl(IParentModel parent, int? page = null, bool absolute= false)
+        public Uri ParentNewsUrl(IParentModel parent, int? page = null, bool absolute= false)
         {
             return GetUrl(page > 0 ? NewsRoutesEnum.NewsByParentWithPage : NewsRoutesEnum.NewsByParent,
                 new {parentUrl = parent.ParentUrl, page}, absolute);
         }
 
-        public string CommentsUrl(Common.Models.News news)
+        public Uri CommentsUrl(Common.Models.News news)
         {
-            return $"{Settings.IPBDomain}/topic/{news.ForumTopicId}/?do=getNewComment";
+            return new Uri($"{Settings.IPBDomain}/topic/{news.ForumTopicId}/?do=getNewComment");
         }
     }
 }

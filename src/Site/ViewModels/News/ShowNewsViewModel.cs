@@ -5,11 +5,12 @@ namespace BioEngine.Site.ViewModels.News
 {
     public class ShowNewsViewModel
     {
-        public ShowNewsViewModel(Common.Models.News news, bool showFull, UrlManager urlManager)
+        public ShowNewsViewModel(Common.Models.News news, bool showFull, UrlManager urlManager, Uri ImageUrl)
         {
             News = news;
             ShowFull = showFull;
             UrlManager = urlManager;
+            Image = ImageUrl;
         }
 
         public Common.Models.News News { get; }
@@ -22,7 +23,7 @@ namespace BioEngine.Site.ViewModels.News
 
         public Uri NewsUrl => new Uri(UrlManager.News.PublicUrl(News, true));
 
-        public Uri Image => BaseViewModel.GetImageFromHtml(News.ShortText);
+        public Uri Image { get; }
         public string Description => BaseViewModel.GetDescriptionFromHtml(News.ShortText);
     }
 }

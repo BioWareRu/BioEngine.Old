@@ -84,13 +84,23 @@ namespace BioEngine.Site.ViewModels
             return description;
         }
 
-        public static Uri GetImageFromHtml(string html)
+        public Uri GetImageFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
             var contentBlock = htmlDoc.DocumentNode.Descendants("img").FirstOrDefault();
-            return contentBlock != null ? new Uri(contentBlock.GetAttributeValue("src", "")) : null;
+            var url = contentBlock?.GetAttributeValue("src", "");
+            Uri uri = null;
+            if (!string.IsNullOrEmpty(url))
+            {
+                var parsed = Uri.TryCreate(url, UriKind.Absolute, out uri);
+                if (!parsed)
+                {
+                    Uri.TryCreate(AppSettings.SiteDomain + url, UriKind.Absolute, out uri);
+                }
+            }
+            return uri;
         }
     }
 

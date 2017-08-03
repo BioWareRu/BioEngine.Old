@@ -20,6 +20,9 @@ namespace BioEngine.Site.ViewModels.News
 
         public string CommentsUrl => UrlManager.News.CommentsUrl(News);
 
-        public string NewsUrl => UrlManager.News.PublicUrl(News, true);
+        public Uri NewsUrl => new Uri(UrlManager.News.PublicUrl(News, true));
+
+        public Uri Image => BaseViewModel.GetImageFromHtml(News.ShortText);
+        public string Description => BaseViewModel.GetDescriptionFromHtml(News.ShortText);
     }
 }

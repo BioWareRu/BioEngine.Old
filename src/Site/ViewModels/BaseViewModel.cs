@@ -64,7 +64,7 @@ namespace BioEngine.Site.ViewModels
             return ImageUrl;
         }
 
-        protected static string GetDescriptionFromHtml(string html)
+        public static string GetDescriptionFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
@@ -84,7 +84,7 @@ namespace BioEngine.Site.ViewModels
             return description;
         }
 
-        protected Uri GetImageFromHtml(string html)
+        public static Uri GetImageFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);

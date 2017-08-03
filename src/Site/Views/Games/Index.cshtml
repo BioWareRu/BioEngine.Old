@@ -72,12 +72,14 @@
                 </table>
             </div>
 
-            <h3>
-                Об игре
-            </h3>
+            @if (!string.IsNullOrEmpty(Model.Game.Desc))
+            {
+                <h3>
+                    Об игре
+                </h3>
 
-
-            @Html.Raw(Model.Game.Desc)
+                @Html.Raw(Model.Game.Desc)
+            }
 
             <div class="game-info__links-block">
                 @{

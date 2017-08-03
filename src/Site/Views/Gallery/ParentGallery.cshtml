@@ -25,10 +25,10 @@
                     <ul class="files__list">
                         <li class="files__item">
                             <h2 class="files__title">
-                                <a class="files__link" href="@Url.Gallery().CatPublicUrl(cat.Cat)">@cat.Cat.Title</a>
+                                <a class="files__link" href="@Url.Gallery().CatPublicUrl(cat)">@cat.Title</a>
                             </h2>
                             <div>
-                                @foreach (var pic in cat.LastEntities)
+                                @foreach (var pic in cat.Items)
                                 {
                                     <a href="@Url.Gallery().PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
                                         <img src="@Url.Gallery().ThumbUrl(pic, 115, 115)"
@@ -42,8 +42,8 @@
                                     <li class="files__item">
                                         <h3 class="files__title">
                                             <a class="files__link"
-                                               href="@Url.Gallery().CatPublicUrl(childCat.Cat)">
-                                                >@childCat.Cat.Title
+                                               href="@Url.Gallery().CatPublicUrl(childCat)">
+                                                >@childCat.Title
                                             </a>
                                         </h3>
                                     </li>

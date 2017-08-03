@@ -5,16 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Articles\Requests\IGetArticlesCategoryRequest.cs" />
-    <Compile Remove="Core\CategoryRequestBase.cs" />
-    <Compile Remove="Files\Handlers\GetFilesCategoryHandlerBase.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Core\CategoryProcessHandlerBase.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
   </ItemGroup>
 

@@ -10,6 +10,7 @@ using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using BioEngine.Data.Base.Requests;
 using BioEngine.Data.Users.Requests;
 using MediatR;
 
@@ -25,7 +26,7 @@ namespace BioEngine.Site.Base
             IContentHelperInterface contentHelper)
         {
             Mediator = mediator;
-            //_settings = context.Settings.ToList();
+            _settings = mediator.Send(new GetSettingsRequest()).GetAwaiter().GetResult();
             ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, _settings, contentHelper);
         }
 

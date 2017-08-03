@@ -1,16 +1,14 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
-using BioEngine.Common.Models;
+using BioEngine.Data.Polls.Commands;
+using BioEngine.Data.Polls.Requests;
 using BioEngine.Site.Base;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
@@ -32,7 +30,7 @@ namespace BioEngine.Site.Controllers
         [HttpPost("polls/{pollId}/vote.html")]
         public async Task<IActionResult> Vote(int pollId, [FromForm] int vote)
         {
-            var poll = await Context.Polls.FirstOrDefaultAsync(x => x.Id == pollId);
+            var poll = await Mediator.Send(new GetPollByIdRequest(pollId));
             if (poll == null)
             {
                 return new NotFoundResult();
@@ -47,26 +45,14 @@ namespace BioEngine.Site.Controllers
                 userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
                 userLogin = User.Identity.Name;
             }
-            if (await poll.GetIsVoted(Context, userId, ip, sessionId))
+            if (await Mediator.Send(new IsPollVotedByUserRequest(poll.Id, userId, ip, sessionId)))
             {
                 return new RedirectResult(returnUrl);
             }
 
-            var pollVote = new PollWho
-            {
-                PollId = pollId,
-                VoteDate = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                VoteOption = vote,
-                Ip = ip,
-                UserId = userId,
-                Login = userLogin,
-                SessionId = sessionId
-            };
+            await Mediator.Publish(new PollVoteCommand(poll.Id, vote, ip, sessionId, userLogin, userId));
 
-            Context.Add(pollVote);
-            await Context.SaveChangesAsync();
-
-            await poll.Recount(Context);
+            await Mediator.Publish(new PollRecountCommand(poll));
             HttpContext.Session.SetInt32("voted", poll.Id);
             return new RedirectResult(returnUrl);
         }

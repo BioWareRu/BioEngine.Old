@@ -1,27 +1,24 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
+using BioEngine.Data.Polls.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Site.ViewComponents
 {
     public class PollViewComponent : ViewComponent
     {
-        private readonly BWContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public PollViewComponent(BWContext context)
+        public PollViewComponent(IMediator mediator)
         {
-            _dbContext = context;
-            //SignInManager = signInManager;
-            //UserManager = userManager;
+            _mediator = mediator;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var poll =
-                await _dbContext.Polls.Where(x => x.OnOff == 1).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+            var poll = await _mediator.Send(new GetActivePollRequest());
 
             bool voted;
             var userId = 0;
@@ -29,10 +26,12 @@ namespace BioEngine.Site.ViewComponents
             if (User.Identity.IsAuthenticated)
             {
                 userId =
-                    int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                    int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)
+                        .Value);
             }
-            voted =
-                await poll.GetIsVoted(_dbContext, userId, Request.HttpContext.Connection.RemoteIpAddress.ToString(), sessionId);
+
+            voted = await _mediator.Send(new IsPollVotedByUserRequest(poll.Id, userId,
+                Request.HttpContext.Connection.RemoteIpAddress.ToString(), sessionId));
 
             if (voted) poll.SetVoted();
             return View(poll);

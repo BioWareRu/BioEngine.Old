@@ -7,11 +7,11 @@ namespace BioEngine.Site.ViewModels.Gallery
 {
     public class ParentGalleryViewModel : BaseViewModel
     {
-        public readonly List<CatsTree<GalleryCat, GalleryPic>> Cats;
+        public readonly IEnumerable<GalleryCat> Cats;
         public readonly IParentModel Parent;
 
         public ParentGalleryViewModel(BaseViewModelConfig config, IParentModel parent,
-            List<CatsTree<GalleryCat, GalleryPic>> cats) : base(config)
+            IEnumerable<GalleryCat> cats) : base(config)
         {
             Parent = parent;
             Cats = cats;

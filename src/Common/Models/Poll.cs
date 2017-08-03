@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
@@ -85,31 +82,6 @@ namespace BioEngine.Common.Models
         public bool IsVoted()
         {
             return _voted;
-        }
-
-        public async Task<bool> GetIsVoted(BWContext dbContext, int userId, string ipAddress, string sessionId)
-        {
-            if (userId > 0)
-            {
-                return await
-                    dbContext.PollVotes.AnyAsync(x => x.UserId == userId && x.PollId == Id);
-            }
-            return await
-                dbContext.PollVotes.AnyAsync(x => x.UserId == 0 && x.PollId == Id && x.Ip == ipAddress &&
-                                                  x.SessionId == sessionId);
-        }
-
-        public async Task Recount(BWContext dbContext)
-        {
-            var votes = new Dictionary<string, string>();
-            foreach (var option in Options)
-            {
-                var voteCount =
-                    await dbContext.PollVotes.CountAsync(x => x.PollId == Id && x.VoteOption == option.Id);
-                votes.Add($"opt_{option.Id}", voteCount.ToString());
-            }
-            Votes = votes;
-            await dbContext.SaveChangesAsync();
         }
     }
 

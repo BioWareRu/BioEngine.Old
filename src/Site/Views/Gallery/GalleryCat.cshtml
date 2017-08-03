@@ -18,7 +18,7 @@
             @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.GalleryCat.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
         <div id="nanoGallery">
-            @foreach (var pic in Model.Pictures)
+            @foreach (var pic in Model.GalleryCat.Items)
             {
                 var desc = "";
                 for (var i = 0; i < pic.Files.Count; i++)

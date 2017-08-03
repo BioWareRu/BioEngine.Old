@@ -62,7 +62,7 @@
         }
 
         <div class="article-list__footer-controls">
-            @Html.Partial("~/Views/Shared/Likes.cshtml", Model.NewsUrl)
+            @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Model.NewsUrl, Model.Description, Model.Image, Model.News.Title))
             <a class="article-list__comments" href="@Model.CommentsUrl">@Html.Raw(Localizer.Plural("Comments", Model.News.Comments))</a>
         </div>
     </footer>

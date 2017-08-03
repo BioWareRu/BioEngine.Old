@@ -8,11 +8,12 @@ namespace BioEngine.Site.ViewModels.News
     {
         private readonly IUrlHelper _urlHelper;
 
-        public ShowNewsViewModel(Common.Models.News news, bool showFull, IUrlHelper urlHelper)
+        public ShowNewsViewModel(Common.Models.News news, bool showFull, IUrlHelper urlHelper, Uri ImageUrl)
         {
             _urlHelper = urlHelper;
             News = news;
             ShowFull = showFull;
+            Image = ImageUrl;
         }
 
         public Common.Models.News News { get; }
@@ -22,6 +23,8 @@ namespace BioEngine.Site.ViewModels.News
 
         public string CommentsUrl => _urlHelper.News().CommentsUrl(News);
 
-        public string NewsUrl => _urlHelper.News().PublicUrl(News, true);
+        public Uri NewsUrl => new Uri(_urlHelper.News().PublicUrl(News, true));
+        public Uri Image { get; }
+        public string Description => BaseViewModel.GetDescriptionFromHtml(News.ShortText);
     }
 }

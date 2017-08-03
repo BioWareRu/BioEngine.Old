@@ -64,7 +64,7 @@ namespace BioEngine.Content.Helpers
 
         public string StripTags(string html)
         {
-            return StripTagsRegex.Replace(html, string.Empty).Trim();
+            return string.IsNullOrEmpty(html) ? html : StripTagsRegex.Replace(html, string.Empty).Trim();
         }
 
         private readonly List<ContentPlaceholder> _placeholders;

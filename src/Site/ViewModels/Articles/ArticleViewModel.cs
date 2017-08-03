@@ -37,5 +37,8 @@ namespace BioEngine.Site.ViewModels.Articles
         public Article Article { get; }
 
         public DateTimeOffset Date => DateTimeOffset.FromUnixTimeSeconds(Article.Date);
+
+        public Uri Image => GetImageFromHtml(Article.Text);
+        public string Description =>!string.IsNullOrEmpty(Article.Announce)?Article.Announce:BaseViewModel.GetDescriptionFromHtml(Article.Text);
     }
 }

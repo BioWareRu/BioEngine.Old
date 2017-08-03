@@ -58,7 +58,7 @@ namespace BioEngine.Site.ViewModels
             return ImageUrl;
         }
 
-        protected static string GetDescriptionFromHtml(string html)
+        public static string GetDescriptionFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
@@ -78,13 +78,23 @@ namespace BioEngine.Site.ViewModels
             return description;
         }
 
-        protected Uri GetImageFromHtml(string html)
+        public Uri GetImageFromHtml(string html)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
             var contentBlock = htmlDoc.DocumentNode.Descendants("img").FirstOrDefault();
-            return contentBlock != null ? new Uri(contentBlock.GetAttributeValue("src", "")) : null;
+            var url = contentBlock?.GetAttributeValue("src", "");
+            Uri uri = null;
+            if (!string.IsNullOrEmpty(url))
+            {
+                var parsed = Uri.TryCreate(url, UriKind.Absolute, out uri);
+                if (!parsed)
+                {
+                    Uri.TryCreate(AppSettings.SiteDomain + url, UriKind.Absolute, out uri);
+                }
+            }
+            return uri;
         }
     }
 

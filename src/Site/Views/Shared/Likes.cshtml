@@ -1,2 +1,10 @@
-﻿@model string
-<div class="article-list__share ya-share2" data-services="vkontakte,facebook,gplus,twitter" data-counter="" data-url="@Model"></div>
+﻿@using BioEngine.Site.ViewModels
+@model YaShareViewModel
+<div class="article-list__share ya-share2"
+     data-services="vkontakte,facebook,gplus,twitter"
+     data-counter=""
+     data-url="@Model.Url"
+     data-description="@Model.Description"
+     data-title="@Model.Title"
+     data-image="@Model.Image">
+</div>

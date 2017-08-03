@@ -1,5 +1,6 @@
 ﻿@using BioEngine.Routing
 @using BioEngine.Site.ViewComponents
+@using BioEngine.Site.ViewModels
 @model BioEngine.Site.ViewModels.Games.GamePageViewModel
 @{
     Layout = "~/Views/_Main.cshtml";
@@ -20,106 +21,149 @@
             </h3>
 
             <div class="game-info">
-                <img src="@Url.Base().GameLogoUrl(Model.Game)"
-                     alt="@Model.Game.Title"
-                     class="game-info__img"/>
+                @if (!string.IsNullOrEmpty(Model.Game.Logo))
+                {
+                    <img src="@Url.Base().GameLogoUrl(Model.Game)"
+                         alt="@Model.Game.Title"
+                         class="game-info__img"/>
+                }
                 <table class="game-info__table">
                     <tr>
                         <td>Разработчик</td>
                         <td>@Model.Game.Developer.Name</td>
                     </tr>
-                    <tr>
-                        <td>Издатель</td>
-                        <td>@Model.Game.Publisher</td>
-                    </tr>
-                    <tr>
-                        <td>Локализатор</td>
-                        <td>@Model.Game.Localizator</td>
-                    </tr>
-                    <tr>
-                        <td>Платформы</td>
-                        <td>@Model.Game.Platforms</td>
-                    </tr>
-                    <tr>
-                        <td>Год издания</td>
-                        <td>@Model.Game.ReleaseDate</td>
-                    </tr>
-                    <tr>
-                        <td>Жанр</td>
-                        <td>@Model.Game.Genre</td>
-                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Game.Publisher))
+                    {
+                        <tr>
+                            <td>Издатель</td>
+                            <td>@Model.Game.Publisher</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Game.Localizator))
+                    {
+                        <tr>
+                            <td>Локализатор</td>
+                            <td>@Model.Game.Localizator</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Game.Platforms))
+                    {
+                        <tr>
+                            <td>Платформы</td>
+                            <td>@Model.Game.Platforms</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Game.ReleaseDate))
+                    {
+                        <tr>
+                            <td>Год издания</td>
+                            <td>@Model.Game.ReleaseDate</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Game.Genre))
+                    {
+                        <tr>
+                            <td>Жанр</td>
+                            <td>@Model.Game.Genre</td>
+                        </tr>
+                    }
                 </table>
             </div>
 
-            <h3>
-                Об игре
-            </h3>
+            @if (!string.IsNullOrEmpty(Model.Game.Desc))
+            {
+                <h3>
+                    Об игре
+                </h3>
 
-
-            @Html.Raw(Model.Game.Desc)
+                @Html.Raw(Model.Game.Desc)
+            }
 
             <div class="game-info__links-block">
-                <div class="game-info__links">
-                    <h3>Последние новости:</h3>
-                    @foreach (var news in Model.LastNews)
+                @{
+                    if (Model.LastNews.Any())
                     {
-                        <p>
-                            <a href="@Url.News().PublicUrl(news)">@news.Title</a>
-                        </p>
+                        <div class="game-info__links">
+                            <h3>Последние новости:</h3>
+                            @foreach (var news in Model.LastNews)
+                            {
+                                <p>
+                                    <a href="@Url.News().PublicUrl(news)">@news.Title</a>
+                                </p>
+                            }
+                            <p class="game-info__all">
+                                <a href="@Url.News().ParentNewsUrl(Model.Game)">Все новости</a>
+                            </p>
+                        </div>
                     }
-                    <p class="game-info__all">
-                        <a href="@Url.News().ParentNewsUrl(Model.Game)">Все новости</a>
-                    </p>
-                </div>
-                <div class="game-info__links">
-                    <h3>Последние файлы:</h3>
-                    @foreach (var file in Model.LastFiles)
+                }
+                @{
+                    if (Model.LastFiles.Any())
                     {
-                        <p>
-                            <a href="@Url.Files().PublicUrl(file)">@file.Title</a>
-                        </p>
+                        <div class="game-info__links">
+                            <h3>Последние файлы:</h3>
+                            @foreach (var file in Model.LastFiles)
+                            {
+                                <p>
+                                    <a href="@Url.Files().PublicUrl(file)">@file.Title</a>
+                                </p>
+                            }
+                            <p class="game-info__all">
+                                <a href="@Url.Files().ParentFilesUrl(Model.Game)">Все файлы</a>
+                            </p>
+                        </div>
                     }
-                    <p class="game-info__all">
-                        <a href="@Url.Files().ParentFilesUrl(Model.Game)">Все файлы</a>
-                    </p>
-                </div>
+                }
             </div>
 
             <div class="game-info__links-block">
-                <div class="game-info__links">
-                    <h3>Последние статьи:</h3>
-                    @foreach (var article in Model.LastArticles)
-                    {
-                        <p>
-                            <a href="@Url.Articles().PublicUrl(article)">@article.Title</a>
-                        </p>
-                    }
-                    <p class="game-info__all">
-                        <a href="@Url.Articles().ParentArticlesUrl(Model.Game)">Все статьи</a>
-                    </p>
-                </div>
-                <div class="game-info__links">
-                    <h3>Последнее в галерее:</h3>
-                    <div>
-                        @foreach (var picture in Model.LastPics)
-                        {
-                            <a href="@Url.Gallery().PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
-                                <img src="@Url.Gallery().ThumbUrl(picture, 115, 115)"
-                                     alt=""/>
-                            </a>
-                        }
-                    </div>
-                    <p class="game-info__all">
-                        <a href="@Url.Gallery().ParentGalleryUrl(Model.Game)">Все картинки</a>
-                    </p>
-                </div>
-            </div>
 
+                @{
+                    if (Model.LastArticles.Any())
+                    {
+                        <div class="game-info__links">
+                            <h3>Последние статьи:</h3>
+                            @foreach (var article in Model.LastArticles)
+                            {
+                                <p>
+                                    <a href="@Url.Articles().PublicUrl(article)">@article.Title</a>
+                                </p>
+                            }
+                            <p class="game-info__all">
+                                <a href="@Url.Articles().ParentArticlesUrl(Model.Game)">Все статьи</a>
+                            </p>
+                        </div>
+                    }
+                }
+
+                @{
+                    if (Model.LastPics.Any())
+                    {
+                        <div class="game-info__links">
+                            <h3>Последнее в галерее:</h3>
+
+                            <div>
+                                @foreach (var picture in Model.LastPics)
+                                {
+                                    <a href="@Url.Gallery().PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
+                                        <img src="@Url.Gallery().ThumbUrl(picture, 115, 115)"
+                                             alt=""/>
+                                    </a>
+                                }
+                            </div>
+                            <p class="game-info__all">
+                                <a href="@Url.Gallery().ParentGalleryUrl(Model.Game)">Все картинки</a>
+                            </p>
+                        </div>
+                    }
+                }
+            </div >
         </div>
 
         <footer class="article__footer">
             <div class="article__footer-controls">
                 @Html.Partial("~/Views/Shared/Likes.cshtml", Url.Base().PublicUrl(Model.Game))
+                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(new Uri(Url.Base().PublicUrl(Model.Game)), Model.Game.Desc, new Uri(UrlManager.Games.LogoUrl(Model.Game)), Model.Game.Title))
             </div>
         </footer>
     </article>

@@ -38,6 +38,7 @@ namespace BioEngine.Site.Controllers
             _logger = logger;
         }
 
+        [HttpGet("/")]
         [HttpGet("/index.html")]
         public async Task<IActionResult> Index([FromServices] IMediator mediatr)
         {
@@ -60,31 +61,37 @@ namespace BioEngine.Site.Controllers
             return View(new NewsListViewModel(ViewModelConfig, response.news, response.count, page));
         }
 
+        [Route("/{year:int}.html", Order = 1)]
         public async Task<IActionResult> NewsByYear(int year)
         {
             return await NewsByDate(year, null, null);
         }
 
+        [Route("/{year:int}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYear(int year, int page)
         {
             return await NewsByDate(year, null, null, page);
         }
 
+        [Route("/{year:int}/{month:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month)
         {
             return await NewsByDate(year, month, null);
         }
 
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int page)
         {
             return await NewsByDate(year, month, null, page);
         }
 
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day)
         {
             return await NewsByDate(year, month, day);
         }
 
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{page:int}.html")]
         public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int page)
         {
             return await NewsByDate(year, month, day, page);
@@ -132,12 +139,14 @@ namespace BioEngine.Site.Controllers
                 new NewsListByDateViewModel(ViewModelConfig, news, totalNews, page, year, month, day));
         }
 
+        [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> ParentNews(string parentUrl)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
             return parent != null ? await ParentNewsList((dynamic) parent) : Task.FromResult(StatusCode(404));
         }
 
+        [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int page)
         {
             var parent = await ParentEntityProvider.GetParenyByUrl(parentUrl);
@@ -197,7 +206,7 @@ namespace BioEngine.Site.Controllers
                 new ParentNewsListViewModel(ViewModelConfig, topic, news, totalNews, page));
         }
 
-
+        [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
         public async Task<IActionResult> Show(int year, int month, int day, string url)
         {
             long dateStart;
@@ -251,6 +260,10 @@ namespace BioEngine.Site.Controllers
             return Redirect(redirectUrl);
         }
 
+        [HttpGet("/rss.xml")]
+        [HttpGet("/rss")]
+        [HttpGet("/news/rss.xml")]
+        [HttpGet("/news/rss")]
         public async Task<IActionResult> Rss([FromServices] IEnumerable<IChannelProvider> channelProviders = null)
         {
             channelProviders = channelProviders ?? new List<IChannelProvider>();

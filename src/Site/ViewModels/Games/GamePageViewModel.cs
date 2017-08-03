@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Models;
 
@@ -15,7 +16,7 @@ namespace BioEngine.Site.ViewModels.Games
             LastArticles = lastArticles;
             LastFiles = lastFiles;
             LastPics = lastPics;
-            //ImageUrl = new Uri(UrlManager.ParentIconUrl(game));
+            ImageUrl = new Uri(UrlManager.Games.LogoUrl(Game));
         }
 
         public Game Game { get; }

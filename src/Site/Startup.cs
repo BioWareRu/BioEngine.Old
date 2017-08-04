@@ -70,8 +70,8 @@ namespace BioEngine.Site
                     options.Filters.Add(typeof(CounterFilter));
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-                .AddDataAnnotationsLocalization()
-                .AddTypedRouting();
+                .AddDataAnnotationsLocalization();
+            
             services.AddDistributedMemoryCache();
             services.AddResponseCaching();
             services.AddAuthentication(options => options.SignInScheme =

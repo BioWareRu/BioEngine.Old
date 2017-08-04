@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
@@ -46,7 +46,7 @@ namespace BioEngine.Site.Components
                             new Uri(_appSettings.SocialLogo))
                 };
 
-                var newsResult = await _mediator.Send(new GetNewsRequest(page: 1), cancellationToken);
+                var newsResult = await _mediator.Send(new GetNewsQuery(page: 1), cancellationToken);
                 var mostRecentPubDate = DateTime.MinValue;
                 var items = new List<RssItem>();
                 foreach (var news in newsResult.news)

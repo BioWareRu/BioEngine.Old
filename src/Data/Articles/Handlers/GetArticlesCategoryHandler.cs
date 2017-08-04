@@ -1,22 +1,23 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Articles.Handlers
 {
-    public class GetArticlesCategoryHandler : RequestHandlerBase<GetArticlesCategoryRequest, ArticleCat>
+    [UsedImplicitly]
+    internal class GetArticlesCategoryHandler : QueryHandlerBase<GetArticlesCategoryQuery, ArticleCat>
     {
         public GetArticlesCategoryHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<ArticleCat> Handle(GetArticlesCategoryRequest message)
+        public override async Task<ArticleCat> Handle(GetArticlesCategoryQuery message)
         {
             var catQuery = DBContext.ArticleCats.AsQueryable();
 
@@ -42,7 +43,7 @@ namespace BioEngine.Data.Articles.Handlers
             var cat = await catQuery.FirstOrDefaultAsync();
             if (cat != null)
             {
-                cat = await Mediator.Send(new ArticleCategoryProcessRequest(cat, message));
+                cat = await Mediator.Send(new ArticleCategoryProcessQuery(cat, message));
             }
             return cat;
         }

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore;
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
-    public class GetArticlesCategoriesHandler : RequestHandlerBase<GetArticlesCategoriesRequest,
+    internal class GetArticlesCategoriesHandler : QueryHandlerBase<GetArticlesCategoriesQuery,
         IEnumerable<ArticleCat>>
     {
         public GetArticlesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<IEnumerable<ArticleCat>> Handle(GetArticlesCategoriesRequest message)
+        public override async Task<IEnumerable<ArticleCat>> Handle(GetArticlesCategoriesQuery message)
         {
             var query = DBContext.ArticleCats.AsQueryable();
             if (message.Parent != null)
@@ -40,7 +40,7 @@ namespace BioEngine.Data.Articles.Handlers
             var cats = await query.ToListAsync();
             foreach (var cat in cats)
             {
-                await Mediator.Send(new ArticleCategoryProcessRequest(cat, message));
+                await Mediator.Send(new ArticleCategoryProcessQuery(cat, message));
             }
 
             return cats;

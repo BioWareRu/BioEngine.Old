@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
-using BioEngine.Data.Articles.Requests;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Files.Requests;
-using BioEngine.Data.Gallery.Requests;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.Articles.Queries;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Files.Queries;
+using BioEngine.Data.Gallery.Queries;
+using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using MediatR;
 
@@ -62,7 +62,7 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> News()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            var allNews = (await Mediator.Send(new GetNewsRequest())).news;
+            var allNews = (await Mediator.Send(new GetNewsQuery())).news;
             foreach (var news in allNews)
             {
                 nodes.Add(new SitemapNode(Url.News().PublicUrl(news, true).ToString())
@@ -82,7 +82,7 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Games()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var game in await Mediator.Send(new GetGamesRequest()))
+            foreach (var game in await Mediator.Send(new GetGamesQuery()))
             {
                 nodes.Add(new SitemapNode(Url.Base().PublicUrl(game, true).ToString())
                 {
@@ -99,7 +99,7 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Articles()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var articleCat in await Mediator.Send(new GetArticlesCategoriesRequest()))
+            foreach (var articleCat in await Mediator.Send(new GetArticlesCategoriesQuery()))
             {
                 nodes.Add(new SitemapNode(Url.Articles().CatPublicUrl(articleCat).ToString())
                 {
@@ -107,7 +107,7 @@ namespace BioEngine.Site.Controllers
                     Priority = 0.9M
                 });
             }
-            foreach (var article in (await Mediator.Send(new GetArticlesRequest())).articles)
+            foreach (var article in (await Mediator.Send(new GetArticlesQuery())).articles)
             {
                 nodes.Add(new SitemapNode(Url.Articles().PublicUrl(article).ToString())
                 {
@@ -124,7 +124,7 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Files()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var fileCat in await Mediator.Send(new GetFilesCategoriesRequest()))
+            foreach (var fileCat in await Mediator.Send(new GetFilesCategoriesQuery()))
             {
                 nodes.Add(new SitemapNode(Url.Files().CatPublicUrl(fileCat).ToString())
                 {
@@ -132,7 +132,7 @@ namespace BioEngine.Site.Controllers
                     Priority = 0.9M
                 });
             }
-            foreach (var file in (await Mediator.Send(new GetFilesRequest())).files)
+            foreach (var file in (await Mediator.Send(new GetFilesQuery())).files)
             {
                 nodes.Add(new SitemapNode(Url.Files().PublicUrl(file).ToString())
                 {
@@ -149,7 +149,7 @@ namespace BioEngine.Site.Controllers
         public async Task<ActionResult> Gallery()
         {
             List<SitemapNode> nodes = new List<SitemapNode>();
-            foreach (var galleryCat in await Mediator.Send(new GetGalleryCategoriesRequest()))
+            foreach (var galleryCat in await Mediator.Send(new GetGalleryCategoriesQuery()))
             {
                 nodes.Add(new SitemapNode(Url.Gallery().CatPublicUrl(galleryCat).ToString())
                 {

@@ -2,7 +2,7 @@
 
 namespace BioEngine.Data.Polls.Commands
 {
-    public class PollVoteCommand : NotificationBase
+    public class PollVoteCommand : CommandBase
     {
         public PollVoteCommand(int pollId, int voteId, string ipAddress, string sessionId, string login, int userId)
         {

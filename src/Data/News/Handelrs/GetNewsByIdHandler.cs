@@ -2,19 +2,21 @@
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.News.Queries;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.News.Handelrs
 {
-    public class GetNewsByIdHandler : RequestHandlerBase<GetNewsByIdRequest, Common.Models.News>
+    [UsedImplicitly]
+    internal class GetNewsByIdHandler : QueryHandlerBase<GetNewsByIdQuery, Common.Models.News>
     {
         public GetNewsByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<Common.Models.News> Handle(GetNewsByIdRequest message)
+        public override async Task<Common.Models.News> Handle(GetNewsByIdQuery message)
         {
             var news =
                 await DBContext.News

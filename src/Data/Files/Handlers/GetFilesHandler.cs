@@ -3,13 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Files.Queries;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
-    public class GetFilesHandler : RequestHandlerBase<GetFilesRequest, (IEnumerable<Common.Models.File>
+    [UsedImplicitly]
+    internal class GetFilesHandler : QueryHandlerBase<GetFilesQuery, (IEnumerable<Common.Models.File>
         files, int count)>
     {
         public GetFilesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
@@ -17,7 +19,7 @@ namespace BioEngine.Data.Files.Handlers
         }
 
         public override async Task<(IEnumerable<Common.Models.File> files, int count)> Handle(
-            GetFilesRequest message)
+            GetFilesQuery message)
         {
             var query = DBContext.Files.AsQueryable();
             if (message.Parent != null)
@@ -44,8 +46,8 @@ namespace BioEngine.Data.Files.Handlers
             foreach (var file in files)
             {
                 file.Cat =
-                    await Mediator.Send(new FileCategoryProcessRequest(file.Cat,
-                        new GetFilesCategoryRequest(message.Parent)));
+                    await Mediator.Send(new FileCategoryProcessQuery(file.Cat,
+                        new GetFilesCategoryQuery(message.Parent)));
             }
 
             return (files, totalFiles);

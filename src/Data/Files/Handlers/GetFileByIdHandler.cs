@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
-    public class GetFileByIdHandler : RequestHandlerBase<GetFileByIdRequest, File>
+    internal class GetFileByIdHandler : QueryHandlerBase<GetFileByIdQuery, File>
     {
         public GetFileByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<File> Handle(GetFileByIdRequest message)
+        public override async Task<File> Handle(GetFileByIdQuery message)
         {
             var file = await DBContext.Files
                 .Where(x => x.Id == message.Id)
@@ -30,7 +30,7 @@ namespace BioEngine.Data.Files.Handlers
             {
                 file.Cat =
                     await Mediator.Send(
-                        new FileCategoryProcessRequest(file.Cat, new GetFilesCategoryRequest(file.Parent)));
+                        new FileCategoryProcessQuery(file.Cat, new GetFilesCategoryQuery(file.Parent)));
             }
             return file;
         }

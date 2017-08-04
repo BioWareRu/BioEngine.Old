@@ -2,20 +2,22 @@
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Articles.Handlers
 {
-    public class GetArticleByUrlHandler : RequestHandlerBase<GetArticleByUrlRequest, Article>
+    [UsedImplicitly]
+    internal class GetArticleByUrlHandler : QueryHandlerBase<GetArticleByUrlQuery, Article>
     {
         public GetArticleByUrlHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<Article> Handle(GetArticleByUrlRequest message)
+        public override async Task<Article> Handle(GetArticleByUrlQuery message)
         {
             var query = DBContext.Articles.Include(x => x.Cat).Include(x => x.Author).AsQueryable();
             query = query.Where(x => x.Pub == 1 && x.Url == message.Url);
@@ -40,8 +42,8 @@ namespace BioEngine.Data.Articles.Handlers
                 if (article != null)
                 {
                     article.Cat =
-                        await Mediator.Send(new ArticleCategoryProcessRequest(article.Cat,
-                            new GetArticlesCategoryRequest(message.Parent)));
+                        await Mediator.Send(new ArticleCategoryProcessQuery(article.Cat,
+                            new GetArticlesCategoryQuery(message.Parent)));
                     return article;
                 }
             }

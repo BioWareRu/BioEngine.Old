@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Files.Requests;
-using BioEngine.Data.Gallery.Requests;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.Articles.Queries;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Files.Queries;
+using BioEngine.Data.Gallery.Queries;
+using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using JetBrains.Annotations;
 using MediatR;
@@ -98,7 +98,7 @@ namespace BioEngine.Content.Helpers
         private async Task<string> ReplaceGame(Match match, bool urlOnly)
         {
             var gameUrl = match.Groups[1].Value;
-            var game = await _mediator.Send(new GetGameByUrlRequest(gameUrl));
+            var game = await _mediator.Send(new GetGameByUrlQuery(gameUrl));
             if (game == null) return null;
             var url = _urlHelper.Base().ParentUrl(game, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
@@ -107,7 +107,7 @@ namespace BioEngine.Content.Helpers
         private async Task<string> ReplaceDeveloper(Match match, bool urlOnly)
         {
             var developerUrl = match.Groups[1].Value;
-            var developer = (Developer) await _mediator.Send(new GetParentByUrlRequest(developerUrl));
+            var developer = (Developer) await _mediator.Send(new GetParentByUrlQuery(developerUrl));
             if (developer == null) return null;
             var url = _urlHelper.Base().ParentUrl(developer, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
@@ -117,7 +117,7 @@ namespace BioEngine.Content.Helpers
         {
             var newsId = int.Parse(match.Groups[1].Value);
             if (newsId <= 0) return null;
-            var news = await _mediator.Send(new GetNewsByIdRequest(newsId));
+            var news = await _mediator.Send(new GetNewsByIdQuery(newsId));
             if (news == null) return null;
             var url = _urlHelper.News().PublicUrl(news, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
@@ -141,7 +141,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         private async Task<string> ReplaceVideo(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
-            var file = await _mediator.Send(new GetFileByIdRequest(fileId));
+            var file = await _mediator.Send(new GetFileByIdQuery(fileId));
             var result = !string.IsNullOrEmpty(file?.YtId)
                 ? $"<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/{file.YtId}\" frameborder=\"0\" allowfullscreen></iframe>"
                 : null;
@@ -164,7 +164,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
                 height = int.Parse(match.Groups[3].Value);
             }
             if (galleryId <= 0) return null;
-            var pic = await _mediator.Send(new GetGalleryPicByIdRequest(galleryId));
+            var pic = await _mediator.Send(new GetGalleryPicByIdQuery(galleryId));
             if (pic == null) return null;
 
 
@@ -181,7 +181,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         {
             var articleId = int.Parse(match.Groups[1].Value);
             if (articleId <= 0) return null;
-            var article = await _mediator.Send(new GetArticleByIdRequest(articleId));
+            var article = await _mediator.Send(new GetArticleByIdQuery(articleId));
             if (article == null) return null;
             var url = _urlHelper.Articles().PublicUrl(article, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
@@ -191,7 +191,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         {
             var fileId = int.Parse(match.Groups[1].Value);
             if (fileId <= 0) return null;
-            var file = await _mediator.Send(new GetFileByIdRequest(fileId));
+            var file = await _mediator.Send(new GetFileByIdQuery(fileId));
             if (file == null) return null;
             var url = _urlHelper.Files().PublicUrl(file, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";

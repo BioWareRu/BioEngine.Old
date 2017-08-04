@@ -2,14 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
-using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Articles.Handlers
 {
-    public class GetArticlesHandler : RequestHandlerBase<GetArticlesRequest, (IEnumerable<Common.Models.Article>
+    [UsedImplicitly]
+    internal class GetArticlesHandler : QueryHandlerBase<GetArticlesQuery, (IEnumerable<Common.Models.Article>
         articles, int count)>
     {
         public GetArticlesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
@@ -17,7 +19,7 @@ namespace BioEngine.Data.Articles.Handlers
         }
 
         public override async Task<(IEnumerable<Common.Models.Article> articles, int count)> Handle(
-            GetArticlesRequest message)
+            GetArticlesQuery message)
         {
             var query = DBContext.Articles.AsQueryable();
             if (!message.WithUnPublishedArticles)
@@ -46,8 +48,8 @@ namespace BioEngine.Data.Articles.Handlers
             foreach (var article in articles)
             {
                 article.Cat =
-                    await Mediator.Send(new ArticleCategoryProcessRequest(article.Cat,
-                        new GetArticlesCategoryRequest(message.Parent)));
+                    await Mediator.Send(new ArticleCategoryProcessQuery(article.Cat,
+                        new GetArticlesCategoryQuery(message.Parent)));
             }
 
             return (articles, totalArticles);

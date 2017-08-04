@@ -4,15 +4,15 @@ using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
-    public class
-        GalleryCategoryProcessHandler : CategoryProcessHandlerBase<GalleryCategoryProcessRequest, GalleryCat, GalleryPic
+    internal class
+        GalleryCategoryProcessHandler : CategoryProcessHandlerBase<GalleryCategoryProcessQuery, GalleryCat, GalleryPic
         >
     {
         public GalleryCategoryProcessHandler(IMediator mediator, BWContext dbContext,
@@ -22,7 +22,7 @@ namespace BioEngine.Data.Gallery.Handlers
 
         protected override async Task<IEnumerable<GalleryPic>> GetCatItems(GalleryCat cat, int count)
         {
-            return (await Mediator.Send(new GetGalleryPicsRequest(cat: cat) {PageSize = count})).pics;
+            return (await Mediator.Send(new GetGalleryPicsQuery(cat: cat) {PageSize = count})).pics;
         }
     }
 }

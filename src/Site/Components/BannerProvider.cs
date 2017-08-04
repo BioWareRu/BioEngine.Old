@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Models;
-using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Base.Queries;
 using BioEngine.Site.Extensions;
 using JetBrains.Annotations;
 using MediatR;
@@ -24,7 +24,7 @@ namespace BioEngine.Site.Components
         {
             if (_banners != null) return _banners;
 
-            var banners = new List<Advertisement>(await _mediator.Send(new GetBannersRequest()));
+            var banners = new List<Advertisement>(await _mediator.Send(new GetBannersQuery()));
             banners.Shuffle();
             _banners = new Stack<Advertisement>(banners);
             return _banners;

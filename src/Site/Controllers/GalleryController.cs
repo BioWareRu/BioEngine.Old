@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Gallery.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels;
@@ -28,7 +28,7 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/gallery/{*url}")]
         public async Task<IActionResult> Cat(string parentUrl, string url)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -52,7 +52,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().ParentGalleryUrl(parent), "Галерея"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catPics = await Mediator.Send(new GetGalleryPicsRequest(cat: category, page: page));
+                var catPics = await Mediator.Send(new GetGalleryPicsQuery(cat: category, page: page));
                 category.Items = catPics.pics;
 
                 var viewModel = new GalleryCatViewModel(ViewModelConfig, category, catPics.count, page);
@@ -68,7 +68,7 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetGalleryCategoryRequest(parent, url: url, loadChildren: loadChildren,
+            return await Mediator.Send(new GetGalleryCategoryQuery(parent, url: url, loadChildren: loadChildren,
                 loadLastItems: loadLastItems));
         }
 
@@ -76,13 +76,13 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/gallery/{parentUrl}/")]*/
         public async Task<IActionResult> ParentGallery(string parentUrl)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetGalleryCategoriesRequest(parent, loadChildren: true,
+            var cats = await Mediator.Send(new GetGalleryCategoriesQuery(parent, loadChildren: true,
                 loadLastItems: 5));
 
             return View("ParentGallery", new ParentGalleryViewModel(ViewModelConfig, parent, cats));

@@ -2,13 +2,15 @@
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
-using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Base.Queries;
 using BioEngine.Data.Core;
+using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Base.Handlers
 {
-    public class GetParentByUrlHandler : RequestHandlerBase<GetParentByUrlRequest, IParentModel>
+    [UsedImplicitly]
+    internal class GetParentByUrlHandler : QueryHandlerBase<GetParentByUrlQuery, IParentModel>
     {
         private readonly ParentEntityProvider _provider;
 
@@ -18,7 +20,7 @@ namespace BioEngine.Data.Base.Handlers
             _provider = provider;
         }
 
-        public override async Task<IParentModel> Handle(GetParentByUrlRequest message)
+        public override async Task<IParentModel> Handle(GetParentByUrlQuery message)
         {
             return await _provider.GetParenyByUrl(message.Url);
         }

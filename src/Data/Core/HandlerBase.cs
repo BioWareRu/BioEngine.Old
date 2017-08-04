@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BioEngine.Common.DB;
+﻿using BioEngine.Common.DB;
 using MediatR;
 
 namespace BioEngine.Data.Core
 {
-    public abstract class HandlerBase
+    internal abstract class HandlerBase
     {
         protected readonly BWContext DBContext;
         protected readonly IMediator Mediator;

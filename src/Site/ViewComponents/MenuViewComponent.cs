@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Base.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace BioEngine.Site.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(string key)
         {
-            var menu = await _mediator.Send(new GetMenuByKeyRequest(key));
+            var menu = await _mediator.Send(new GetMenuByKeyQuery(key));
             return View(menu.GetMenu());
         }
     }

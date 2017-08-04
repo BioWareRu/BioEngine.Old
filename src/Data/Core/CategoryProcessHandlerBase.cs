@@ -7,8 +7,8 @@ using MediatR;
 
 namespace BioEngine.Data.Core
 {
-    public abstract class CategoryProcessHandlerBase<TRequest, TCat, TEntity> : RequestHandlerBase<TRequest, TCat>
-        where TCat : class, ICat<TCat, TEntity> where TRequest : CategoryProcessRequestBase<TCat>, IRequest<TCat>
+    internal abstract class CategoryProcessHandlerBase<TRequest, TCat, TEntity> : QueryHandlerBase<TRequest, TCat>
+        where TCat : class, ICat<TCat, TEntity> where TRequest : CategoryProcessQueryBase<TCat>, IRequest<TCat>
     {
         private readonly ParentEntityProvider _parentEntityProvider;
 
@@ -20,23 +20,23 @@ namespace BioEngine.Data.Core
 
         public override async Task<TCat> Handle(TRequest message)
         {
-            await ProcessCat(message.Cat, message.CategoryRequest);
+            await ProcessCat(message.Cat, message.CategoryQuery);
             return message.Cat;
         }
 
-        private async Task<bool> ProcessCat(TCat cat, ICategoryRequest<TCat> request)
+        private async Task<bool> ProcessCat(TCat cat, ICategoryQuery<TCat> query)
         {
             await DBContext.Entry(cat).Collection(x => x.Children).LoadAsync();
-            cat.Parent = request.Parent ?? await _parentEntityProvider.GetModelParent(cat);
-            if (request.LoadLastItems != null)
+            cat.Parent = query.Parent ?? await _parentEntityProvider.GetModelParent(cat);
+            if (query.LoadLastItems != null)
             {
-                cat.Items = await GetCatItems(cat, (int) request.LoadLastItems);
+                cat.Items = await GetCatItems(cat, (int) query.LoadLastItems);
             }
-            if (request.LoadChildren)
+            if (query.LoadChildren)
             {
                 foreach (var child in cat.Children)
                 {
-                    await ProcessCat(child, request);
+                    await ProcessCat(child, query);
                 }
             }
 

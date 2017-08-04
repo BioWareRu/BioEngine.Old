@@ -5,8 +5,8 @@ using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels;
@@ -54,7 +54,7 @@ namespace BioEngine.Site.Controllers
                 return BadRequest();
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var response = await mediatr.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page));
+            var response = await mediatr.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page));
 
             return View(new NewsListViewModel(ViewModelConfig, response.news, response.count, page));
         }
@@ -117,7 +117,7 @@ namespace BioEngine.Site.Controllers
             }
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var newsResult = await Mediator.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page,
+            var newsResult = await Mediator.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page,
                 dateStart: new DateTimeOffset(dateStart).ToUnixTimeSeconds(),
                 dateEnd: new DateTimeOffset(dateEnd).ToUnixTimeSeconds()));
 
@@ -129,14 +129,14 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/news.html")]
         public async Task<IActionResult> ParentNews(string parentUrl)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             return parent != null ? await ParentNewsList(parent) : StatusCode(404);
         }
 
         [HttpGet("/{parentUrl}/news/page/{page}.html")]
         public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int page)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             return parent != null ? await ParentNewsList(parent, page) : StatusCode(404);
         }
 
@@ -147,7 +147,7 @@ namespace BioEngine.Site.Controllers
 
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var newsResult = await Mediator.Send(new GetNewsRequest(canUserSeeUnpublishedNews, page, parent));
+            var newsResult = await Mediator.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page, parent));
 
             return View("ParentNews",
                 new ParentNewsListViewModel(ViewModelConfig, parent, newsResult.news, newsResult.count, page));
@@ -172,7 +172,7 @@ namespace BioEngine.Site.Controllers
             }
 
             var news = await Mediator.Send(
-                new GetOneNewsRequest(url, await HasRight(UserRights.News), dateStart, dateEnd));
+                new GetOneNewsQuery(url, await HasRight(UserRights.News), dateStart, dateEnd));
 
             if (news == null) return StatusCode(404);
 
@@ -252,7 +252,7 @@ namespace BioEngine.Site.Controllers
                 new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
             };
 
-            var news = await Mediator.Send(new GetNewsByIdRequest(newsId));
+            var news = await Mediator.Send(new GetNewsByIdQuery(newsId));
 
             if (news == null)
                 return new NotFoundResult();
@@ -290,7 +290,7 @@ namespace BioEngine.Site.Controllers
                 new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
             };
 
-            var news = await Mediator.Send(new GetNewsByIdRequest(newsId));
+            var news = await Mediator.Send(new GetNewsByIdQuery(newsId));
 
             if (news == null)
                 return new NotFoundResult();

@@ -7,9 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Files.Notifications;
-using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Files.Commands;
+using BioEngine.Data.Files.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.Files;
@@ -30,13 +30,13 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/files/{parentUrl}/")]*/
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetFilesCategoriesRequest(parent, loadChildren: true,
+            var cats = await Mediator.Send(new GetFilesCategoriesQuery(parent, loadChildren: true,
                 loadLastItems: 5));
 
             return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
@@ -44,7 +44,7 @@ namespace BioEngine.Site.Controllers
 
         public async Task<IActionResult> Download(string parentUrl, string url)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -58,7 +58,7 @@ namespace BioEngine.Site.Controllers
             var file = await GetFile(parent, catUrl, fileUrl);
             if (file != null)
             {
-                await Mediator.Publish(new FileDownloadedNotification(file));
+                await Mediator.Publish(new FileDownloadedCommand(file));
 
                 var breadcrumbs = new List<BreadCrumbsItem>();
                 var cat = file.Cat.ParentCat;
@@ -82,7 +82,7 @@ namespace BioEngine.Site.Controllers
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find file
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -131,7 +131,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Files().ParentFilesUrl(parent), "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catFiles = await Mediator.Send(new GetCategoryFilesRequest(category, page));
+                var catFiles = await Mediator.Send(new GetCategoryFilesQuery(category, page));
                 category.Items = catFiles.files;
                 var viewModel = new FileCatViewModel(ViewModelConfig, category, page, catFiles.count);
                 breadcrumbs.Reverse();
@@ -146,7 +146,7 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetFilesCategoryRequest(parent: parent, url: url,
+            return await Mediator.Send(new GetFilesCategoryQuery(parent: parent, url: url,
                 loadChildren: loadChildren, loadLastItems: loadLastItems));
         }
 
@@ -159,7 +159,7 @@ namespace BioEngine.Site.Controllers
                     catUrl = catUrl.Split('/').Last();
                 }
 
-                return await Mediator.Send(new GetFileByUrlRequest(parent, catUrl, articleUrl));
+                return await Mediator.Send(new GetFileByUrlQuery(parent, catUrl, articleUrl));
             }
             return null;
         }

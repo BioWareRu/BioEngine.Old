@@ -5,11 +5,11 @@ using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Common.Search;
-using BioEngine.Data.Articles.Requests;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Files.Requests;
-using BioEngine.Data.Gallery.Requests;
-using BioEngine.Data.News.Requests;
+using BioEngine.Data.Articles.Queries;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Files.Queries;
+using BioEngine.Data.Gallery.Queries;
+using BioEngine.Data.News.Queries;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -158,13 +158,13 @@ namespace BioEngine.Site.Controllers
 
         public async Task<string> Reindex()
         {
-            AddEntities(await Mediator.Send(new GetGamesRequest()));
-            AddEntities((await Mediator.Send(new GetNewsRequest())).news);
-            AddEntities((await Mediator.Send(new GetArticlesRequest())).articles);
-            AddEntities(await Mediator.Send(new GetArticlesCategoriesRequest()));
-            AddEntities((await Mediator.Send(new GetFilesRequest())).files);
-            AddEntities(await Mediator.Send(new GetFilesCategoriesRequest()));
-            AddEntities(await Mediator.Send(new GetGalleryCategoriesRequest()));
+            AddEntities(await Mediator.Send(new GetGamesQuery()));
+            AddEntities((await Mediator.Send(new GetNewsQuery())).news);
+            AddEntities((await Mediator.Send(new GetArticlesQuery())).articles);
+            AddEntities(await Mediator.Send(new GetArticlesCategoriesQuery()));
+            AddEntities((await Mediator.Send(new GetFilesQuery())).files);
+            AddEntities(await Mediator.Send(new GetFilesCategoriesQuery()));
+            AddEntities(await Mediator.Send(new GetGalleryCategoriesQuery()));
             return "done";
         }
     }

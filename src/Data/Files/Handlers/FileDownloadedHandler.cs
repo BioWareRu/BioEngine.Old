@@ -1,23 +1,23 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Notifications;
+using BioEngine.Data.Files.Commands;
 using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
-    public class FileDownloadedHandler : NotificationHandlerBase<FileDownloadedNotification>
+    internal class FileDownloadedHandler : CommandHandlerBase<FileDownloadedCommand>
     {
         public FileDownloadedHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task Handle(FileDownloadedNotification notification)
+        public override async Task Handle(FileDownloadedCommand command)
         {
-            notification.File.Count++;
-            DBContext.Files.Update(notification.File);
+            command.File.Count++;
+            DBContext.Files.Update(command.File);
             await DBContext.SaveChangesAsync();
         }
     }

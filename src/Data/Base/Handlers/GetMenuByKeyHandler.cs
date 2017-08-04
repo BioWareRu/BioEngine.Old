@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Base.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace BioEngine.Data.Base.Handlers
 {
     [UsedImplicitly]
-    public class GetMenuByKeyHandler : RequestHandlerBase<GetMenuByKeyRequest, Menu>
+    internal class GetMenuByKeyHandler : QueryHandlerBase<GetMenuByKeyQuery, Menu>
     {
         public GetMenuByKeyHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<Menu> Handle(GetMenuByKeyRequest message)
+        public override async Task<Menu> Handle(GetMenuByKeyQuery message)
         {
             return await DBContext.Menus.Where(x => x.Key == message.Key).FirstOrDefaultAsync();
         }

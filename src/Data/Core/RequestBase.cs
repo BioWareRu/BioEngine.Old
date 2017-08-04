@@ -2,7 +2,7 @@
 
 namespace BioEngine.Data.Core
 {
-    public abstract class RequestBase<TResponse> : IRequest<TResponse>
+    public abstract class QueryBase<TResponse> : IRequest<TResponse>
     {
     }
 }

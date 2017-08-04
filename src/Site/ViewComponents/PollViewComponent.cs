@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BioEngine.Data.Polls.Requests;
+using BioEngine.Data.Polls.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ namespace BioEngine.Site.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var poll = await _mediator.Send(new GetActivePollRequest());
+            var poll = await _mediator.Send(new GetActivePollQuery());
 
             bool voted;
             var userId = 0;
@@ -30,7 +30,7 @@ namespace BioEngine.Site.ViewComponents
                         .Value);
             }
 
-            voted = await _mediator.Send(new IsPollVotedByUserRequest(poll.Id, userId,
+            voted = await _mediator.Send(new IsPollVotedByUserQuery(poll.Id, userId,
                 Request.HttpContext.Connection.RemoteIpAddress.ToString(), sessionId));
 
             if (voted) poll.SetVoted();

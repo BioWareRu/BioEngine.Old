@@ -4,22 +4,24 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.Gallery.Queries;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
-    public class GetGalleryPicsHandler : RequestHandlerBase<GetGalleryPicsRequest, (
-        IEnumerable<Common.Models.GalleryPic>
+    [UsedImplicitly]
+    internal class GetGalleryPicsHandler : QueryHandlerBase<GetGalleryPicsQuery, (
+        IEnumerable<GalleryPic>
         pics, int count)>
     {
         public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<(IEnumerable<Common.Models.GalleryPic> pics, int count)> Handle(
-            GetGalleryPicsRequest message)
+        public override async Task<(IEnumerable<GalleryPic> pics, int count)> Handle(
+            GetGalleryPicsQuery message)
         {
             var query = DBContext.GalleryPics.AsQueryable();
             if (!message.WithUnPublishedPictures)
@@ -51,8 +53,8 @@ namespace BioEngine.Data.Gallery.Handlers
             foreach (var pic in pics)
             {
                 pic.Cat =
-                    await Mediator.Send(new GalleryCategoryProcessRequest(pic.Cat,
-                        new GetGalleryCategoryRequest(message.Parent)));
+                    await Mediator.Send(new GalleryCategoryProcessQuery(pic.Cat,
+                        new GetGalleryCategoryQuery(message.Parent)));
 
                 if (message.LoadPicPositions)
                 {

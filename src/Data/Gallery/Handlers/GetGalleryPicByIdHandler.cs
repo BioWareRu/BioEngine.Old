@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
-    public class GetGalleryPicByIdHandler : RequestHandlerBase<GetGalleryPicByIdRequest, GalleryPic>
+    internal class GetGalleryPicByIdHandler : QueryHandlerBase<GetGalleryPicByIdQuery, GalleryPic>
     {
         public GetGalleryPicByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<GalleryPic> Handle(GetGalleryPicByIdRequest message)
+        public override async Task<GalleryPic> Handle(GetGalleryPicByIdQuery message)
         {
             var pic =
                 await DBContext.GalleryPics.Where(x => x.Id == message.Id)
@@ -28,8 +28,8 @@ namespace BioEngine.Data.Gallery.Handlers
             if (pic != null)
             {
                 pic.Cat =
-                    await Mediator.Send(new GalleryCategoryProcessRequest(pic.Cat,
-                        new GetGalleryCategoryRequest()));
+                    await Mediator.Send(new GalleryCategoryProcessQuery(pic.Cat,
+                        new GetGalleryCategoryQuery()));
 
                 pic.Position = await GetPicPosition(pic);
             }

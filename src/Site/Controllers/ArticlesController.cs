@@ -9,8 +9,8 @@ using BioEngine.Site.ViewModels.Articles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using BioEngine.Data.Articles.Requests;
-using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Articles.Queries;
+using BioEngine.Data.Base.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.Extensions;
 using MediatR;
@@ -32,7 +32,7 @@ namespace BioEngine.Site.Controllers
             [FromServices] ILogger<ArticlesController> logger)
         {
             //so... let's try to find article
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
@@ -88,7 +88,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Articles().ParentArticlesUrl(parent), "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catArticles = await Mediator.Send(new GetCategoryArticlesRequest(category, 0));
+                var catArticles = await Mediator.Send(new GetCategoryArticlesQuery(category, 0));
                 category.Items = catArticles.articles;
                 var viewModel = new ArticleCatViewModel(ViewModelConfig, category);
                 breadcrumbs.Reverse();
@@ -101,13 +101,13 @@ namespace BioEngine.Site.Controllers
         [HttpGet("/{parentUrl}/articles.html")]
         public async Task<IActionResult> ParentArticles(string parentUrl)
         {
-            var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
+            var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
             if (parent == null)
             {
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetArticlesCategoriesRequest(parent, loadChildren: true,
+            var cats = await Mediator.Send(new GetArticlesCategoriesQuery(parent, loadChildren: true,
                 loadLastItems: 5));
 
             return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats));
@@ -115,7 +115,7 @@ namespace BioEngine.Site.Controllers
 
         public async Task<IEnumerable<Article>> GetLastArticles(ArticleCat cat, int count = 5)
         {
-            return (await Mediator.Send(new GetCategoryArticlesRequest(cat, count))).articles;
+            return (await Mediator.Send(new GetCategoryArticlesQuery(cat, count))).articles;
         }
 
 
@@ -124,7 +124,7 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetArticlesCategoryRequest(parent: parent, url: url,
+            return await Mediator.Send(new GetArticlesCategoryQuery(parent: parent, url: url,
                 loadChildren: loadChildren, loadLastItems: loadLastItems));
         }
 
@@ -137,7 +137,7 @@ namespace BioEngine.Site.Controllers
                     catUrl = catUrl.Split('/').Last();
                 }
 
-                return await Mediator.Send(new GetArticleByUrlRequest(parent, catUrl, articleUrl));
+                return await Mediator.Send(new GetArticleByUrlQuery(parent, catUrl, articleUrl));
             }
             return null;
         }

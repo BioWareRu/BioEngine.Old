@@ -2,19 +2,21 @@
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Polls.Requests;
+using BioEngine.Data.Polls.Queries;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Polls.Handlers
 {
-    public class GetPollByIdHandler : RequestHandlerBase<GetPollByIdRequest, Poll>
+    [UsedImplicitly]
+    internal class GetPollByIdHandler : QueryHandlerBase<GetPollByIdQuery, Poll>
     {
         public GetPollByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<Poll> Handle(GetPollByIdRequest message)
+        public override async Task<Poll> Handle(GetPollByIdQuery message)
         {
             return await DBContext.Polls.FirstOrDefaultAsync(x => x.Id == message.Id);
         }

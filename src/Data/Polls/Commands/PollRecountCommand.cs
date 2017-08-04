@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Polls.Commands
 {
-    public class PollRecountCommand : NotificationBase
+    public class PollRecountCommand : CommandBase
     {
         public PollRecountCommand(Poll poll)
         {

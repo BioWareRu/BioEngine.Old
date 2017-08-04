@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Data.Polls.Commands;
-using BioEngine.Data.Polls.Requests;
+using BioEngine.Data.Polls.Queries;
 using BioEngine.Site.Base;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +30,7 @@ namespace BioEngine.Site.Controllers
         [HttpPost("polls/{pollId}/vote.html")]
         public async Task<IActionResult> Vote(int pollId, [FromForm] int vote)
         {
-            var poll = await Mediator.Send(new GetPollByIdRequest(pollId));
+            var poll = await Mediator.Send(new GetPollByIdQuery(pollId));
             if (poll == null)
             {
                 return new NotFoundResult();
@@ -45,7 +45,7 @@ namespace BioEngine.Site.Controllers
                 userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
                 userLogin = User.Identity.Name;
             }
-            if (await Mediator.Send(new IsPollVotedByUserRequest(poll.Id, userId, ip, sessionId)))
+            if (await Mediator.Send(new IsPollVotedByUserQuery(poll.Id, userId, ip, sessionId)))
             {
                 return new RedirectResult(returnUrl);
             }

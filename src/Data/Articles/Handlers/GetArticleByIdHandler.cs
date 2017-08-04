@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
-    public class GetArticleByIdHandler : RequestHandlerBase<GetArticleByIdRequest, Article>
+    internal class GetArticleByIdHandler : QueryHandlerBase<GetArticleByIdQuery, Article>
     {
         public GetArticleByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task<Article> Handle(GetArticleByIdRequest message)
+        public override async Task<Article> Handle(GetArticleByIdQuery message)
         {
             var article = await DBContext.Articles
                 .Where(x => x.Id == message.Id)
@@ -31,8 +31,8 @@ namespace BioEngine.Data.Articles.Handlers
             {
                 article.Cat =
                     await Mediator.Send(
-                        new ArticleCategoryProcessRequest(article.Cat,
-                            new GetArticlesCategoriesRequest(article.Parent)));
+                        new ArticleCategoryProcessQuery(article.Cat,
+                            new GetArticlesCategoriesQuery(article.Parent)));
             }
             return article;
         }

@@ -10,8 +10,8 @@ using BioEngine.Site.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using BioEngine.Data.Base.Requests;
-using BioEngine.Data.Users.Requests;
+using BioEngine.Data.Base.Queries;
+using BioEngine.Data.Users.Queries;
 using MediatR;
 
 namespace BioEngine.Site.Base
@@ -26,7 +26,7 @@ namespace BioEngine.Site.Base
             IContentHelperInterface contentHelper)
         {
             Mediator = mediator;
-            _settings = mediator.Send(new GetSettingsRequest()).GetAwaiter().GetResult();
+            _settings = mediator.Send(new GetSettingsQuery()).GetAwaiter().GetResult();
             ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, _settings, contentHelper);
         }
 
@@ -136,7 +136,7 @@ namespace BioEngine.Site.Base
                 return null;
             }
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            _user = await Mediator.Send(new GetUserByIdRequest(userId));
+            _user = await Mediator.Send(new GetUserByIdQuery(userId));
             return _user;
         }
 

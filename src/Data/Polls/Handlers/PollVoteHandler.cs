@@ -4,27 +4,29 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Polls.Commands;
+using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Polls.Handlers
 {
-    public class PollVoteHandler : NotificationHandlerBase<PollVoteCommand>
+    [UsedImplicitly]
+    internal class PollVoteHandler : CommandHandlerBase<PollVoteCommand>
     {
         public PollVoteHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {
         }
 
-        public override async Task Handle(PollVoteCommand notification)
+        public override async Task Handle(PollVoteCommand command)
         {
             var pollVote = new PollWho
             {
-                PollId = notification.PollId,
+                PollId = command.PollId,
                 VoteDate = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                VoteOption = notification.VoteId,
-                Ip = notification.IpAddress,
-                UserId = notification.UserId,
-                Login = notification.Login,
-                SessionId = notification.SessionId
+                VoteOption = command.VoteId,
+                Ip = command.IpAddress,
+                UserId = command.UserId,
+                Login = command.Login,
+                SessionId = command.SessionId
             };
 
             DBContext.Add(pollVote);

@@ -72,7 +72,10 @@ namespace BioEngine.Common.Ipb
                     result.topicId = topicCreateData.Value<int>("id");
                     result.postId = topicCreateData["firstPost"].Value<int>("id");
                 }
-                throw new Exception($"Can't create topic: {response}");
+                else
+                {
+                    throw new Exception($"Can't create topic: {response}");
+                }
             }
             var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
                 new List<KeyValuePair<string, string>>()

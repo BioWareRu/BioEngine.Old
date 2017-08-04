@@ -35,21 +35,21 @@ namespace BioEngine.Data.News.Handelrs
 
             var totalNews = await query.CountAsync();
 
+            query = query
+                .OrderByDescending(x => x.Sticky)
+                .ThenByDescending(x => x.Date)
+                .Include(x => x.Author)
+                .Include(x => x.Game)
+                .Include(x => x.Developer)
+                .Include(x => x.Topic);
+
             if (message.Page != null && message.Page > 0)
             {
-                query = query.Skip(((int)message.Page - 1) * message.PageSize)
+                query = query.Skip(((int) message.Page - 1) * message.PageSize)
                     .Take(message.PageSize);
             }
 
-            var news =
-                await query
-                    .OrderByDescending(x => x.Sticky)
-                    .ThenByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic)
-                    .ToListAsync();
+            var news = await query.ToListAsync();
 
 
             return (news, totalNews);

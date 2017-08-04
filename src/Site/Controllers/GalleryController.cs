@@ -52,7 +52,7 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().ParentGalleryUrl(parent), "Галерея"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catPics = await Mediator.Send(new GetCategoryPicsRequest(category, page));
+                var catPics = await Mediator.Send(new GetGalleryPicsRequest(cat: category, page: page));
                 category.Items = catPics.pics;
 
                 var viewModel = new GalleryCatViewModel(ViewModelConfig, category, catPics.count, page);
@@ -72,9 +72,8 @@ namespace BioEngine.Site.Controllers
                 loadLastItems: loadLastItems));
         }
 
-        [HttpGet("/{parentUrl}/gallery.html")]
-        [HttpGet("/{parentUrl}/gallery")]
-        [HttpGet("/gallery/{parentUrl}/")]
+        /*[HttpGet("/{parentUrl}/gallery")]
+        [HttpGet("/gallery/{parentUrl}/")]*/
         public async Task<IActionResult> ParentGallery(string parentUrl)
         {
             var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));

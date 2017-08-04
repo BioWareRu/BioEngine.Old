@@ -5,11 +5,13 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
+    [UsedImplicitly]
     public class GetCategoryFilesHandler : RequestHandlerBase<GetCategoryFilesRequest, (IEnumerable<File>
         files, int count)>
     {
@@ -27,7 +29,7 @@ namespace BioEngine.Data.Files.Handlers
 
             if (message.Page > 0)
             {
-                filesQuery = filesQuery.Skip(message.Page - 1 * message.PageSize).Take(message.PageSize);
+                filesQuery = filesQuery.Skip((message.Page - 1) * message.PageSize).Take(message.PageSize);
             }
 
             var files = await filesQuery.ToListAsync();

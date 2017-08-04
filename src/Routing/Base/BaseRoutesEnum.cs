@@ -2,7 +2,6 @@
 {
     public enum BaseRoutesEnum
     {
-        GamePage,
-        DeveloperPage
+        GamePage
     }
 }

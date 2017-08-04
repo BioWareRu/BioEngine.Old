@@ -6,6 +6,8 @@ namespace BioEngine.Routing.Search
     {
         public static void Register(IRouteBuilder routeBuilder)
         {
+            routeBuilder.MapRoute(SearchRoutesEnum.BlockPage, "search.html",
+                new {controller = "Search", action = "Index"});
         }
     }
 }

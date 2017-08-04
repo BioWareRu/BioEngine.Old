@@ -30,7 +30,7 @@ namespace BioEngine.Common.Models
         [InverseProperty(nameof(ParentCat))]
         public List<FileCat> Children { get; set; }
 
-        public IEnumerable<File> Items { get; set; }
+        public IEnumerable<File> Items { get; set; } = new List<File>();
 
         [NotMapped]
         public override int? TopicId { get; set; }

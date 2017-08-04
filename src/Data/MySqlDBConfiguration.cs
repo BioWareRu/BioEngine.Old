@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
-namespace BioEngine.Site.Components
+namespace BioEngine.Data
 {
     [UsedImplicitly]
     public class MySqlDBConfiguration : DBConfiguration

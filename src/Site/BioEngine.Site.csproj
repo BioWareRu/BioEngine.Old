@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -13,22 +12,18 @@
     <GeneratedItemPatterns>wwwroot/js/**;wwwroot/img/**;wwwroot/css/**</GeneratedItemPatterns>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(GeneratedItemPatterns)</DefaultItemExcludes>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Static\node_modules\**" />
     <Content Remove="Static\node_modules\**" />
     <EmbeddedResource Remove="Static\node_modules\**" />
     <None Remove="Static\node_modules\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Static\blocks\*\*.css" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Components\AppSettings.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="wwwroot\img\article-list__balloon.png" />
     <Content Include="wwwroot\img\article-list__bg.png" />
@@ -103,13 +98,11 @@
     <Content Include="wwwroot\img\auth_user-icon-red.svg" />
     <Content Include="wwwroot\js\script.min.js" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="BundlerMinifier.Core" Version="2.4.337" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
@@ -146,7 +139,6 @@
     <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
     <PackageReference Include="SimpleMvcSitemap" Version="3.0.0" />
   </ItemGroup>
-
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="bower install --allow-root" WorkingDirectory="Static" />
     <Exec Command="npm install" WorkingDirectory="Static" />
@@ -158,28 +150,23 @@
       <ContentWithTargetPath Include="@(_GeneratedFiles->'%(FullPath)')" RelativePath="%(_GeneratedFiles.Identity)" TargetPath="%(_GeneratedFiles.Identity)" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
-
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
     <ProjectReference Include="..\Content\BioEngine.Content.csproj" />
     <ProjectReference Include="..\Data\BioEngine.Data.csproj" />
     <ProjectReference Include="..\Routing\BioEngine.Routing.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Views\Errors\" />
   </ItemGroup>
-
   <PropertyGroup>
     <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
-
   <PropertyGroup>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
@@ -187,5 +174,4 @@
     <ThreadPoolMinThreads>500</ThreadPoolMinThreads>
     <ThreadPoolMaxThreads>800</ThreadPoolMaxThreads>
   </PropertyGroup>
-
 </Project>

@@ -7,9 +7,8 @@ using MediatR;
 
 namespace BioEngine.Data.Core
 {
-    public abstract class
-        CategoryProcessHandlerBase<TCat, TEntity> : RequestHandlerBase<CategoryProcessRequestBase<TCat>, TCat>
-        where TCat : class, ICat<TCat, TEntity>
+    public abstract class CategoryProcessHandlerBase<TRequest, TCat, TEntity> : RequestHandlerBase<TRequest, TCat>
+        where TCat : class, ICat<TCat, TEntity> where TRequest : CategoryProcessRequestBase<TCat>, IRequest<TCat>
     {
         private readonly ParentEntityProvider _parentEntityProvider;
 
@@ -19,7 +18,7 @@ namespace BioEngine.Data.Core
             _parentEntityProvider = parentEntityProvider;
         }
 
-        public override async Task<TCat> Handle(CategoryProcessRequestBase<TCat> message)
+        public override async Task<TCat> Handle(TRequest message)
         {
             await ProcessCat(message.Cat, message.CategoryRequest);
             return message.Cat;

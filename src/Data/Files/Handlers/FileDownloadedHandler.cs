@@ -2,10 +2,12 @@
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Notifications;
+using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Files.Handlers
 {
+    [UsedImplicitly]
     public class FileDownloadedHandler : NotificationHandlerBase<FileDownloadedNotification>
     {
         public FileDownloadedHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)

@@ -5,13 +5,15 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
+using JetBrains.Annotations;
 using MediatR;
 
 namespace BioEngine.Data.Files.Handlers
 {
-    public class FilesCategoryProcessHandler : CategoryProcessHandlerBase<FileCat, File>
+    [UsedImplicitly]
+    public class FilesCategoryProcessHandler : CategoryProcessHandlerBase<FileCategoryProcessRequest, FileCat, File>
     {
-        protected FilesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
+        public FilesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
             ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)
         {
         }

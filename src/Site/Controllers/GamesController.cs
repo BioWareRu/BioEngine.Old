@@ -24,7 +24,7 @@ namespace BioEngine.Site.Controllers
         }
 
 
-        [HttpGet("/{gameUrl:regex(^[[a-z0-9_]]+$)}.html", Order = 2)]
+        //[HttpGet("/{gameUrl:regex(^[[a-z0-9_]]+$)}.html", Order = 2)]
         public async Task<IActionResult> Index(string gameUrl)
         {
             var game = await Mediator.Send(new GetGameByUrlRequest(gameUrl));
@@ -45,7 +45,12 @@ namespace BioEngine.Site.Controllers
 
             var canUserSeeUnpublishedGalleryPics = await HasRight(UserRights.Gallery);
             var lastPics =
-                (await Mediator.Send(new GetGalleryPicsRequest(canUserSeeUnpublishedGalleryPics, 1, game) { PageSize = 5 })).pics;
+            (await Mediator.Send(
+                new GetGalleryPicsRequest(canUserSeeUnpublishedGalleryPics, 1, game)
+                {
+                    PageSize = 5,
+                    LoadPicPositions = true
+                })).pics;
 
             var view = new GamePageViewModel(ViewModelConfig, game, lastNews, lastArticles, lastFiles, lastPics);
             return View(view);

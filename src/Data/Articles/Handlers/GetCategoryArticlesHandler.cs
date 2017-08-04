@@ -27,7 +27,7 @@ namespace BioEngine.Data.Articles.Handlers
 
             if (message.Page > 0)
             {
-                articlesQuery = articlesQuery.Skip(message.Page - 1 * message.PageSize).Take(message.PageSize);
+                articlesQuery = articlesQuery.Skip((message.Page - 1) * message.PageSize).Take(message.PageSize);
             }
 
             var articles = await articlesQuery.ToListAsync();

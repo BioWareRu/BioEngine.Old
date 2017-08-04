@@ -31,7 +31,6 @@ namespace BioEngine.Site.Controllers
             _contentHelper = contentHelper;
         }
 
-        [HttpGet("/search.html")]
         public async Task<IActionResult> Index(string query, string block)
         {
             var viewModel = new SearchViewModel(ViewModelConfig, query);

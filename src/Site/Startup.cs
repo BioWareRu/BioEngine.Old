@@ -3,12 +3,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
-using BioEngine.Common.Search;
 using BioEngine.Routing;
 using BioEngine.Site.Components;
 using BioEngine.Site.Helpers;
@@ -35,8 +32,7 @@ using BioEngine.Prometheus.Core;
 using Microsoft.AspNetCore.DataProtection;
 using StackExchange.Redis;
 using BioEngine.Content.Helpers;
-using BioEngine.Data.Core;
-using MediatR;
+using BioEngine.Data;
 
 namespace BioEngine.Site
 {
@@ -71,7 +67,6 @@ namespace BioEngine.Site
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddMvc(options =>
                 {
-                    //options.Filters.Add(typeof(ExceptionFilter));
                     options.Filters.Add(typeof(CounterFilter));
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
@@ -90,21 +85,19 @@ namespace BioEngine.Site
             });
 
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
-            var dbConfig = new MySqlDBConfiguration(Configuration);
-            services.AddDbContext<BWContext>(builder => dbConfig.Configure(builder));
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             services.AddBioEngineRouting();
+            services.AddBioEngineData(Configuration);
 
             services.AddSingleton(Configuration);
 
             services.AddScoped<BannerProvider>();
-            services.AddScoped<ParentEntityProvider>();
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
-            services.AddScoped(typeof(ISearchProvider<>), typeof(ElasticSearchProvider<>));
+            
             services.AddSingleton(new IPBApiConfig
             {
                 ApiKey = Configuration["BE_IPB_API_KEY"],
@@ -112,12 +105,10 @@ namespace BioEngine.Site
                 NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
             });
 
-            services.AddMediatR(typeof(RequestBase<>).GetTypeInfo().Assembly);
-
             if (_env.IsProduction())
             {
                 var resolved = TryResolveDns(Configuration["BE_REDIS_HOST"]);
-                var redisConfiguration = new ConfigurationOptions()
+                var redisConfiguration = new ConfigurationOptions
                 {
                     EndPoints =
                     {

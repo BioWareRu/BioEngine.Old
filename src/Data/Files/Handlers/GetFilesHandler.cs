@@ -38,7 +38,6 @@ namespace BioEngine.Data.Files.Handlers
                     .Include(x => x.Author)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
-                    .Include(x => x.Topic)
                     .Include(x => x.Cat)
                     .ToListAsync();
 

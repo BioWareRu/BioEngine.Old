@@ -1,30 +1,23 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using BioEngine.Common.DB;
-using BioEngine.Common.Models;
+﻿using System.Threading.Tasks;
+using BioEngine.Data.Base.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Site.ViewComponents
 {
     public class MenuViewComponent : ViewComponent
     {
-        private readonly BWContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public MenuViewComponent(BWContext context)
+        public MenuViewComponent(IMediator mediator)
         {
-            _dbContext = context;
+            _mediator = mediator;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string key)
         {
-            var menu = await GetItemsAsync(key);
+            var menu = await _mediator.Send(new GetMenuByKeyRequest(key));
             return View(menu.GetMenu());
-        }
-
-        private Task<Menu> GetItemsAsync(string key)
-        {
-            return _dbContext.Menus.Where(x => x.Key == key).FirstOrDefaultAsync();
         }
     }
 }

@@ -35,6 +35,6 @@ namespace BioEngine.Common.Models
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
 
-        public IEnumerable<Article> Items { get; set; }
+        public IEnumerable<Article> Items { get; set; } = new List<Article>();
     }
 }

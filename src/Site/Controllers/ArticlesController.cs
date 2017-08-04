@@ -107,7 +107,7 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetArticlesCategoriesRequest(parent: parent, loadChildren: true,
+            var cats = await Mediator.Send(new GetArticlesCategoriesRequest(parent, loadChildren: true,
                 loadLastItems: 5));
 
             return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats));

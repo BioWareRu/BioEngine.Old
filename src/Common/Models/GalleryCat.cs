@@ -31,7 +31,7 @@ namespace BioEngine.Common.Models
         [InverseProperty(nameof(ParentCat))]
         public List<GalleryCat> Children { get; set; }
 
-        public IEnumerable<GalleryPic> Items { get; set; }
+        public IEnumerable<GalleryPic> Items { get; set; } = new List<GalleryPic>();
 
         [NotMapped]
         public override int? TopicId { get; set; }

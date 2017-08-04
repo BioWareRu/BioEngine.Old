@@ -4,11 +4,13 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
+    [UsedImplicitly]
     public class GetFileByUrlHandler : RequestHandlerBase<GetFileByUrlRequest, File>
     {
         public GetFileByUrlHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
@@ -17,8 +19,8 @@ namespace BioEngine.Data.Files.Handlers
 
         public override async Task<File> Handle(GetFileByUrlRequest message)
         {
-            var query = DBContext.Files.Include(x => x.Cat).Include(x => x.Author).AsQueryable();
-            query = query.Where(x => x.Url == message.Url);
+            var query = DBContext.Files.Include(x => x.Cat).Include(x => x.Author).Include(x => x.Game)
+                .Include(x => x.Developer).AsQueryable().Where(x => x.Url == message.Url);
             query = ApplyParentCondition(query, message.Parent);
             var files = await query.ToListAsync();
             if (files.Any())

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
+using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Gallery.Requests;
 using MediatR;
@@ -27,6 +28,10 @@ namespace BioEngine.Data.Gallery.Handlers
             {
                 query = ApplyParentCondition(query, message.Parent);
             }
+            if (message.Cat != null)
+            {
+                query = query.Where(x => x.CatId == message.Cat.Id);
+            }
             var totalPics = await query.CountAsync();
 
             if (message.Page != null && message.Page > 0)
@@ -40,18 +45,30 @@ namespace BioEngine.Data.Gallery.Handlers
                     .OrderByDescending(x => x.Id)
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
-                    .Include(x => x.Topic)
                     .Include(x => x.Cat)
                     .ToListAsync();
 
-            foreach (var article in pics)
+            foreach (var pic in pics)
             {
-                article.Cat =
-                    await Mediator.Send(new GalleryCategoryProcessRequest(article.Cat,
+                pic.Cat =
+                    await Mediator.Send(new GalleryCategoryProcessRequest(pic.Cat,
                         new GetGalleryCategoryRequest(message.Parent)));
+
+                if (message.LoadPicPositions)
+                {
+                    pic.Position = await GetPicPosition(pic);
+                }
             }
 
             return (pics, totalPics);
+        }
+
+        private async Task<int> GetPicPosition(GalleryPic picture)
+        {
+            return
+                await DBContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
+                    .OrderByDescending(x => x.Id)
+                    .CountAsync();
         }
     }
 }

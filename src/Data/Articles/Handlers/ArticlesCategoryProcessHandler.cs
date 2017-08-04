@@ -9,9 +9,9 @@ using MediatR;
 
 namespace BioEngine.Data.Articles.Handlers
 {
-    public class ArticlesCategoryProcessHandler : CategoryProcessHandlerBase<ArticleCat, Article>
+    public class ArticlesCategoryProcessHandler : CategoryProcessHandlerBase<ArticleCategoryProcessRequest, ArticleCat, Article>
     {
-        protected ArticlesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
+        public ArticlesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
             ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)
         {
         }

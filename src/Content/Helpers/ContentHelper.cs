@@ -3,25 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
+using BioEngine.Common.Models;
+using BioEngine.Data.Articles.Requests;
+using BioEngine.Data.Base.Requests;
+using BioEngine.Data.Files.Requests;
+using BioEngine.Data.Gallery.Requests;
+using BioEngine.Data.News.Requests;
 using BioEngine.Routing;
+using JetBrains.Annotations;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Content.Helpers
 {
+    [UsedImplicitly]
     public class ContentHelper : IContentHelperInterface
     {
-        private readonly BWContext _dbContext;
         private readonly IUrlHelper _urlHelper;
+        private readonly IMediator _mediator;
 
-        public ContentHelper(BWContext dbContext, IUrlHelper urlHelper)
+        public ContentHelper(IMediator mediator, IUrlHelper urlHelper)
         {
-            _dbContext = dbContext;
+            _mediator = mediator;
             _urlHelper = urlHelper;
 
-            _placeholders = new List<ContentPlaceholder>()
+            _placeholders = new List<ContentPlaceholder>
             {
                 new ContentPlaceholder(new Regex("\\[game:([a-zA-Z0-9_]+)\\]"), false, ReplaceGame),
                 new ContentPlaceholder(new Regex("\\[gameUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceGame),
@@ -91,7 +98,7 @@ namespace BioEngine.Content.Helpers
         private async Task<string> ReplaceGame(Match match, bool urlOnly)
         {
             var gameUrl = match.Groups[1].Value;
-            var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Url == gameUrl);
+            var game = await _mediator.Send(new GetGameByUrlRequest(gameUrl));
             if (game == null) return null;
             var url = _urlHelper.Base().ParentUrl(game, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
@@ -100,7 +107,7 @@ namespace BioEngine.Content.Helpers
         private async Task<string> ReplaceDeveloper(Match match, bool urlOnly)
         {
             var developerUrl = match.Groups[1].Value;
-            var developer = await _dbContext.Developers.FirstOrDefaultAsync(x => x.Url == developerUrl);
+            var developer = (Developer) await _mediator.Send(new GetParentByUrlRequest(developerUrl));
             if (developer == null) return null;
             var url = _urlHelper.Base().ParentUrl(developer, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
@@ -110,7 +117,7 @@ namespace BioEngine.Content.Helpers
         {
             var newsId = int.Parse(match.Groups[1].Value);
             if (newsId <= 0) return null;
-            var news = await _dbContext.News.FirstOrDefaultAsync(x => x.Id == newsId);
+            var news = await _mediator.Send(new GetNewsByIdRequest(newsId));
             if (news == null) return null;
             var url = _urlHelper.News().PublicUrl(news, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
@@ -134,7 +141,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         private async Task<string> ReplaceVideo(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
-            var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
+            var file = await _mediator.Send(new GetFileByIdRequest(fileId));
             var result = !string.IsNullOrEmpty(file?.YtId)
                 ? $"<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/{file.YtId}\" frameborder=\"0\" allowfullscreen></iframe>"
                 : null;
@@ -157,7 +164,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
                 height = int.Parse(match.Groups[3].Value);
             }
             if (galleryId <= 0) return null;
-            var pic = await _dbContext.GalleryPics.FirstOrDefaultAsync(x => x.Id == galleryId);
+            var pic = await _mediator.Send(new GetGalleryPicByIdRequest(galleryId));
             if (pic == null) return null;
 
 
@@ -174,7 +181,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         {
             var articleId = int.Parse(match.Groups[1].Value);
             if (articleId <= 0) return null;
-            var article = await _dbContext.Articles.FirstOrDefaultAsync(x => x.Id == articleId);
+            var article = await _mediator.Send(new GetArticleByIdRequest(articleId));
             if (article == null) return null;
             var url = _urlHelper.Articles().PublicUrl(article, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
@@ -184,7 +191,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
         {
             var fileId = int.Parse(match.Groups[1].Value);
             if (fileId <= 0) return null;
-            var file = await _dbContext.Files.FirstOrDefaultAsync(x => x.Id == fileId);
+            var file = await _mediator.Send(new GetFileByIdRequest(fileId));
             if (file == null) return null;
             var url = _urlHelper.Files().PublicUrl(file, true);
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{file.Title}\">{file.Title}</a>";

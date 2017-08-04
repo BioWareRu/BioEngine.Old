@@ -5,11 +5,13 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Requests;
 using BioEngine.Data.Core;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Articles.Handlers
 {
+    [UsedImplicitly]
     public class GetArticlesCategoriesHandler : RequestHandlerBase<GetArticlesCategoriesRequest,
         IEnumerable<ArticleCat>>
     {

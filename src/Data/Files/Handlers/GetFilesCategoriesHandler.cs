@@ -5,13 +5,14 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Requests;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Files.Handlers
 {
-    public class GetFilesCategoriesHandler : RequestHandlerBase<GetFilesCategoriesRequest, IEnumerable<FileCat>
-    >
+    [UsedImplicitly]
+    public class GetFilesCategoriesHandler : RequestHandlerBase<GetFilesCategoriesRequest, IEnumerable<FileCat>>
     {
         public GetFilesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
         {

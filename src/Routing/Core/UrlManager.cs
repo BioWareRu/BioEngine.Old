@@ -29,7 +29,7 @@ namespace BioEngine.Routing.Core
                 url = url.Replace("%2F", "/"); //TODO: Ugly hack because of https://github.com/aspnet/Routing/issues/363
                 if (url.IndexOf(".html", StringComparison.Ordinal) < 0)
                     url += ".html";
-                return new Uri(url);
+                return new Uri(url, absolute ? UriKind.Absolute : UriKind.Relative);
             }
             return null;
         }

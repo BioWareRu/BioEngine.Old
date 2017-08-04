@@ -26,6 +26,7 @@ namespace BioEngine.Common.Base
         [ForeignKey(nameof(TopicId))]
         public virtual Topic Topic { get; set; }
 
+        [NotMapped]
         public IParentModel Parent
         {
             get

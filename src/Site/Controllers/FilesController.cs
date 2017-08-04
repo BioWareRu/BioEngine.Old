@@ -26,9 +26,8 @@ namespace BioEngine.Site.Controllers
         {
         }
 
-        [HttpGet("/{parentUrl}/files.html")]
-        [HttpGet("/{parentUrl}/files")]
-        [HttpGet("/files/{parentUrl}/")]
+        /*[HttpGet("/{parentUrl}/files")]
+        [HttpGet("/files/{parentUrl}/")]*/
         public async Task<IActionResult> ParentFiles(string parentUrl)
         {
             var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
@@ -37,13 +36,12 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetFilesCategoriesRequest(parent: parent, loadChildren: true,
+            var cats = await Mediator.Send(new GetFilesCategoriesRequest(parent, loadChildren: true,
                 loadLastItems: 5));
 
             return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
         }
 
-        [HttpGet("/{parentUrl}/download/{*url}")]
         public async Task<IActionResult> Download(string parentUrl, string url)
         {
             var parent = await Mediator.Send(new GetParentByUrlRequest(parentUrl));
@@ -81,7 +79,6 @@ namespace BioEngine.Site.Controllers
             return StatusCode(404);
         }
 
-        [HttpGet("/{parentUrl}/files/{*url}")]
         public async Task<IActionResult> Show(string parentUrl, string url)
         {
             //so... let's try to find file
@@ -120,7 +117,7 @@ namespace BioEngine.Site.Controllers
             {
                 return new NotFoundResult();
             }
-            var category = await GetCat(parent, catUrl, true);
+            var category = await GetCat(parent, catUrl, true, 5);
             if (category != null)
             {
                 var breadcrumbs = new List<BreadCrumbsItem>();

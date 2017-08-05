@@ -85,34 +85,37 @@ namespace BioEngine.Common.Ipb
                     throw new Exception($"Can't create topic: {response}");
                 }
             }
-            var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
-                new List<KeyValuePair<string, string>>()
-                {
-                    new KeyValuePair<string, string>("title", news.Title),
-                });
-            if (!topicTitleUpdateResponse.IsSuccessStatusCode)
+            else
             {
-                throw new Exception(
-                    $"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
-            }
-
-            var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
-                new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
-                    new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
-                });
-            if (topicStatusUpdateResponse.IsSuccessStatusCode)
-            {
-                var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
-                    new List<KeyValuePair<string, string>>
+                var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
+                    new List<KeyValuePair<string, string>>()
                     {
-                        new KeyValuePair<string, string>("post", await GetPostContent(news))
+                        new KeyValuePair<string, string>("title", news.Title),
                     });
-                if (!postUpdateResponse.IsSuccessStatusCode)
+                if (!topicTitleUpdateResponse.IsSuccessStatusCode)
                 {
                     throw new Exception(
-                        $"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
+                        $"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
+                }
+
+                var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
+                    new List<KeyValuePair<string, string>>
+                    {
+                        new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
+                        new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
+                    });
+                if (topicStatusUpdateResponse.IsSuccessStatusCode)
+                {
+                    var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
+                        new List<KeyValuePair<string, string>>
+                        {
+                            new KeyValuePair<string, string>("post", await GetPostContent(news))
+                        });
+                    if (!postUpdateResponse.IsSuccessStatusCode)
+                    {
+                        throw new Exception(
+                            $"Can't update post content: {await postUpdateResponse.Content.ReadAsStringAsync()}");
+                    }
                 }
             }
             return result;

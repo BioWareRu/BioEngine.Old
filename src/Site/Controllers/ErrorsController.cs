@@ -1,10 +1,9 @@
 ﻿using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Site.Base;
-using BioEngine.Site.Extensions;
 using BioEngine.Site.ViewModels.Errors;
 using MediatR;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,7 +23,8 @@ namespace BioEngine.Site.Controllers
         {
             if (errorCode == 404)
             {
-                logger.LogError($"Page not found. Url: {HttpContext.Request.AbsoluteUrl()}");
+                var feature = HttpContext.Features.Get<IHttpRequestFeature>();
+                logger.LogError($"Page not found. Url: {feature.RawTarget}");
             }
             return View("Error", new ErrorsViewModel(ViewModelConfig, errorCode));
         }

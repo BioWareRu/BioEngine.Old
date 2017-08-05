@@ -130,7 +130,7 @@ namespace BioEngine.Site
             return ip;
         }
 
-        public static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
+        private static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         [UsedImplicitly]
@@ -225,7 +225,7 @@ namespace BioEngine.Site
             else
             {
                 loggerConfiguration = loggerConfiguration
-                    .WriteTo.Graylog(new GraylogSinkOptions()
+                    .WriteTo.Graylog(new GraylogSinkOptions
                     {
                         HostnameOrAdress = Configuration["BE_GELF_HOST"],
                         Port = int.Parse(Configuration["BE_GELF_PORT"]),

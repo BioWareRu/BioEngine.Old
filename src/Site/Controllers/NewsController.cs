@@ -236,7 +236,6 @@ namespace BioEngine.Site.Controllers
 
         [HttpGet("/news/update-forum-post/{newsId:int}.html")]
         public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, string accessToken,
-            [FromServices] IPBApiHelper ipbApiHelper,
             [FromServices] IConfigurationRoot configuration)
         {
             if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])
@@ -274,7 +273,6 @@ namespace BioEngine.Site.Controllers
 
         [HttpGet("/news/delete-forum-post/{newsId:int}.html")]
         public async Task<IActionResult> DeleteNewsTopic(int newsId, string accessToken,
-            [FromServices] IPBApiHelper ipbApiHelper,
             [FromServices] IConfigurationRoot configuration)
         {
             if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])

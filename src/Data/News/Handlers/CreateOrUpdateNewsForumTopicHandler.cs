@@ -14,7 +14,8 @@ namespace BioEngine.Data.News.Handlers
     {
         private readonly IPBApiHelper _ipbApiHelper;
 
-        public CreateOrUpdateNewsForumTopicHandler(IMediator mediator, BWContext dbContext, ILogger logger,
+        public CreateOrUpdateNewsForumTopicHandler(IMediator mediator, BWContext dbContext,
+            ILogger<CreateOrUpdateNewsForumTopicHandler> logger,
             IPBApiHelper ipbApiHelper) : base(
             mediator, dbContext, logger)
         {

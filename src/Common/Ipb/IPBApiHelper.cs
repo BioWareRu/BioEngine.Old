@@ -6,23 +6,30 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
+using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BioEngine.Common.Ipb
 {
+    [UsedImplicitly]
     public class IPBApiHelper
     {
         private readonly IPBApiConfig _ipbApiConfig;
         private readonly IContentHelperInterface _contextHelper;
+        private readonly ILogger<IPBApiHelper> _logger;
         private readonly HttpClient _client;
 
         private static readonly Regex BlockQuoteRegex =
             new Regex("<blockquote.*?>(.+?)<\\/blockquote>", RegexOptions.Singleline);
 
-        public IPBApiHelper(IPBApiConfig ipbApiConfig, IContentHelperInterface contextHelper)
+        public IPBApiHelper(IPBApiConfig ipbApiConfig, IContentHelperInterface contextHelper,
+            ILogger<IPBApiHelper> logger)
         {
             _ipbApiConfig = ipbApiConfig;
             _contextHelper = contextHelper;
+            _logger = logger;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(_ipbApiConfig.ApiKey) + ":");
         }
@@ -33,6 +40,7 @@ namespace BioEngine.Common.Ipb
             var url = _ipbApiConfig.ApiUrl + method;
             var response = await _client.PostAsync(url,
                 new FormUrlEncodedContent(data));
+            _logger.LogWarning($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
             return response;
         }
 
@@ -55,7 +63,7 @@ namespace BioEngine.Common.Ipb
             if (news.ForumTopicId == 0)
             {
                 var topicCreateResponse = await DoApiRequest("/forums/topics",
-                    new List<KeyValuePair<string, string>>()
+                    new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("forum", _ipbApiConfig.NewsForumId),
                         new KeyValuePair<string, string>("author", news.AuthorId.ToString()),
@@ -89,7 +97,7 @@ namespace BioEngine.Common.Ipb
             }
 
             var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
-                new List<KeyValuePair<string, string>>()
+                new List<KeyValuePair<string, string>>
                 {
                     new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
                     new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
@@ -97,7 +105,7 @@ namespace BioEngine.Common.Ipb
             if (topicStatusUpdateResponse.IsSuccessStatusCode)
             {
                 var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
-                    new List<KeyValuePair<string, string>>()
+                    new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("post", await GetPostContent(news))
                     });
@@ -110,7 +118,7 @@ namespace BioEngine.Common.Ipb
             return result;
         }
 
-        public async Task<string> GetPostContent(News news)
+        private async Task<string> GetPostContent(News news)
         {
             var postContent = await _contextHelper.ReplacePlaceholders(news.ShortText);
             if (!string.IsNullOrEmpty(news.AddText))

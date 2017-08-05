@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BioEngine.Data.News.Handelrs
+namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
     internal class GetOneNewsHandler : QueryHandlerBase<GetOneNewsQuery, Common.Models.News>

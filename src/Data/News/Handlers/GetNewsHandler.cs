@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BioEngine.Data.News.Handelrs
+namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
     internal class GetNewsHandler : QueryHandlerBase<GetNewsQuery, (IEnumerable<Common.Models.News> news, int count)>

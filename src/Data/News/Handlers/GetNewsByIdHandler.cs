@@ -2,14 +2,13 @@
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.News.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BioEngine.Data.News.Handelrs
+namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
     internal class GetNewsByIdHandler : QueryHandlerBase<GetNewsByIdQuery, Common.Models.News>

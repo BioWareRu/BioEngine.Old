@@ -133,7 +133,7 @@ namespace BioEngine.Site.Controllers
 
                 var catFiles = await Mediator.Send(new GetCategoryFilesQuery(category, page));
                 category.Items = catFiles.files;
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, page, catFiles.count);
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, catFiles.count, page);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);

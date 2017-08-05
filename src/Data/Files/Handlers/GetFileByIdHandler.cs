@@ -7,17 +7,19 @@ using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
     internal class GetFileByIdHandler : QueryHandlerBase<GetFileByIdQuery, File>
     {
-        public GetFileByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFileByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetFileByIdHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<File> Handle(GetFileByIdQuery message)
+        protected override async Task<File> RunQuery(GetFileByIdQuery message)
         {
             var file = await DBContext.Files
                 .Where(x => x.Id == message.Id)

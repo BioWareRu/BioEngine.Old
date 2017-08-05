@@ -6,17 +6,19 @@ using BioEngine.Data.Core;
 using BioEngine.Data.Polls.Commands;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Polls.Handlers
 {
     [UsedImplicitly]
     internal class PollVoteHandler : CommandHandlerBase<PollVoteCommand>
     {
-        public PollVoteHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public PollVoteHandler(IMediator mediator, BWContext dbContext, ILogger<PollVoteHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task Handle(PollVoteCommand command)
+        protected override async Task ExecuteCommand(PollVoteCommand command)
         {
             var pollVote = new PollWho
             {

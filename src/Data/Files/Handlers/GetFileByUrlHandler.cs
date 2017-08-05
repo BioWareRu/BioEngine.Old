@@ -7,17 +7,19 @@ using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
     internal class GetFileByUrlHandler : QueryHandlerBase<GetFileByUrlQuery, File>
     {
-        public GetFileByUrlHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFileByUrlHandler(IMediator mediator, BWContext dbContext, ILogger<GetFileByIdHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<File> Handle(GetFileByUrlQuery message)
+        protected override async Task<File> RunQuery(GetFileByUrlQuery message)
         {
             var query = DBContext.Files.Include(x => x.Cat).Include(x => x.Author).Include(x => x.Game)
                 .Include(x => x.Developer).AsQueryable().Where(x => x.Url == message.Url);

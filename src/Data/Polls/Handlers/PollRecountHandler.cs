@@ -6,17 +6,19 @@ using BioEngine.Data.Polls.Commands;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Polls.Handlers
 {
     [UsedImplicitly]
     internal class PollRecountHandler : CommandHandlerBase<PollRecountCommand>
     {
-        public PollRecountHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public PollRecountHandler(IMediator mediator, BWContext dbContext, ILogger<PollRecountHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task Handle(PollRecountCommand command)
+        protected override async Task ExecuteCommand(PollRecountCommand command)
         {
             var votes = new Dictionary<string, string>();
             foreach (var option in command.Poll.Options)

@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
+using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
@@ -16,11 +18,12 @@ namespace BioEngine.Data.Gallery.Handlers
         IEnumerable<GalleryPic>
         pics, int count)>
     {
-        public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext, ILogger<GetGalleryPicsHandler> logger) :
+            base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<(IEnumerable<GalleryPic> pics, int count)> Handle(
+        protected override async Task<(IEnumerable<GalleryPic> pics, int count)> RunQuery(
             GetGalleryPicsQuery message)
         {
             var query = DBContext.GalleryPics.AsQueryable();

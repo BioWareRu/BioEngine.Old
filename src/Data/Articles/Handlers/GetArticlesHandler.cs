@@ -7,6 +7,7 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
@@ -14,11 +15,12 @@ namespace BioEngine.Data.Articles.Handlers
     internal class GetArticlesHandler : QueryHandlerBase<GetArticlesQuery, (IEnumerable<Common.Models.Article>
         articles, int count)>
     {
-        public GetArticlesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetArticlesHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticlesHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<(IEnumerable<Common.Models.Article> articles, int count)> Handle(
+        protected override async Task<(IEnumerable<Common.Models.Article> articles, int count)> RunQuery(
             GetArticlesQuery message)
         {
             var query = DBContext.Articles.AsQueryable();
@@ -31,7 +33,7 @@ namespace BioEngine.Data.Articles.Handlers
             var totalArticles = await query.CountAsync();
             if (message.Page != null && message.Page > 0)
             {
-                query = query.Skip(((int)message.Page - 1) * message.PageSize)
+                query = query.Skip(((int) message.Page - 1) * message.PageSize)
                     .Take(message.PageSize);
             }
 

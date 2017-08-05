@@ -7,17 +7,19 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Base.Handlers
 {
     [UsedImplicitly]
     internal class GetSettingsHandler : QueryHandlerBase<GetSettingsQuery, List<Settings>>
     {
-        public GetSettingsHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetSettingsHandler(IMediator mediator, BWContext dbContext, ILogger<GetSettingsHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<List<Settings>> Handle(GetSettingsQuery message)
+        protected override async Task<List<Settings>> RunQuery(GetSettingsQuery message)
         {
             return await DBContext.Settings.ToListAsync();
         }

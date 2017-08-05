@@ -8,17 +8,19 @@ using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
     internal class GetFilesCategoriesHandler : QueryHandlerBase<GetFilesCategoriesQuery, IEnumerable<FileCat>>
     {
-        public GetFilesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFilesCategoriesHandler(IMediator mediator, BWContext dbContext,
+            ILogger<GetFilesCategoriesHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<IEnumerable<FileCat>> Handle(GetFilesCategoriesQuery message)
+        protected override async Task<IEnumerable<FileCat>> RunQuery(GetFilesCategoriesQuery message)
         {
             var query = DBContext.FileCats.AsQueryable();
             if (message.Parent != null)

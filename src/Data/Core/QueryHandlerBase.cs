@@ -5,6 +5,7 @@ using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
@@ -12,9 +13,10 @@ namespace BioEngine.Data.Core
         IAsyncRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
-        public abstract Task<TResponse> Handle(TRequest message);
+        protected abstract Task<TResponse> RunQuery(TRequest message);
 
-        protected QueryHandlerBase(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        protected QueryHandlerBase(IMediator mediator, BWContext dbContext, ILogger logger) : base(mediator, dbContext,
+            logger)
         {
         }
 
@@ -36,6 +38,14 @@ namespace BioEngine.Data.Core
             }
 
             return query;
+        }
+
+        public Task<TResponse> Handle(TRequest message)
+        {
+            Logger.LogInformation($"Run query {GetType().FullName} for message {message.GetType().FullName}");
+            var result = RunQuery(message);
+            Logger.LogInformation("Query completed");
+            return result;
         }
     }
 }

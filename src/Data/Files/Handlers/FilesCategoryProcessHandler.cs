@@ -5,8 +5,10 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Queries;
+using BioEngine.Data.Gallery.Handlers;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
@@ -14,7 +16,8 @@ namespace BioEngine.Data.Files.Handlers
     internal class FilesCategoryProcessHandler : CategoryProcessHandlerBase<FileCategoryProcessQuery, FileCat, File>
     {
         public FilesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
-            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)
+            ILogger<GalleryCategoryProcessHandler> logger,
+            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, logger, parentEntityProvider)
         {
         }
 

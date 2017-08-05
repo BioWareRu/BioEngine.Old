@@ -4,6 +4,7 @@ using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
@@ -12,13 +13,13 @@ namespace BioEngine.Data.Core
     {
         private readonly ParentEntityProvider _parentEntityProvider;
 
-        protected CategoryProcessHandlerBase(IMediator mediator, BWContext dbContext,
-            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext)
+        protected CategoryProcessHandlerBase(IMediator mediator, BWContext dbContext, ILogger logger,
+            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, logger)
         {
             _parentEntityProvider = parentEntityProvider;
         }
 
-        public override async Task<TCat> Handle(TRequest message)
+        protected override async Task<TCat> RunQuery(TRequest message)
         {
             await ProcessCat(message.Cat, message.CategoryQuery);
             return message.Cat;

@@ -7,6 +7,7 @@ using BioEngine.Data.Core;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
@@ -16,7 +17,8 @@ namespace BioEngine.Data.Gallery.Handlers
         >
     {
         public GalleryCategoryProcessHandler(IMediator mediator, BWContext dbContext,
-            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)
+            ILogger<GalleryCategoryProcessHandler> logger,
+            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, logger, parentEntityProvider)
         {
         }
 

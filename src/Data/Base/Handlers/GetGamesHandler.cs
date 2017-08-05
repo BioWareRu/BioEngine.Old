@@ -7,17 +7,19 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Base.Handlers
 {
     [UsedImplicitly]
     internal class GetGamesHandler : QueryHandlerBase<GetGamesQuery, IEnumerable<Game>>
     {
-        public GetGamesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetGamesHandler(IMediator mediator, BWContext dbContext, ILogger<GetGamesHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<IEnumerable<Game>> Handle(GetGamesQuery message)
+        protected override async Task<IEnumerable<Game>> RunQuery(GetGamesQuery message)
         {
             return await DBContext.Games.ToListAsync();
         }

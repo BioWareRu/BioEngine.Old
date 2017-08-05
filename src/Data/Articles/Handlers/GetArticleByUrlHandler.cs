@@ -7,17 +7,19 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
     internal class GetArticleByUrlHandler : QueryHandlerBase<GetArticleByUrlQuery, Article>
     {
-        public GetArticleByUrlHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetArticleByUrlHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticleByUrlHandler> logger) :
+            base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<Article> Handle(GetArticleByUrlQuery message)
+        protected override async Task<Article> RunQuery(GetArticleByUrlQuery message)
         {
             var query = DBContext.Articles.Include(x => x.Cat).Include(x => x.Author).AsQueryable();
             query = query.Where(x => x.Pub == 1 && x.Url == message.Url);

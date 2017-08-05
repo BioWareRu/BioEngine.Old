@@ -8,6 +8,7 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
@@ -15,11 +16,12 @@ namespace BioEngine.Data.Articles.Handlers
     internal class GetArticlesCategoriesHandler : QueryHandlerBase<GetArticlesCategoriesQuery,
         IEnumerable<ArticleCat>>
     {
-        public GetArticlesCategoriesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetArticlesCategoriesHandler(IMediator mediator, BWContext dbContext,
+            ILogger<GetArticlesCategoriesHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<IEnumerable<ArticleCat>> Handle(GetArticlesCategoriesQuery message)
+        protected override async Task<IEnumerable<ArticleCat>> RunQuery(GetArticlesCategoriesQuery message)
         {
             var query = DBContext.ArticleCats.AsQueryable();
             if (message.Parent != null)

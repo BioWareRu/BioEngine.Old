@@ -6,6 +6,7 @@ using BioEngine.Data.Base.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Base.Handlers
 {
@@ -14,13 +15,13 @@ namespace BioEngine.Data.Base.Handlers
     {
         private readonly ParentEntityProvider _provider;
 
-        public GetParentByUrlHandler(IMediator mediator, BWContext dbContext,
-            ParentEntityProvider provider) : base(mediator, dbContext)
+        public GetParentByUrlHandler(IMediator mediator, BWContext dbContext, ILogger<GetParentByUrlHandler> logger,
+            ParentEntityProvider provider) : base(mediator, dbContext, logger)
         {
             _provider = provider;
         }
 
-        public override async Task<IParentModel> Handle(GetParentByUrlQuery message)
+        protected override async Task<IParentModel> RunQuery(GetParentByUrlQuery message)
         {
             return await _provider.GetParenyByUrl(message.Url);
         }

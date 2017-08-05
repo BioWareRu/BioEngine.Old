@@ -6,17 +6,19 @@ using BioEngine.Data.News.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handelrs
 {
     [UsedImplicitly]
     internal class GetOneNewsHandler : QueryHandlerBase<GetOneNewsQuery, Common.Models.News>
     {
-        public GetOneNewsHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetOneNewsHandler(IMediator mediator, BWContext dbContext, ILogger<GetOneNewsHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<Common.Models.News> Handle(GetOneNewsQuery message)
+        protected override async Task<Common.Models.News> RunQuery(GetOneNewsQuery message)
         {
             var query = DBContext.News.AsQueryable();
             if (!message.WithUnPublishedNews)

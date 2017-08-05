@@ -3,21 +3,24 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
+using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
     internal class GetGalleryPicByIdHandler : QueryHandlerBase<GetGalleryPicByIdQuery, GalleryPic>
     {
-        public GetGalleryPicByIdHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetGalleryPicByIdHandler(IMediator mediator, BWContext dbContext,
+            ILogger<GetGalleryPicByIdHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<GalleryPic> Handle(GetGalleryPicByIdQuery message)
+        protected override async Task<GalleryPic> RunQuery(GetGalleryPicByIdQuery message)
         {
             var pic =
                 await DBContext.GalleryPics.Where(x => x.Id == message.Id)

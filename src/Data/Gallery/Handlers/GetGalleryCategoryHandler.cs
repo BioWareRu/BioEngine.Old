@@ -3,21 +3,24 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
+using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
     internal class GetGalleryCategoryHandler : QueryHandlerBase<GetGalleryCategoryQuery, GalleryCat>
     {
-        public GetGalleryCategoryHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetGalleryCategoryHandler(IMediator mediator, BWContext dbContext,
+            ILogger<GetGalleryCategoryHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        public override async Task<GalleryCat> Handle(GetGalleryCategoryQuery message)
+        protected override async Task<GalleryCat> RunQuery(GetGalleryCategoryQuery message)
         {
             var catQuery = DBContext.GalleryCats.AsQueryable();
 

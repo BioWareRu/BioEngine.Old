@@ -7,14 +7,17 @@ using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
-    internal class ArticlesCategoryProcessHandler : CategoryProcessHandlerBase<ArticleCategoryProcessQuery, ArticleCat, Article>
+    internal class
+        ArticlesCategoryProcessHandler : CategoryProcessHandlerBase<ArticleCategoryProcessQuery, ArticleCat, Article>
     {
         public ArticlesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
-            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, parentEntityProvider)
+            ILogger<ArticlesCategoryProcessHandler> logger,
+            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, logger, parentEntityProvider)
         {
         }
 

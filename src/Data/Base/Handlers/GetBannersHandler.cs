@@ -9,17 +9,19 @@ using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Base.Handlers
 {
     [UsedImplicitly]
     internal class GetBannersHandler : QueryHandlerBase<GetBannersQuery, IEnumerable<Advertisement>>
     {
-        public GetBannersHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetBannersHandler(IMediator mediator, BWContext dbContext, ILogger<GetBannersHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<IEnumerable<Advertisement>> Handle(GetBannersQuery message)
+        protected override async Task<IEnumerable<Advertisement>> RunQuery(GetBannersQuery message)
         {
             var currentTs = DateTimeOffset.Now.ToUnixTimeSeconds();
             var banners =

@@ -7,6 +7,7 @@ using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
@@ -14,11 +15,12 @@ namespace BioEngine.Data.Files.Handlers
     internal class GetFilesHandler : QueryHandlerBase<GetFilesQuery, (IEnumerable<Common.Models.File>
         files, int count)>
     {
-        public GetFilesHandler(IMediator mediator, BWContext dbContext) : base(mediator, dbContext)
+        public GetFilesHandler(IMediator mediator, BWContext dbContext, ILogger<GetFilesHandler> logger) : base(
+            mediator, dbContext, logger)
         {
         }
 
-        public override async Task<(IEnumerable<Common.Models.File> files, int count)> Handle(
+        protected override async Task<(IEnumerable<Common.Models.File> files, int count)> RunQuery(
             GetFilesQuery message)
         {
             var query = DBContext.Files.AsQueryable();
@@ -30,7 +32,7 @@ namespace BioEngine.Data.Files.Handlers
 
             if (message.Page != null && message.Page > 0)
             {
-                query = query.Skip(((int)message.Page - 1) * message.PageSize)
+                query = query.Skip(((int) message.Page - 1) * message.PageSize)
                     .Take(message.PageSize);
             }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
-using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using BioEngine.Data.Base.Queries;
 using BioEngine.Data.News.Commands;

@@ -6,6 +6,7 @@ using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using BioEngine.Data.Base.Queries;
+using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
@@ -259,8 +260,8 @@ namespace BioEngine.Site.Controllers
 
             using (LogContext.Push(logProperties.ToArray()))
             {
-                var result = await ipbApiHelper.CreateOrUpdateNewsTopic(news);
-                if (result.topicId > 0 && result.postId > 0)
+                await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(news));
+                if (news.ForumTopicId > 0 && news.ForumPostId > 0)
                 {
                     Response.StatusCode = 200;
                     return new EmptyResult();
@@ -297,8 +298,8 @@ namespace BioEngine.Site.Controllers
 
             using (LogContext.Push(logProperties.ToArray()))
             {
-                var result = await ipbApiHelper.DeleteNewsTopic(news);
-                if (result)
+                await Mediator.Publish(new DeleteNewsForumTopicCommand(news));
+                if (news.ForumTopicId == 0)
                 {
                     Response.StatusCode = 200;
                     return new EmptyResult();

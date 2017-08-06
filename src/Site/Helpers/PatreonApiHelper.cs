@@ -45,18 +45,11 @@ namespace BioEngine.Site.Helpers
             return includedObjects;
         }
 
-
-        private List<PatreonGoal> _goals;
-
         public async Task<List<PatreonGoal>> GetGoals()
         {
-            if (_goals == null)
-            {
-                var json = await GetReponseJson("/current_user/campaigns?include-goals");
+            var json = await GetReponseJson("/current_user/campaigns?include-goals");
 
-                _goals = GetIncluded<PatreonGoal>(json, "goal");
-            }
-            return _goals;
+            return GetIncluded<PatreonGoal>(json, "goal");
         }
     }
 

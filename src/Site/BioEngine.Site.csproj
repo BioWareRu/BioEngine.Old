@@ -22,9 +22,6 @@
     <None Remove="Static\blocks\*\*.css" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Components\AppSettings.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="wwwroot\img\article-list__balloon.png" />
     <Content Include="wwwroot\img\article-list__bg.png" />
     <Content Include="wwwroot\img\article-list__bg2.png" />

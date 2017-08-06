@@ -65,13 +65,10 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add(typeof(CounterFilter));
-                })
+            services.AddMvc(options => { options.Filters.Add(typeof(CounterFilter)); })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
-            
+
             services.AddDistributedMemoryCache();
             services.AddResponseCaching();
             services.AddAuthentication(options => options.SignInScheme =
@@ -97,13 +94,17 @@ namespace BioEngine.Site
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
-            
+
             services.AddSingleton(new IPBApiConfig
             {
                 ApiKey = Configuration["BE_IPB_API_KEY"],
                 ApiUrl = Configuration["BE_IPB_API_URL"],
                 NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
             });
+
+            services.AddSingleton(new PatreonConfig(new Uri(Configuration["BE_PATREON_API_URL"]),
+                Configuration["BE_PATREON_API_KEY"]));
+            services.AddSingleton<PatreonApiHelper>();
 
             if (_env.IsProduction())
             {
@@ -164,6 +165,10 @@ namespace BioEngine.Site
             {
                 ConfigureProduction(app, lifetime);
             }
+            else
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseResponseCaching();
 
@@ -203,7 +208,6 @@ namespace BioEngine.Site
 
             app.UseExceptionHandler("/error/500");
 
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             lifetime.ApplicationStarted.Register(RunPrometheus);
             lifetime.ApplicationStopped.Register(StopPrometheus);

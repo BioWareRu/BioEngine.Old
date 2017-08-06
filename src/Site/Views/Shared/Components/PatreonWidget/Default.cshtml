@@ -1,0 +1,22 @@
+﻿@model BioEngine.Site.Helpers.PatreonGoal
+
+@{
+    Layout = null;
+}
+<div class="patreon-widget black">
+    <h4 class="patreon-title">
+        <a href="https://www.bioware.ru/biowareru/articles/others/patreon.html">BRC на Patreon</a>
+    </h4>
+    <div class="patreon-progress">
+        Собрано: <span class="">$@Model.GetCompletedAmount() из $@Model.GetAmount()</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-line" style="width: @(Model.CompletedPercentage)%"></div>
+    </div>
+    <div class="patreon-description">
+        <strong>Ближайшая цель</strong>: @Model.Description.
+    </div>
+    <a href="https://www.patreon.com/bePatron?u=6790376">
+        <img src="/img/patreon.png" alt="Become a Patron"/>
+    </a>
+</div>

@@ -5,17 +5,17 @@
         <input class="search__input" type="search" placeholder="Поиск" name="query"/>
         <button class="search__magnifier"></button>
     </form>
-    <div class="sidebar__image" style="text-align: center; line-height: 1.5em;">
-        <a href="https://www.patreon.com/bePatron?u=6790376">
-            <img src="/img/patreon.png" alt="Become a Patron"/>
-        </a>
-        <br/>
-        <a href="https://www.bioware.ru/biowareru/articles/others/patreon.html">Подробнее</a>
-    </div>
-    @await Component.InvokeAsync(typeof(CounterViewComponent))
+</div>
+@await Component.InvokeAsync(typeof(PatreonWidgetViewComponent))
+@await Component.InvokeAsync(typeof(CounterViewComponent))
+<div class="sidebar__content-wrp">
     @await Component.InvokeAsync(typeof(BannerViewComponent))
     @await Component.InvokeAsync(typeof(BannerViewComponent))
+</div>
+<div class="sidebar__content-wrp">
     @await Component.InvokeAsync(typeof(PollViewComponent))
+</div>
+<div class="sidebar__content-wrp">
     @await Component.InvokeAsync(typeof(BannerViewComponent))
     @await Component.InvokeAsync(typeof(BannerViewComponent))
 </div>

@@ -2,7 +2,9 @@
 @model Block
 @if (Model.Active == 1)
 {
-    <div class="sidebar__counter">
-       @Html.Raw(Model.Content)
+    <div class="sidebar__content-wrp">
+        <div class="sidebar__counter">
+            @Html.Raw(Model.Content)
+        </div>
     </div>
 }

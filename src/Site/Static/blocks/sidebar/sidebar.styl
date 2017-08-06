@@ -1,25 +1,33 @@
 .sidebar__content-wrp
-  margin-top 30px
+  margin-top 10px
   border-radius $sidebarRadius
   padding $sidebarInnerGap
   background-color $sidebarColor
   color $fontColor
+
 .sidebar__image
-  margin-top 30px
+  margin-bottom 20px
+  &:last-child {
+    margin-bottom 0
+  }
   img
     width 100%
+
 .sidebar__poll
-  margin-top 30px
+  
+
 .sidebar__poll-title
   font-size 1em
   line-height 1.4
   font-weight bold
   margin 0 0 20px
+
 .sidebar__poll-fieldset
   border none
   margin-bottom 20px
   padding 0
   margin-left 0
+
 .sidebar__poll-item
   font-size 0.9em
   line-height 1.35
@@ -30,6 +38,7 @@
   input
     margin-left -21px
     margin-right 4px
+
 .sidebar__poll-submit
   font-weight bold
   text-shadow 0 -1px black
@@ -44,18 +53,91 @@
   &:disabled
     background-color $sidebarButton
     cursor default
+
 .sidebar__result-number
   float right
   font-weight bold
   margin-right -3.75rem
+
 .sidebar__poll-result-item
   clearfix()
   margin 0.3rem 3.25rem 1rem 0
+
 .sidebar__poll-bar
   display inline-block
   box-sizing border-box
   margin-right 3rem
   height 0.5rem
   background-color: $accentColor;
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba($linkColor,.5) 5px, rgba($linkColor,.5) 10px);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba($linkColor, .5) 5px, rgba($linkColor, .5) 10px);
   width 100%
+
+.patreon-widget {
+  margin: 10px 0 10px 0;
+  padding: 10px;
+  background-color $sidebarColor
+  color $fontColor
+  border-radius: 5px;
+
+  .progress-bar-container {
+    width: 100%;
+    background: #d5d9dc;
+    height: 8px;
+    margin-bottom: 10px;
+  }
+
+  .progress-bar-line {
+    height: 100%;
+    background: #F96854;
+  }
+
+  .patreon-progress {
+    font-size: 1.1em;
+    margin-bottom 10px;
+  }
+
+  .patreon-progress span {
+    color: #000;
+    font-size: 1.2em;
+  }
+
+  .patreon-widget img {
+    max-width: 100%;
+  }
+
+  h4 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    margin-top: 5px;
+  }
+
+  .patreon-title {
+    text-align: center;
+  }
+
+  .patreon-description {
+    margin-bottom: 10px
+    font-size: 0.9em
+  }
+
+  img {
+    max-width 100%;
+  }
+
+  a, a:visited {
+    color: #000;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  &.black {
+    background: #000;
+    color: #ddd;
+    a, a:visited, .patreon-progress span {
+      color: #F96854;
+    }
+  }
+}
+
+

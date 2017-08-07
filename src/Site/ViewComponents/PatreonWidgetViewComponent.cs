@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Content.Helpers;
 using BioEngine.Site.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,9 +30,7 @@ namespace BioEngine.Site.ViewComponents
             {
                 try
                 {
-                    var goals = await _patreonApiHelper.GetGoals();
-                    currentGoal = goals.Where(x => x.CompletedPercentage < 100)
-                        .OrderByDescending(x => x.CompletedPercentage).First();
+                    currentGoal = await _patreonApiHelper.GetCurrentGoal();
                     _cache.Set("patreonCurrentGoal", currentGoal, TimeSpan.FromHours(1));
                 }
                 catch (Exception ex)

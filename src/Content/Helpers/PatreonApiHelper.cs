@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BioEngine.Site.Helpers
+namespace BioEngine.Content.Helpers
 {
+    [UsedImplicitly]
     public class PatreonApiHelper
     {
         private readonly Uri _apiUrl;
@@ -28,21 +31,22 @@ namespace BioEngine.Site.Helpers
         private static List<T> GetIncluded<T>(string json, string type)
         {
             var jToken = JToken.Parse(json);
-            var includedObjects = new List<T>();
             var included = jToken["included"].AsJEnumerable();
-            foreach (var value in included)
-            {
-                if (value["type"].ToString() == type)
-                {
-                    var obj = value["attributes"].ToObject<T>();
-                    if (obj != null)
-                    {
-                        includedObjects.Add(obj);
-                    }
-                }
-            }
 
-            return includedObjects;
+            return (from value in included
+                where value["type"].ToString() == type
+                select value["attributes"].ToObject<T>()
+                into obj
+                where obj != null
+                select obj).ToList();
+        }
+
+        public async Task<PatreonGoal> GetCurrentGoal()
+        {
+            var goals = await GetGoals();
+            var currentGoal = goals.Where(x => x.CompletedPercentage < 100)
+                .OrderByDescending(x => x.CompletedPercentage).First();
+            return currentGoal;
         }
 
         public async Task<List<PatreonGoal>> GetGoals()

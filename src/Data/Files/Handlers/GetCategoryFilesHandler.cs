@@ -7,36 +7,23 @@ using BioEngine.Data.Core;
 using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
-    internal class GetCategoryFilesHandler : QueryHandlerBase<GetCategoryFilesQuery, (IEnumerable<File>
-        files, int count)>
+    internal class GetCategoryFilesHandler : ModelListQueryHandlerBase<GetCategoryFilesQuery, File>
     {
         public GetCategoryFilesHandler(IMediator mediator, BWContext dbContext, ILogger<GetCategoryFilesHandler> logger)
             : base(mediator, dbContext, logger)
         {
         }
 
-        protected override async Task<(IEnumerable<File> files, int count)> RunQuery(
-            GetCategoryFilesQuery message)
+        protected override async Task<(IEnumerable<File>, int)> RunQuery(GetCategoryFilesQuery message)
         {
-            var filesQuery = DBContext.Files.Where(x => x.CatId == message.Cat.Id)
-                .OrderByDescending(x => x.Id).AsQueryable();
+            var filesQuery = DBContext.Files.Where(x => x.CatId == message.Cat.Id);
 
-            var count = await filesQuery.CountAsync();
-
-            if (message.Page > 0)
-            {
-                filesQuery = filesQuery.Skip((message.Page - 1) * message.PageSize).Take(message.PageSize);
-            }
-
-            var files = await filesQuery.ToListAsync();
-
-            return (files, count);
+            return await GetData(filesQuery, message);
         }
     }
 }

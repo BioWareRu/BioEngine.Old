@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using BioEngine.Common.Base;
 using BioEngine.Common.Models;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BioEngine.Common.Interfaces
 {
-    public interface IChildModel
+    public interface IChildModel : IBaseModel
     {
         int? GameId { get; set; }
         int? DeveloperId { get; set; }

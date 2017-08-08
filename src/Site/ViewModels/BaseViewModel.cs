@@ -107,9 +107,9 @@ namespace BioEngine.Site.ViewModels
     {
         public IContentHelperInterface ContentHelper { get; }
         public readonly AppSettings AppSettings;
-        public readonly List<Settings> Settings;
+        public readonly IEnumerable<Settings> Settings;
 
-        public BaseViewModelConfig(AppSettings appSettings, List<Settings> settings,
+        public BaseViewModelConfig(AppSettings appSettings, IEnumerable<Settings> settings,
             IContentHelperInterface contentHelper)
         {
             ContentHelper = contentHelper;

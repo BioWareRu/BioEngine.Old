@@ -2,7 +2,7 @@
 
 namespace BioEngine.Data.News.Queries
 {
-    public class GetNewsByIdQuery : QueryBase<Common.Models.News>
+    public class GetNewsByIdQuery : SingleModelQueryBase<Common.Models.News>
     {
         public GetNewsByIdQuery(int id)
         {

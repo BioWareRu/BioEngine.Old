@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using BioEngine.Common.Base;
 
 namespace BioEngine.Common.Interfaces
 {
-    public interface ICat
+    public interface ICat : IBaseModel
     {
         int Id { get; set; }
     }

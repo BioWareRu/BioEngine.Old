@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Files.Queries
 {
-    public class GetFileByIdQuery : QueryBase<File>
+    public class GetFileByIdQuery : SingleModelQueryBase<File>
     {
         public GetFileByIdQuery(int id)
         {

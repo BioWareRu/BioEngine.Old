@@ -14,7 +14,8 @@ namespace BioEngine.Data.Articles.Handlers
     [UsedImplicitly]
     internal class GetArticleByIdHandler : QueryHandlerBase<GetArticleByIdQuery, Article>
     {
-        public GetArticleByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticleByIdHandler> logger) : base(mediator, dbContext, logger)
+        public GetArticleByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticleByIdHandler> logger) :
+            base(mediator, dbContext, logger)
         {
         }
 
@@ -33,7 +34,7 @@ namespace BioEngine.Data.Articles.Handlers
                 article.Cat =
                     await Mediator.Send(
                         new ArticleCategoryProcessQuery(article.Cat,
-                            new GetArticlesCategoriesQuery(article.Parent)));
+                            new GetArticlesCategoriesQuery {Parent = article.Parent}));
             }
             return article;
         }

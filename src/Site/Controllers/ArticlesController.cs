@@ -88,8 +88,8 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Articles().ParentArticlesUrl(parent), "Статьи"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catArticles = await Mediator.Send(new GetCategoryArticlesQuery(category, 0));
-                category.Items = catArticles.articles;
+                var catArticles = await Mediator.Send(new GetCategoryArticlesQuery {Cat = category, Page = 0});
+                category.Items = catArticles.models;
                 var viewModel = new ArticleCatViewModel(ViewModelConfig, category);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
@@ -107,15 +107,19 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetArticlesCategoriesQuery(parent, loadChildren: true,
-                loadLastItems: 5));
+            var cats = await Mediator.Send(new GetArticlesCategoriesQuery
+            {
+                Parent = parent,
+                LoadChildren = true,
+                LoadLastItems = 5
+            });
 
-            return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats));
+            return View("ParentArticles", new ParentArticlesViewModel(ViewModelConfig, parent, cats.models));
         }
 
         public async Task<IEnumerable<Article>> GetLastArticles(ArticleCat cat, int count = 5)
         {
-            return (await Mediator.Send(new GetCategoryArticlesQuery(cat, count))).articles;
+            return (await Mediator.Send(new GetCategoryArticlesQuery {Cat = cat, PageSize = count})).models;
         }
 
 
@@ -124,8 +128,13 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetArticlesCategoryQuery(parent: parent, url: url,
-                loadChildren: loadChildren, loadLastItems: loadLastItems));
+            return await Mediator.Send(new GetArticlesCategoryQuery
+            {
+                Parent = parent,
+                Url = url,
+                LoadChildren = loadChildren,
+                LoadLastItems = loadLastItems
+            });
         }
 
         private async Task<Article> GetArticle(IParentModel parent, string catUrl, string articleUrl)

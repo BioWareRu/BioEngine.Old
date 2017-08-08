@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
@@ -54,9 +55,10 @@ namespace BioEngine.Site.Controllers
                 return BadRequest();
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var response = await mediatr.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page));
+            var response =
+                await mediatr.Send(new GetNewsQuery {WithUnPublishedNews = canUserSeeUnpublishedNews, Page = page});
 
-            return View(new NewsListViewModel(ViewModelConfig, response.news, response.count, page));
+            return View(new NewsListViewModel(ViewModelConfig, response.models, response.totalCount, page));
         }
 
         [Route("/{year:int}.html", Order = 1)]
@@ -117,12 +119,17 @@ namespace BioEngine.Site.Controllers
             }
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var newsResult = await Mediator.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page,
-                dateStart: new DateTimeOffset(dateStart).ToUnixTimeSeconds(),
-                dateEnd: new DateTimeOffset(dateEnd).ToUnixTimeSeconds()));
+            var newsResult = await Mediator.Send(new GetNewsQuery
+            {
+                WithUnPublishedNews = canUserSeeUnpublishedNews,
+                Page = page,
+                DateStart = new DateTimeOffset(dateStart).ToUnixTimeSeconds(),
+                DateEnd = new DateTimeOffset(dateEnd).ToUnixTimeSeconds()
+            });
 
             return View("ListByDate",
-                new NewsListByDateViewModel(ViewModelConfig, newsResult.news, newsResult.count, page, year, month,
+                new NewsListByDateViewModel(ViewModelConfig, newsResult.models, newsResult.totalCount, page, year,
+                    month,
                     day));
         }
 
@@ -147,10 +154,15 @@ namespace BioEngine.Site.Controllers
 
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
 
-            var newsResult = await Mediator.Send(new GetNewsQuery(canUserSeeUnpublishedNews, page, parent));
+            var newsResult = await Mediator.Send(new GetNewsQuery
+            {
+                WithUnPublishedNews = canUserSeeUnpublishedNews,
+                Page = page,
+                Parent = parent
+            });
 
             return View("ParentNews",
-                new ParentNewsListViewModel(ViewModelConfig, parent, newsResult.news, newsResult.count, page));
+                new ParentNewsListViewModel(ViewModelConfig, parent, newsResult.models, newsResult.totalCount, page));
         }
 
         [Route("/{year:int}/{month:regex(^\\d{{2}}$)}/{day:regex(^\\d{{2}}$)}/{url}.html")]
@@ -172,7 +184,12 @@ namespace BioEngine.Site.Controllers
             }
 
             var news = await Mediator.Send(
-                new GetOneNewsQuery(url, await HasRight(UserRights.News), dateStart, dateEnd));
+                new GetOneNewsQuery(url)
+                {
+                    WithUnPublishedNews = await HasRight(UserRights.News),
+                    DateStart = dateStart,
+                    DateEnd = dateEnd
+                });
 
             if (news == null) return StatusCode(404);
 

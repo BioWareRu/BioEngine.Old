@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Users.Queries
 {
-    public class GetUserByIdQuery : QueryBase<User>
+    public class GetUserByIdQuery : SingleModelQueryBase<User>
     {
         public int Id { get; }
 

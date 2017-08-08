@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Base.Queries
 {
-    public class GetBlockByIdQuery : QueryBase<Block>
+    public class GetBlockByIdQuery : SingleModelQueryBase<Block>
     {
         public GetBlockByIdQuery(string id)
         {

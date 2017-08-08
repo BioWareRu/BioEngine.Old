@@ -4,7 +4,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Articles.Queries
 {
-    public class GetArticleByUrlQuery : QueryBase<Article>
+    public class GetArticleByUrlQuery : SingleModelQueryBase<Article>
     {
         public GetArticleByUrlQuery(IParentModel parent, string catUrl, string url)
         {

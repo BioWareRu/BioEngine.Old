@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Base.Queries
 {
-    public class GetParentByUrlQuery : QueryBase<IParentModel>
+    public class GetParentByUrlQuery : SingleModelQueryBase<IParentModel>
     {
         public string Url { get; }
 

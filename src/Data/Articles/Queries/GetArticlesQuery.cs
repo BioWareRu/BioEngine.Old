@@ -1,22 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
 using BioEngine.Common.Interfaces;
+using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Articles.Queries
 {
-    public class GetArticlesQuery : QueryBase<(IEnumerable<Common.Models.Article> articles, int count)>
+    public class GetArticlesQuery : ModelsListQueryBase<Article>
     {
-        public bool WithUnPublishedArticles { get; }
-        public int? Page { get; }
-        public IParentModel Parent { get; }
+        public bool WithUnPublishedArticles { get; set; }
+        public IParentModel Parent { get; set; }
 
-        public int PageSize { get; set; } = 20;
-
-        public GetArticlesQuery(bool withUnPublishedArticles = false, int? page = null, IParentModel parent = null)
-        {
-            WithUnPublishedArticles = withUnPublishedArticles;
-            Page = page;
-            Parent = parent;
-        }
+        public override Func<IQueryable<Article>, IQueryable<Article>> OrderByFunc { get; protected set; } =
+            query => query.OrderByDescending(x => x.Id);
     }
 }

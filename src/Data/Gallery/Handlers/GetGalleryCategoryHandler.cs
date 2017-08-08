@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;

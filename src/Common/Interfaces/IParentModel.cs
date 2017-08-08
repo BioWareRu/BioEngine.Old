@@ -2,7 +2,7 @@
 
 namespace BioEngine.Common.Interfaces
 {
-    public interface IParentModel
+    public interface IParentModel : IBaseModel
     {
         ParentType Type { get; }
 
@@ -11,6 +11,5 @@ namespace BioEngine.Common.Interfaces
         string ParentUrl { get; }
 
         string DisplayTitle { get; }
-        object GetId();
     }
 }

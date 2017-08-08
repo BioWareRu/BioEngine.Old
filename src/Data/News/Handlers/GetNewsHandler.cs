@@ -12,14 +12,14 @@ using Microsoft.Extensions.Logging;
 namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
-    internal class GetNewsHandler : QueryHandlerBase<GetNewsQuery, (IEnumerable<Common.Models.News> news, int count)>
+    internal class GetNewsHandler : ModelListQueryHandlerBase<GetNewsQuery, Common.Models.News>
     {
         public GetNewsHandler(IMediator mediator, BWContext dbContext, ILogger<GetNewsHandler> logger) : base(mediator,
             dbContext, logger)
         {
         }
 
-        protected override async Task<(IEnumerable<Common.Models.News> news, int count)> RunQuery(GetNewsQuery message)
+        protected override async Task<(IEnumerable<Common.Models.News>, int)> RunQuery(GetNewsQuery message)
         {
             var query = DBContext.News.AsQueryable();
             if (!message.WithUnPublishedNews)
@@ -37,26 +37,13 @@ namespace BioEngine.Data.News.Handlers
                 query = query.Where(x => x.Date <= message.DateEnd);
             }
 
-            var totalNews = await query.CountAsync();
-
             query = query
-                .OrderByDescending(x => x.Sticky)
-                .ThenByDescending(x => x.Date)
                 .Include(x => x.Author)
                 .Include(x => x.Game)
                 .Include(x => x.Developer)
                 .Include(x => x.Topic);
 
-            if (message.Page != null && message.Page > 0)
-            {
-                query = query.Skip(((int) message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize);
-            }
-
-            var news = await query.ToListAsync();
-
-
-            return (news, totalNews);
+            return await GetData(query, message);
         }
     }
 }

@@ -4,7 +4,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Files.Queries
 {
-    public class GetFileByUrlQuery : QueryBase<File>
+    public class GetFileByUrlQuery : SingleModelQueryBase<File>
     {
         public GetFileByUrlQuery(IParentModel parent, string catUrl, string url)
         {

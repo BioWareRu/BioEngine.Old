@@ -19,18 +19,16 @@ namespace BioEngine.Site.Base
     public abstract class BaseController : Controller
     {
         protected readonly IMediator Mediator;
-        private readonly List<Settings> _settings;
+        private readonly IEnumerable<Settings> _settings;
         protected readonly BaseViewModelConfig ViewModelConfig;
 
         protected BaseController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
             IContentHelperInterface contentHelper)
         {
             Mediator = mediator;
-            _settings = mediator.Send(new GetSettingsQuery()).GetAwaiter().GetResult();
+            _settings = mediator.Send(new GetSettingsQuery()).GetAwaiter().GetResult().models;
             ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, _settings, contentHelper);
         }
-
-        protected IEnumerable<Settings> Settings => _settings.AsReadOnly();
 
         private static readonly Regex CatchAllRegex = new Regex("(.*)/([a-zA-Z0-9_-]+).html");
         private static readonly Regex CatchAllCatRegex = new Regex("(.*).html");

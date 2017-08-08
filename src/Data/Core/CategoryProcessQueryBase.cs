@@ -2,7 +2,7 @@
 
 namespace BioEngine.Data.Core
 {
-    public abstract class CategoryProcessQueryBase<TCat> : QueryBase<TCat>
+    public abstract class CategoryProcessQueryBase<TCat> : SingleModelQueryBase<TCat>
         where TCat : class, ICat
     {
         public TCat Cat { get; }

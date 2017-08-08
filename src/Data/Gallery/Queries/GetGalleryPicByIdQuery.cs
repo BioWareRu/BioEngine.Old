@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Gallery.Queries
 {
-    public class GetGalleryPicByIdQuery : QueryBase<GalleryPic>
+    public class GetGalleryPicByIdQuery : SingleModelQueryBase<GalleryPic>
     {
         public GetGalleryPicByIdQuery(int id)
         {

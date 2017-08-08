@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core

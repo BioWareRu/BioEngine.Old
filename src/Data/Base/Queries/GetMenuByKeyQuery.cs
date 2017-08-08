@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Base.Queries
 {
-    public class GetMenuByKeyQuery : QueryBase<Menu>
+    public class GetMenuByKeyQuery : SingleModelQueryBase<Menu>
     {
         public GetMenuByKeyQuery(string key)
         {

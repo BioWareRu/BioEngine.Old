@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Base.Queries
 {
-    public class GetGameByUrlQuery : QueryBase<Game>
+    public class GetGameByUrlQuery : SingleModelQueryBase<Game>
     {
         public GetGameByUrlQuery(string url)
         {

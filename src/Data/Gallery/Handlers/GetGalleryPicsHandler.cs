@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
-using BioEngine.Data.Files.Handlers;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
@@ -14,17 +13,14 @@ using Microsoft.Extensions.Logging;
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
-    internal class GetGalleryPicsHandler : QueryHandlerBase<GetGalleryPicsQuery, (
-        IEnumerable<GalleryPic>
-        pics, int count)>
+    internal class GetGalleryPicsHandler : ModelListQueryHandlerBase<GetGalleryPicsQuery, GalleryPic>
     {
         public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext, ILogger<GetGalleryPicsHandler> logger) :
             base(mediator, dbContext, logger)
         {
         }
 
-        protected override async Task<(IEnumerable<GalleryPic> pics, int count)> RunQuery(
-            GetGalleryPicsQuery message)
+        protected override async Task<(IEnumerable<GalleryPic>, int)> RunQuery(GetGalleryPicsQuery message)
         {
             var query = DBContext.GalleryPics.AsQueryable();
             if (!message.WithUnPublishedPictures)
@@ -37,27 +33,21 @@ namespace BioEngine.Data.Gallery.Handlers
             {
                 query = query.Where(x => x.CatId == message.Cat.Id);
             }
-            var totalPics = await query.CountAsync();
 
-            if (message.Page != null && message.Page > 0)
-            {
-                query = query.Skip(((int) message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize);
-            }
 
-            var pics =
-                await query
-                    .OrderByDescending(x => x.Id)
+            query =
+                query
                     .Include(x => x.Game)
                     .Include(x => x.Developer)
-                    .Include(x => x.Cat)
-                    .ToListAsync();
+                    .Include(x => x.Cat);
 
-            foreach (var pic in pics)
+            var data = await GetData(query, message);
+
+            foreach (var pic in data.models)
             {
                 pic.Cat =
                     await Mediator.Send(new GalleryCategoryProcessQuery(pic.Cat,
-                        new GetGalleryCategoryQuery(message.Parent)));
+                        new GetGalleryCategoryQuery {Parent = message.Parent}));
 
                 if (message.LoadPicPositions)
                 {
@@ -65,7 +55,7 @@ namespace BioEngine.Data.Gallery.Handlers
                 }
             }
 
-            return (pics, totalPics);
+            return data;
         }
 
         private async Task<int> GetPicPosition(GalleryPic picture)

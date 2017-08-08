@@ -46,10 +46,10 @@ namespace BioEngine.Site.Components
                             new Uri(_appSettings.SocialLogo))
                 };
 
-                var newsResult = await _mediator.Send(new GetNewsQuery(page: 1), cancellationToken);
+                var newsResult = await _mediator.Send(new GetNewsQuery {Page = 1}, cancellationToken);
                 var mostRecentPubDate = DateTime.MinValue;
                 var items = new List<RssItem>();
-                foreach (var news in newsResult.news)
+                foreach (var news in newsResult.models)
                 {
                     var newsDate = DateTimeOffset.FromUnixTimeSeconds(news.LastChangeDate).Date;
                     if (newsDate > mostRecentPubDate) mostRecentPubDate = newsDate;

@@ -1,20 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Files.Queries
 {
-    public class GetCategoryFilesQuery : QueryBase<(IEnumerable<File> files, int count)>
+    public class GetCategoryFilesQuery : ModelsListQueryBase<File>
     {
-        public int PageSize { get; set; } = 20;
+        public FileCat Cat { get; }
+        public override Func<IQueryable<File>, IQueryable<File>> OrderByFunc { get; protected set; }  =
+            query => query.OrderByDescending(x => x.Id);
 
-        public GetCategoryFilesQuery(FileCat cat, int page = 1)
+        public GetCategoryFilesQuery(FileCat cat)
         {
             Cat = cat;
-            Page = page;
         }
-
-        public FileCat Cat { get; }
-        public int Page { get; }
     }
 }

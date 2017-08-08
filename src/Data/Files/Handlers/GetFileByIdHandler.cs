@@ -32,7 +32,7 @@ namespace BioEngine.Data.Files.Handlers
             {
                 file.Cat =
                     await Mediator.Send(
-                        new FileCategoryProcessQuery(file.Cat, new GetFilesCategoryQuery(file.Parent)));
+                        new FileCategoryProcessQuery(file.Cat, new GetFilesCategoryQuery {Parent = file.Parent}));
             }
             return file;
         }

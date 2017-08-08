@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Polls.Queries
 {
-    public class GetPollByIdQuery : QueryBase<Poll>
+    public class GetPollByIdQuery : SingleModelQueryBase<Poll>
     {
         public GetPollByIdQuery(int id)
         {

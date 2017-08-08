@@ -4,20 +4,20 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Common.Base
 {
-    public abstract class BaseModel
+    public interface IBaseModel
     {
-        public abstract object GetId();
+        object GetId();
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class BaseModel<TPkType> : BaseModel, ISearchModel
+    public abstract class BaseModel<TPkType> : IBaseModel, ISearchModel
     {
         [Key]
         [Required]
         [JsonProperty("id")]
         public virtual TPkType Id { get; set; }
 
-        public override object GetId()
+        public object GetId()
         {
             return Id;
         }

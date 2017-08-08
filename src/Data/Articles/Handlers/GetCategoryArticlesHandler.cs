@@ -7,34 +7,23 @@ using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
-    internal class GetCategoryArticlesHandler : QueryHandlerBase<GetCategoryArticlesQuery, (IEnumerable<Article>articles, int count)>
+    internal class GetCategoryArticlesHandler : ModelListQueryHandlerBase<GetCategoryArticlesQuery, Article>
     {
-        public GetCategoryArticlesHandler(IMediator mediator, BWContext dbContext, ILogger<GetCategoryArticlesHandler> logger) : base(mediator, dbContext, logger)
+        public GetCategoryArticlesHandler(IMediator mediator, BWContext dbContext,
+            ILogger<GetCategoryArticlesHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        protected override async Task<(IEnumerable<Article> articles, int count)> RunQuery(
-            GetCategoryArticlesQuery message)
+        protected override async Task<(IEnumerable<Article>, int)> RunQuery(GetCategoryArticlesQuery message)
         {
-            var articlesQuery = DBContext.Articles.Where(x => x.CatId == message.Cat.Id && x.Pub == 1)
-                .OrderByDescending(x => x.Id).AsQueryable();
+            var articlesQuery = DBContext.Articles.Where(x => x.CatId == message.Cat.Id && x.Pub == 1);
 
-            var count = await articlesQuery.CountAsync();
-
-            if (message.Page > 0)
-            {
-                articlesQuery = articlesQuery.Skip((message.Page - 1) * message.PageSize).Take(message.PageSize);
-            }
-
-            var articles = await articlesQuery.ToListAsync();
-
-            return (articles, count);
+            return await GetData(articlesQuery, message);
         }
     }
 }

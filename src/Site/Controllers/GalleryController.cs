@@ -52,10 +52,10 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().ParentGalleryUrl(parent), "Галерея"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catPics = await Mediator.Send(new GetGalleryPicsQuery(cat: category, page: page));
-                category.Items = catPics.pics;
+                var catPics = await Mediator.Send(new GetGalleryPicsQuery {Cat = category, Page = page});
+                category.Items = catPics.models;
 
-                var viewModel = new GalleryCatViewModel(ViewModelConfig, category, catPics.count, page);
+                var viewModel = new GalleryCatViewModel(ViewModelConfig, category, catPics.totalCount, page);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("GalleryCat", viewModel);
@@ -68,8 +68,13 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetGalleryCategoryQuery(parent, url: url, loadChildren: loadChildren,
-                loadLastItems: loadLastItems));
+            return await Mediator.Send(new GetGalleryCategoryQuery
+            {
+                Parent = parent,
+                Url = url,
+                LoadChildren = loadChildren,
+                LoadLastItems = loadLastItems
+            });
         }
 
         /*[HttpGet("/{parentUrl}/gallery")]
@@ -82,10 +87,14 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetGalleryCategoriesQuery(parent, loadChildren: true,
-                loadLastItems: 5));
+            var cats = await Mediator.Send(new GetGalleryCategoriesQuery
+            {
+                Parent = parent,
+                LoadChildren = true,
+                LoadLastItems = 5
+            });
 
-            return View("ParentGallery", new ParentGalleryViewModel(ViewModelConfig, parent, cats));
+            return View("ParentGallery", new ParentGalleryViewModel(ViewModelConfig, parent, cats.models));
         }
     }
 }

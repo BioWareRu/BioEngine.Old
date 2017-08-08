@@ -3,7 +3,7 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Articles.Queries
 {
-    public class GetArticleByIdQuery : QueryBase<Article>
+    public class GetArticleByIdQuery : SingleModelQueryBase<Article>
     {
         public GetArticleByIdQuery(int id)
         {

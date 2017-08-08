@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.DB;
+using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
@@ -12,47 +13,37 @@ using Microsoft.Extensions.Logging;
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
-    internal class GetFilesHandler : QueryHandlerBase<GetFilesQuery, (IEnumerable<Common.Models.File>
-        files, int count)>
+    internal class GetFilesHandler : ModelListQueryHandlerBase<GetFilesQuery, File>
     {
         public GetFilesHandler(IMediator mediator, BWContext dbContext, ILogger<GetFilesHandler> logger) : base(
             mediator, dbContext, logger)
         {
         }
 
-        protected override async Task<(IEnumerable<Common.Models.File> files, int count)> RunQuery(
-            GetFilesQuery message)
+        protected override async Task<(IEnumerable<File>, int)> RunQuery(GetFilesQuery message)
         {
             var query = DBContext.Files.AsQueryable();
             if (message.Parent != null)
             {
                 query = ApplyParentCondition(query, message.Parent);
             }
-            var totalFiles = await query.CountAsync();
 
-            if (message.Page != null && message.Page > 0)
-            {
-                query = query.Skip(((int) message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize);
-            }
+            query = query
+                .Include(x => x.Author)
+                .Include(x => x.Game)
+                .Include(x => x.Developer)
+                .Include(x => x.Cat);
 
-            var files =
-                await query
-                    .OrderByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Cat)
-                    .ToListAsync();
+            var data = await GetData(query, message);
 
-            foreach (var file in files)
+            foreach (var file in data.models)
             {
                 file.Cat =
                     await Mediator.Send(new FileCategoryProcessQuery(file.Cat,
-                        new GetFilesCategoryQuery(message.Parent)));
+                        new GetFilesCategoryQuery {Parent = message.Parent}));
             }
 
-            return (files, totalFiles);
+            return data;
         }
     }
 }

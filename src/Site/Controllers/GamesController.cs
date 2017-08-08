@@ -33,24 +33,39 @@ namespace BioEngine.Site.Controllers
 
             var canUserSeeUnpublishedNews = await HasRight(UserRights.News);
             var lastNews =
-                (await Mediator.Send(new GetNewsQuery(canUserSeeUnpublishedNews, 1, game) {PageSize = 5})).news;
+            (await Mediator.Send(new GetNewsQuery
+            {
+                WithUnPublishedNews = canUserSeeUnpublishedNews,
+                Page = 1,
+                PageSize = 5,
+                Parent = game
+            })).models;
 
             var canUserSeeUnpublishedArticles = await HasRight(UserRights.Articles);
             var lastArticles =
-                (await Mediator.Send(new GetArticlesQuery(canUserSeeUnpublishedArticles, 1, game) {PageSize = 5}))
-                .articles;
+                (await Mediator.Send(new GetArticlesQuery
+                {
+                    WithUnPublishedArticles = canUserSeeUnpublishedArticles,
+                    Page = 1,
+                    PageSize = 5,
+                    Parent = game
+                }))
+                .models;
 
             var lastFiles =
-                (await Mediator.Send(new GetFilesQuery(1, game) {PageSize = 5})).files;
+                (await Mediator.Send(new GetFilesQuery {Parent = game, Page = 1, PageSize = 5})).models;
 
             var canUserSeeUnpublishedGalleryPics = await HasRight(UserRights.Gallery);
             var lastPics =
             (await Mediator.Send(
-                new GetGalleryPicsQuery(canUserSeeUnpublishedGalleryPics, 1, game)
+                new GetGalleryPicsQuery
                 {
+                    Parent = game,
+                    WithUnPublishedPictures = canUserSeeUnpublishedGalleryPics,
+                    Page = 1,
                     PageSize = 5,
                     LoadPicPositions = true
-                })).pics;
+                })).models;
 
             var view = new GamePageViewModel(ViewModelConfig, game, lastNews, lastArticles, lastFiles, lastPics);
             return View(view);

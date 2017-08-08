@@ -158,13 +158,13 @@ namespace BioEngine.Site.Controllers
 
         public async Task<string> Reindex()
         {
-            AddEntities(await Mediator.Send(new GetGamesQuery()));
-            AddEntities((await Mediator.Send(new GetNewsQuery())).news);
-            AddEntities((await Mediator.Send(new GetArticlesQuery())).articles);
-            AddEntities(await Mediator.Send(new GetArticlesCategoriesQuery()));
-            AddEntities((await Mediator.Send(new GetFilesQuery())).files);
-            AddEntities(await Mediator.Send(new GetFilesCategoriesQuery()));
-            AddEntities(await Mediator.Send(new GetGalleryCategoriesQuery()));
+            AddEntities((await Mediator.Send(new GetGamesQuery())).models);
+            AddEntities((await Mediator.Send(new GetNewsQuery())).models);
+            AddEntities((await Mediator.Send(new GetArticlesQuery())).models);
+            AddEntities((await Mediator.Send(new GetArticlesCategoriesQuery())).models);
+            AddEntities((await Mediator.Send(new GetFilesQuery())).models);
+            AddEntities((await Mediator.Send(new GetFilesCategoriesQuery())).models);
+            AddEntities((await Mediator.Send(new GetGalleryCategoriesQuery())).models);
             return "done";
         }
     }

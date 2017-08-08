@@ -51,7 +51,7 @@ namespace BioEngine.Data.Articles.Handlers
             {
                 article.Cat =
                     await Mediator.Send(new ArticleCategoryProcessQuery(article.Cat,
-                        new GetArticlesCategoryQuery(message.Parent)));
+                        new GetArticlesCategoryQuery {Parent = message.Parent}));
             }
 
             return (articles, totalArticles);

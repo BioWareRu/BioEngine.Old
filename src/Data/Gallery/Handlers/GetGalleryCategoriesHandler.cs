@@ -7,20 +7,20 @@ using BioEngine.Data.Core;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
-    internal class GetGalleryCategoriesHandler : QueryHandlerBase<GetGalleryCategoriesQuery, IEnumerable<GalleryCat>>
+    internal class
+        GetGalleryCategoriesHandler : ModelListQueryHandlerBase<GetGalleryCategoriesQuery, GalleryCat>
     {
         public GetGalleryCategoriesHandler(IMediator mediator, BWContext dbContext,
             ILogger<GetGalleryCategoriesHandler> logger) : base(mediator, dbContext, logger)
         {
         }
 
-        protected override async Task<IEnumerable<GalleryCat>> RunQuery(GetGalleryCategoriesQuery message)
+        protected override async Task<(IEnumerable<GalleryCat>, int)> RunQuery(GetGalleryCategoriesQuery message)
         {
             var query = DBContext.GalleryCats.AsQueryable();
             if (message.Parent != null)
@@ -37,14 +37,13 @@ namespace BioEngine.Data.Gallery.Handlers
                 query = query.Where(x => x.Pid == null);
             }
 
-
-            var cats = await query.ToListAsync();
-            foreach (var cat in cats)
+            var data = await GetData(query, message);
+            foreach (var cat in data.models)
             {
                 await Mediator.Send(new GalleryCategoryProcessQuery(cat, message));
             }
 
-            return cats;
+            return data;
         }
     }
 }

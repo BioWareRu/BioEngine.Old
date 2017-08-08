@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BioEngine.Common.Base;
 using BioEngine.Site.Base;
 using Microsoft.AspNetCore.Mvc;
@@ -36,10 +35,14 @@ namespace BioEngine.Site.Controllers
                 return new NotFoundResult();
             }
 
-            var cats = await Mediator.Send(new GetFilesCategoriesQuery(parent, loadChildren: true,
-                loadLastItems: 5));
+            var cats = await Mediator.Send(new GetFilesCategoriesQuery
+            {
+                Parent = parent,
+                LoadChildren = true,
+                LoadLastItems = 5
+            });
 
-            return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats));
+            return View("ParentFiles", new ParentFilesViewModel(ViewModelConfig, parent, cats.models));
         }
 
         public async Task<IActionResult> Download(string parentUrl, string url)
@@ -131,9 +134,9 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Files().ParentFilesUrl(parent), "Файлы"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catFiles = await Mediator.Send(new GetCategoryFilesQuery(category, page));
-                category.Items = catFiles.files;
-                var viewModel = new FileCatViewModel(ViewModelConfig, category, catFiles.count, page);
+                var catFiles = await Mediator.Send(new GetCategoryFilesQuery(category) {Page = page});
+                category.Items = catFiles.models;
+                var viewModel = new FileCatViewModel(ViewModelConfig, category, catFiles.totalCount, page);
                 breadcrumbs.Reverse();
                 viewModel.BreadCrumbs.AddRange(breadcrumbs);
                 return View("FileCat", viewModel);
@@ -146,8 +149,13 @@ namespace BioEngine.Site.Controllers
         {
             var url = catUrl.Split('/').Last();
 
-            return await Mediator.Send(new GetFilesCategoryQuery(parent: parent, url: url,
-                loadChildren: loadChildren, loadLastItems: loadLastItems));
+            return await Mediator.Send(new GetFilesCategoryQuery
+            {
+                Parent = parent,
+                Url = url,
+                LoadChildren = loadChildren,
+                LoadLastItems = loadLastItems
+            });
         }
 
         private async Task<File> GetFile(IParentModel parent, string catUrl, string articleUrl)

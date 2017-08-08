@@ -24,7 +24,7 @@ namespace BioEngine.Site.Components
         {
             if (_banners != null) return _banners;
 
-            var banners = new List<Advertisement>(await _mediator.Send(new GetBannersQuery()));
+            var banners = new List<Advertisement>((await _mediator.Send(new GetBannersQuery())).models);
             banners.Shuffle();
             _banners = new Stack<Advertisement>(banners);
             return _banners;

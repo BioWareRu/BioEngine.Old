@@ -4,23 +4,12 @@ using BioEngine.Data.Core;
 
 namespace BioEngine.Data.Gallery.Queries
 {
-    public class GetGalleryCategoryQuery : QueryBase<GalleryCat>, ICategoryQuery<GalleryCat>
+    public class GetGalleryCategoryQuery : SingleModelQueryBase<GalleryCat>, ICategoryQuery<GalleryCat>
     {
-        public GetGalleryCategoryQuery(IParentModel parent = null, GalleryCat parentCat = null,
-            bool loadChildren = false,
-            int? loadLastItems = null, string url = null)
-        {
-            Parent = parent;
-            LoadChildren = loadChildren;
-            ParentCat = parentCat;
-            LoadLastItems = loadLastItems;
-            Url = url;
-        }
-
-        public IParentModel Parent { get; }
-        public bool LoadChildren { get; }
-        public GalleryCat ParentCat { get; }
-        public int? LoadLastItems { get; }
-        public string Url { get; }
+        public IParentModel Parent { get; set; }
+        public bool LoadChildren { get; set; }
+        public GalleryCat ParentCat { get; set; }
+        public int? LoadLastItems { get; set; }
+        public string Url { get; set; }
     }
 }

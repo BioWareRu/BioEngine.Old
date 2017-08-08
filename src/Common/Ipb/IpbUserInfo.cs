@@ -17,6 +17,11 @@ namespace BioEngine.Common.Ipb
 
         public IpbUserInfo(string ipbResponse, ILogger ipbLogger)
         {
+            if (string.IsNullOrEmpty(ipbResponse))
+            {
+                IsParsed = false;
+                return;
+            }
             JObject user;
             try
             {

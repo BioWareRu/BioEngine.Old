@@ -47,7 +47,8 @@ namespace BioEngine.API.Auth
                         if (user != null)
                         {
                             var identity = new ClaimsIdentity("tokenAuth");
-                            identity.AddClaim(new Claim(ClaimTypes.Name, user.Name));
+                            identity.AddClaim(new Claim("Id", user.Id.ToString()));
+                            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Name));
                             foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
                             {
                                 if (user.HasRight(userRight, user.SiteTeamMember))
@@ -71,7 +72,8 @@ namespace BioEngine.API.Auth
             return result;
         }
 
-        private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>();
+        private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>()
+            ;
 
         private async Task<User> GetUser(string token)
         {
@@ -106,7 +108,15 @@ namespace BioEngine.API.Auth
 
             var stringTask = client.GetStringAsync(userInformationEndpoint);
 
-            var msg = await stringTask;
+            string msg = null;
+            try
+            {
+                msg = await stringTask;
+            }
+            catch (HttpRequestException e)
+            {
+                Logger.LogError($"Error while request user information: {e.Message}");
+            }
 
             var userInformation = new IpbUserInfo(msg, _logger);
 

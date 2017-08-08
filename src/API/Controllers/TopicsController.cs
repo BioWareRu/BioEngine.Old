@@ -6,6 +6,7 @@ using BioEngine.API.Components.REST;
 using BioEngine.Common.Models;
 using BioEngine.Data.Base.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
 {
@@ -25,7 +26,7 @@ namespace BioEngine.API.Controllers
             return await Mediator.Send(new GetTopicsQuery().SetQueryParams(queryParams));
         }
 
-        protected override Task<Topic> UpdateItem(int id, Topic model)
+        /*protected override Task<Topic> UpdateItem(int id, Topic model)
         {
             throw new NotImplementedException();
         }
@@ -39,5 +40,10 @@ namespace BioEngine.API.Controllers
         {
             throw new NotImplementedException();
         }
+
+        public override Task<IActionResult> Post<TCommand>(TCommand model)
+        {
+            throw new NotImplementedException();
+        }*/
     }
 }

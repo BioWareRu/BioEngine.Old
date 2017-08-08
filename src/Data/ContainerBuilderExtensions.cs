@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Features.Variance;
+using AutoMapper;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Search;
@@ -55,6 +56,22 @@ namespace BioEngine.Data
 
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces();
+            containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
+                .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces();
+
+            containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
+                .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
+
+            containerBuilder.Register(context => new MapperConfiguration(cfg =>
+            {
+                foreach (var profile in context.Resolve<IEnumerable<Profile>>())
+                {
+                    cfg.AddProfile(profile);
+                }
+            })).AsSelf().SingleInstance();
+
+            containerBuilder.Register(ctx => ctx.Resolve<MapperConfiguration>().CreateMapper())
+                .As<IMapper>().InstancePerLifetimeScope();
         }
 
         public static ContainerBuilder AddDbContext<TContext>(

@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using BioEngine.API.Extensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentValidation.Results;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 
 namespace BioEngine.API.Components.REST.Models
@@ -17,14 +16,16 @@ namespace BioEngine.API.Components.REST.Models
         [UsedImplicitly]
         public bool IsSuccess { get; } = true;
 
-        public ValidationResultModel(ModelStateDictionary modelState) : base(StatusCodes.Status422UnprocessableEntity)
+        public ValidationResultModel(IEnumerable<ValidationFailure> errors) : base(StatusCodes
+            .Status422UnprocessableEntity)
         {
-            if (!modelState.IsValid)
+            var validationFailures = errors as ValidationFailure[] ?? errors.ToArray();
+            if (validationFailures.Any())
             {
                 IsSuccess = false;
                 Message = "Validation Failed";
-                Errors = modelState.Keys
-                    .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(key.ToCamelCase(), x.ErrorMessage)))
+                Errors = validationFailures
+                    .Select(error => new ValidationError(error.PropertyName, error.ErrorMessage))
                     .ToList();
             }
         }
@@ -46,21 +47,10 @@ namespace BioEngine.API.Components.REST.Models
 
     public class ValidationFailedResult : ObjectResult
     {
-        public ValidationFailedResult(ModelStateDictionary modelState)
-            : base(new ValidationResultModel(modelState))
+        public ValidationFailedResult(IEnumerable<ValidationFailure> errors)
+            : base(new ValidationResultModel(errors))
         {
             StatusCode = StatusCodes.Status422UnprocessableEntity;
-        }
-    }
-
-    public class ValidateModelAttribute : ActionFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            if (!context.ModelState.IsValid)
-            {
-                context.Result = new ValidationFailedResult(context.ModelState);
-            }
         }
     }
 }

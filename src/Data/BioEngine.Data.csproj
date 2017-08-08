@@ -6,6 +6,7 @@
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1" />
     <PackageReference Include="MediatR" Version="3.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="1.1.2" />

@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using BioEngine.API.Auth;
 using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.Base;
@@ -51,10 +53,11 @@ namespace BioEngine.API
         }
 
         private IConfigurationRoot Configuration { get; }
+        public IContainer ApplicationContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container
         [UsedImplicitly]
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<TokenAuthOptions>(o =>
             {
@@ -67,7 +70,6 @@ namespace BioEngine.API
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddBioEngineRouting();
-            services.AddBioEngineData(Configuration);
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
 
@@ -83,7 +85,7 @@ namespace BioEngine.API
             services.AddSingleton<PatreonApiHelper>();
 
             services.AddSingleton(Configuration);
-            services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
+            //services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
 
             if (_env.IsProduction())
             {
@@ -115,6 +117,15 @@ namespace BioEngine.API
 
             // Add framework services.
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>());
+            
+            // Create the container builder.
+            var builder = new ContainerBuilder();
+            builder.Populate(services);          
+            builder.AddBioEngineData(Configuration);
+            
+            ApplicationContainer = builder.Build();
+
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         private static IPHostEntry TryResolveDns(string redisUrl)
@@ -124,7 +135,9 @@ namespace BioEngine.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        [UsedImplicitly]
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApplicationLifetime applicationLifetime)
         {
             ConfigureLogging(env, loggerFactory);
             app.UseMiddleware<TokenAuthMiddleware>();
@@ -136,6 +149,7 @@ namespace BioEngine.API
                     "{controller=Index}/{action=Index}/{id?}");
                 routes.UseBioEngineRouting();
             });
+            applicationLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }
 
         private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)

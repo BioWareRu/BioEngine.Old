@@ -3,6 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
@@ -58,10 +60,11 @@ namespace BioEngine.Site
         }
 
         private IConfigurationRoot Configuration { get; }
+        public IContainer ApplicationContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         [UsedImplicitly]
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -86,7 +89,6 @@ namespace BioEngine.Site
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             services.AddBioEngineRouting();
-            services.AddBioEngineData(Configuration);
 
             services.AddSingleton(Configuration);
 
@@ -123,6 +125,14 @@ namespace BioEngine.Site
                 services.AddDataProtection().PersistKeysToRedis(redis, "DataProtection-Keys");
                 services.AddAntiforgery(opts => opts.CookieName = "beAntiforgeryCookie");
             }
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.AddBioEngineData(Configuration);
+
+            ApplicationContainer = builder.Build();
+
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         private static IPHostEntry TryResolveDns(string redisUrl)
@@ -193,6 +203,8 @@ namespace BioEngine.Site
                     "{controller=Index}/{action=Index}/{id?}");
                 routes.UseBioEngineRouting();
             });
+
+            lifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }
 
         private void ConfigureProduction(IApplicationBuilder app, IApplicationLifetime lifetime)

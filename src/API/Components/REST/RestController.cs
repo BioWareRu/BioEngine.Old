@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.API.Components.REST.Errors;
 using BioEngine.API.Components.REST.Models;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.API.Components.REST
 {
@@ -16,22 +14,24 @@ namespace BioEngine.API.Components.REST
     [Route("api/[controller]")]
     public abstract class RestController<T, TPkType> : Controller where T : BaseModel<TPkType>
     {
-        protected readonly BWContext DBContext;
+        protected readonly IMediator Mediator;
 
-        protected RestController(BWContext dbContext)
+        protected RestController(IMediator mediator)
         {
-            DBContext = dbContext;
+            Mediator = mediator;
         }
 
-        protected abstract IQueryable<T> GetBaseQuery();
         protected abstract Task<T> GetItem(TPkType id);
+        protected abstract Task<(IEnumerable<T> items, int itemsCount)> GetItems(QueryParams queryParams);
+        protected abstract Task<T> UpdateItem(TPkType id, T model);
+        protected abstract Task<T> CreateItem(T model);
+        protected abstract Task<T> DeleteItem(TPkType id);
 
         [HttpGet]
         public virtual async Task<IActionResult> Get(QueryParams queryParams)
         {
-            var query = GetBaseQuery();
-            return Ok(new ListResult<T>(await query.ApplyParams(queryParams).ToListAsync(),
-                await query.CountAsync()));
+            var itemsResult = await GetItems(queryParams);
+            return Ok(new ListResult<T>(itemsResult.items, itemsResult.itemsCount));
         }
 
         [HttpGet("{id}")]
@@ -49,6 +49,7 @@ namespace BioEngine.API.Components.REST
         [ValidateModel]
         public virtual async Task<IActionResult> Post([FromBody] T model)
         {
+            await CreateItem(model);
             return Ok(new SaveModelReponse<T>(StatusCodes.Status201Created, model));
         }
 
@@ -56,13 +57,20 @@ namespace BioEngine.API.Components.REST
         [ValidateModel]
         public virtual async Task<IActionResult> Put(TPkType id, [FromBody] T model)
         {
+            var item = await GetItem(id);
+            if (item == null)
+            {
+                return NotFound(new NotFoundError());
+            }
+            await UpdateItem(id, model);
             return Ok(new SaveModelReponse<T>(StatusCodes.Status202Accepted, model));
         }
 
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> Delete(TPkType id)
         {
-            throw new NotImplementedException();
+            await DeleteItem(id);
+            return Ok("Deleted");
         }
     }
 }

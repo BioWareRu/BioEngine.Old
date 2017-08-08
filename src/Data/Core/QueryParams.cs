@@ -41,25 +41,28 @@ namespace BioEngine.Data.Core
         private static List<SortQuery> GetSortParameters<T>(string orderBy)
         {
             var sortParameters = new List<SortQuery>();
-            orderBy.Split(',').ToList().ForEach(p =>
+            if (!string.IsNullOrEmpty(orderBy))
             {
-                var direction = SortDirection.Ascending;
-                if (p[0] == '-')
+                orderBy.Split(',').ToList().ForEach(p =>
                 {
-                    direction = SortDirection.Descending;
-                    p = p.Substring(1);
-                }
+                    var direction = SortDirection.Ascending;
+                    if (p[0] == '-')
+                    {
+                        direction = SortDirection.Descending;
+                        p = p.Substring(1);
+                    }
 
-                var attribute = GetByName(typeof(T), p);
-                if (attribute != null)
-                {
-                    sortParameters.Add(new SortQuery(attribute.Name, direction));
-                }
-            });
+                    var attribute = GetByName(typeof(T), p);
+                    if (attribute != null)
+                    {
+                        sortParameters.Add(new SortQuery(attribute.Name, direction));
+                    }
+                });
+            }
             return sortParameters;
         }
 
-        public static Func<IQueryable<T>, IQueryable<T>> GetSortFunc<T>(string orderBy)
+        public static Func<IQueryable<T>, IQueryable<T>> GetOrderByFunc<T>(string orderBy)
         {
             var sortParameters = GetSortParameters<T>(orderBy);
             if (sortParameters.Any())

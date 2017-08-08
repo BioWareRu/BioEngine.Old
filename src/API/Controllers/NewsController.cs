@@ -1,27 +1,42 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
-using Microsoft.EntityFrameworkCore;
+using BioEngine.Data.News.Queries;
+using MediatR;
 
 namespace BioEngine.API.Controllers
 {
     public class NewsController : RestController<News, int>
     {
-        public NewsController(BWContext dbContext) : base(dbContext)
+        public NewsController(IMediator mediator) : base(mediator)
         {
         }
 
-        protected override IQueryable<News> GetBaseQuery()
+        protected override async Task<News> GetItem(int id)
         {
-            return DBContext.News.Include(x => x.Game).Include(x => x.Developer).Include(x => x.Topic)
-                .Include(x => x.Author);
+            return await Mediator.Send(new GetNewsByIdQuery(id));
         }
 
-        protected override Task<News> GetItem(int id)
+        protected override async Task<(IEnumerable<News> items, int itemsCount)> GetItems(QueryParams queryParams)
         {
-            return GetBaseQuery().FirstOrDefaultAsync(x => x.Id == id);
+            return await Mediator.Send(new GetNewsQuery().SetQueryParams(queryParams));
+        }
+
+        protected override Task<News> UpdateItem(int id, News model)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override Task<News> CreateItem(News model)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override Task<News> DeleteItem(int id)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

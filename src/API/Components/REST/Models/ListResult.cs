@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.API.Components.REST.Models
 {
-    public class ListResult<T> : RestResult where T : BaseModel
+    public class ListResult<T> : RestResult where T : IBaseModel
     {
         public ListResult(IEnumerable<T> data, int totalitem) : base(StatusCodes.Status200OK)
         {

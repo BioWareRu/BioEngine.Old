@@ -13,13 +13,6 @@ namespace BioEngine.Data.Core
 
         public int PageOffset => (Page - 1) * PageSize ?? 0;
 
-        public void SetQueryParams(IQueryParams queryParams)
-        {
-            Page = queryParams.Page;
-            PageSize = queryParams.PageSize;
-            OrderByFunc = QueryParamsExtensions.GetSortFunc<TEntity>(queryParams.OrderBy);
-        }
-
         public virtual Func<IQueryable<TEntity>, IQueryable<TEntity>> OrderByFunc { get; protected set; }
 
         public ModelsListQueryBase<TEntity> SetOrderBy(Func<IQueryable<TEntity>, IQueryable<TEntity>> orderBy)

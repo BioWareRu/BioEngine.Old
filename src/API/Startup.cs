@@ -143,11 +143,6 @@ namespace BioEngine.API
             ConfigureLogging(env, loggerFactory);
 
             context.Database.Migrate();
-            var logger = loggerFactory.CreateLogger<Startup>();
-            foreach (var migration in context.Database.GetAppliedMigrations())
-            {
-                logger.LogDebug($"Migration: {migration}");
-            }
             
             app.UseMiddleware<TokenAuthMiddleware>();
             app.UseCors("allorigins");

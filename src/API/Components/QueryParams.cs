@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Components
 {
-    public class QueryParams : IQueryParams
+    public class QueryParams
     {
         [FromQuery(Name = "limit")]
         public int PageSize { get; set; } = 10;
@@ -19,11 +19,11 @@ namespace BioEngine.API.Components
     public static class ModelListQueryBaseExtensions
     {
         public static ModelsListQueryBase<TEntity> SetQueryParams<TEntity>(this ModelsListQueryBase<TEntity> query,
-            IQueryParams queryParams) where TEntity : IBaseModel
+            QueryParams queryParams) where TEntity : IBaseModel
         {
             query.Page = queryParams.Page;
             query.PageSize = queryParams.PageSize;
-            var orderByFunc = QueryParamsExtensions.GetOrderByFunc<TEntity>(queryParams.OrderBy);
+            var orderByFunc = QueryableExtensions.GetOrderByFunc<TEntity>(queryParams.OrderBy);
             if (orderByFunc != null)
             {
                 query.SetOrderBy(orderByFunc);

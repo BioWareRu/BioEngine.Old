@@ -4,38 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace BioEngine.Data.Core
 {
-    public interface IQueryParams
-    {
-        int? Page { get; [UsedImplicitly] set; }
-        int PageSize { get; [UsedImplicitly] set; }
-        string OrderBy { get; [UsedImplicitly] set; }
-    }
-
-    public static class QueryParamsExtensions
+    public static class QueryableExtensions
     {
         public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int offset, int limit)
         {
             return query.Skip(offset).Take(limit);
-        }
-
-        public static IQueryable<T> ApplySort<T>(this IQueryable<T> query, string orderBy)
-        {
-            if (!string.IsNullOrEmpty(orderBy))
-            {
-                var sortParameters = GetSortParameters<T>(orderBy);
-
-                if (sortParameters.Any())
-                {
-                    query = sortParameters.Aggregate(query, (current, sortParameter) => current.Sort(sortParameter));
-                }
-            }
-
-            return query;
         }
 
         private static List<SortQuery> GetSortParameters<T>(string orderBy)
@@ -91,18 +67,6 @@ namespace BioEngine.Data.Core
             return CallGenericOrderMethod(source, propertyName, "OrderByDescending");
         }
 
-        public static IOrderedQueryable<TSource> ThenBy<TSource>(this IOrderedQueryable<TSource> source,
-            string propertyName)
-        {
-            return CallGenericOrderMethod(source, propertyName, "ThenBy");
-        }
-
-        public static IOrderedQueryable<TSource> ThenByDescending<TSource>(this IOrderedQueryable<TSource> source,
-            string propertyName)
-        {
-            return CallGenericOrderMethod(source, propertyName, "ThenByDescending");
-        }
-
         private static IOrderedQueryable<TSource> CallGenericOrderMethod<TSource>(IQueryable<TSource> source,
             string propertyName, string method)
         {
@@ -122,7 +86,7 @@ namespace BioEngine.Data.Core
             return (IOrderedQueryable<TSource>) result;
         }
 
-        private static readonly Dictionary<Type, ModelStructure> models = new Dictionary<Type, ModelStructure>();
+        private static readonly Dictionary<Type, ModelStructure> Models = new Dictionary<Type, ModelStructure>();
 
         private static PropertyDescription GetByName(Type cls, string attrName)
         {
@@ -135,11 +99,11 @@ namespace BioEngine.Data.Core
 
         private static ModelStructure GetModelStructure(Type cls)
         {
-            if (!models.ContainsKey(cls))
+            if (!Models.ContainsKey(cls))
             {
-                models.Add(cls, ParseClass(cls));
+                Models.Add(cls, ParseClass(cls));
             }
-            return models[cls];
+            return Models[cls];
         }
 
         private static ModelStructure ParseClass(Type cls)
@@ -161,31 +125,17 @@ namespace BioEngine.Data.Core
     internal class PropertyDescription
     {
         public string Name { get; }
-        public string JsonName { get; }
         public string Column { get; }
-        public Type Type { get; }
 
-        public PropertyDescription(string name, string jsonName, string column, Type type)
+        private PropertyDescription(string name, string column)
         {
             Name = name;
-            JsonName = jsonName;
             Column = column;
-            Type = type;
         }
 
         public static PropertyDescription Parse(PropertyInfo property)
         {
-            string jsonName, column;
-
-            var jsonAttr = property.GetCustomAttribute<JsonPropertyAttribute>();
-            if (jsonAttr != null)
-            {
-                jsonName = jsonAttr.PropertyName;
-            }
-            else
-            {
-                jsonName = char.ToLowerInvariant(property.Name[0]) + property.Name.Substring(1);
-            }
+            string column;
             var columnAttr = property.GetCustomAttribute<ColumnAttribute>();
             if (columnAttr != null)
             {
@@ -198,7 +148,7 @@ namespace BioEngine.Data.Core
                         (x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString()))
                     .ToLower();
             }
-            return new PropertyDescription(property.Name, jsonName, column, property.PropertyType);
+            return new PropertyDescription(property.Name, column);
         }
     }
 

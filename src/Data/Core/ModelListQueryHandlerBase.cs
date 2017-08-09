@@ -22,12 +22,6 @@ namespace BioEngine.Data.Core
             {
                 query = message.OrderByFunc(query);
             }
-            /*else if (!string.IsNullOrEmpty(message.OrderBy))
-            {
-                Logger.LogDebug($"Start apply sort: {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
-                query = query.ApplySort(message.OrderBy);
-                Logger.LogDebug($"End apply sort: {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
-            }*/
             if (message.Page != null && message.Page > 0)
             {
                 totalCount = await query.CountAsync();

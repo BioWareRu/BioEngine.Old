@@ -12,25 +12,35 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.API.Auth
 {
     public class TokenAuthenticationHandler : AuthenticationHandler<TokenAuthOptions>
     {
-        private readonly BWContext _dbContext;
+        private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>()
+            ;
+
         private readonly IConfigurationRoot _configuration;
+        private readonly BWContext _dbContext;
         private readonly ILogger<TokenAuthenticationHandler> _logger;
 
+        private readonly TokenAuthOptions _options;
+
         public TokenAuthenticationHandler(BWContext dbContext,
-            IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger)
+            IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger,
+            IOptions<TokenAuthOptions> options)
         {
             _dbContext = dbContext;
             _configuration = configuration;
             _logger = logger;
+            _options = options.Value;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            if (_options.DevMode)
+                return HandleAuthenticateDevAsync();
             var stopwatch = Stopwatch.StartNew();
             var result = AuthenticateResult.Fail("No token");
             //            throw new NotImplementedException();
@@ -46,18 +56,7 @@ namespace BioEngine.API.Auth
                         var user = await GetUser(tokenString);
                         if (user != null)
                         {
-                            var identity = new ClaimsIdentity("tokenAuth");
-                            identity.AddClaim(new Claim("Id", user.Id.ToString()));
-                            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Name));
-                            foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
-                            {
-                                if (user.HasRight(userRight, user.SiteTeamMember))
-                                {
-                                    identity.AddClaim(new Claim(ClaimTypes.Role, userRight.ToString()));
-                                }
-                            }
-                            var userTicket =
-                                new AuthenticationTicket(new ClaimsPrincipal(identity), null, "tokenAuth");
+                            var userTicket = AuthenticationTicket(user);
                             result = AuthenticateResult.Success(userTicket);
                         }
                         else
@@ -72,8 +71,25 @@ namespace BioEngine.API.Auth
             return result;
         }
 
-        private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>()
-            ;
+        private static AuthenticationTicket AuthenticationTicket(User user)
+        {
+            var identity = new ClaimsIdentity("tokenAuth");
+            identity.AddClaim(new Claim("Id", user.Id.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Name));
+            foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
+                if (user.HasRight(userRight, user.SiteTeamMember))
+                    identity.AddClaim(new Claim(ClaimTypes.Role, userRight.ToString()));
+            var userTicket =
+                new AuthenticationTicket(new ClaimsPrincipal(identity), null, "tokenAuth");
+            return userTicket;
+        }
+
+        private static AuthenticateResult HandleAuthenticateDevAsync()
+        {
+            var user = new User {Id = 1, Name = "Admin", GroupId = 4};
+            var userTicket = AuthenticationTicket(user);
+            return AuthenticateResult.Success(userTicket);
+        }
 
         private async Task<User> GetUser(string token)
         {
@@ -91,9 +107,7 @@ namespace BioEngine.API.Auth
                             .Include(x => x.SiteTeamMember)
                             .FirstOrDefaultAsync();
                     if (user != null)
-                    {
                         TokenUsers.TryAdd(token, user);
-                    }
                 }
             }
             return user;

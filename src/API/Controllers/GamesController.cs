@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.Common.Models;
@@ -12,38 +11,32 @@ namespace BioEngine.API.Controllers
 {
     public class GamesController : RestController<Game, int>
     {
-        public GamesController(IMediator mediator) : base(mediator)
+        public GamesController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
+            currentUserProvider)
         {
         }
 
-        protected override async Task<Game> GetItem(int id)
+        [HttpGet]
+        [UserRightsAuthorize(UserRights.Games)]
+        public override async Task<IActionResult> Get(QueryParams queryParams)
         {
-            return await Mediator.Send(new GetGameByIdQuery(id));
+            var result = await Mediator.Send(new GetGamesQuery().SetQueryParams(queryParams));
+            return List(result);
         }
 
-        protected override async Task<(IEnumerable<Game> items, int itemsCount)> GetItems(QueryParams queryParams)
+        [HttpGet("{id}")]
+        [UserRightsAuthorize(UserRights.Games)]
+        public override async Task<IActionResult> Get(int id)
         {
-            return await Mediator.Send(new GetGamesQuery().SetQueryParams(queryParams));
+            var game = await Mediator.Send(new GetGameByIdQuery(id));
+            return Model(game);
         }
 
-        /*protected override async Task<Game> UpdateItem(int id, Game model)
+        [HttpDelete]
+        [UserRightsAuthorize(UserRights.EditGames)]
+        public override Task<IActionResult> Delete(int id)
         {
             throw new System.NotImplementedException();
         }
-
-        protected override async Task<Game> CreateItem(Game model)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override async Task<Game> DeleteItem(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Task<IActionResult> Post<TCommand>(TCommand model)
-        {
-            throw new System.NotImplementedException();
-        }*/
     }
 }

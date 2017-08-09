@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.Common.Models;
@@ -12,38 +11,32 @@ namespace BioEngine.API.Controllers
 {
     public class TopicsController : RestController<Topic, int>
     {
-        public TopicsController(IMediator mediator) : base(mediator)
+        public TopicsController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
+            currentUserProvider)
         {
         }
 
-        protected override async Task<Topic> GetItem(int id)
+        [HttpGet]
+        [UserRightsAuthorize(UserRights.Developers)]
+        public override async Task<IActionResult> Get(QueryParams queryParams)
         {
-            return await Mediator.Send(new GetTopicByIdQuery(id));
+            var result = await Mediator.Send(new GetTopicsQuery().SetQueryParams(queryParams));
+            return List(result);
         }
 
-        protected override async Task<(IEnumerable<Topic> items, int itemsCount)> GetItems(QueryParams queryParams)
+        [HttpGet("{id}")]
+        [UserRightsAuthorize(UserRights.Developers)]
+        public override async Task<IActionResult> Get(int id)
         {
-            return await Mediator.Send(new GetTopicsQuery().SetQueryParams(queryParams));
+            var topic = await Mediator.Send(new GetTopicByIdQuery(id));
+            return Model(topic);
         }
 
-        /*protected override Task<Topic> UpdateItem(int id, Topic model)
+        [HttpDelete]
+        [UserRightsAuthorize(UserRights.EditDevelopers)]
+        public override Task<IActionResult> Delete(int id)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
-
-        protected override Task<Topic> CreateItem(Topic model)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Task<Topic> DeleteItem(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<IActionResult> Post<TCommand>(TCommand model)
-        {
-            throw new NotImplementedException();
-        }*/
     }
 }

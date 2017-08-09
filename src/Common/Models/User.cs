@@ -26,6 +26,7 @@ namespace BioEngine.Common.Models
         public bool HasRight(UserRights right, SiteTeamMember siteTeam = null)
         {
             if (IsAdmin) return true;
+            siteTeam = siteTeam ?? SiteTeamMember;
             if (siteTeam == null) return false;
             switch (right)
             {

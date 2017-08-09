@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.API.Components.REST.Models;
@@ -10,7 +9,6 @@ using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
@@ -18,44 +16,48 @@ namespace BioEngine.API.Controllers
     [Route("api/[controller]")]
     public class NewsController : RestController<News, int>
     {
-        public NewsController(IMediator mediator) : base(mediator)
+        public NewsController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
+            currentUserProvider)
         {
         }
-
-        protected override async Task<News> GetItem(int id)
-        {
-            return await Mediator.Send(new GetNewsByIdQuery(id));
-        }
-
-        protected override async Task<(IEnumerable<News> items, int itemsCount)> GetItems(QueryParams queryParams)
-        {
-            return await Mediator.Send(new GetNewsQuery().SetQueryParams(queryParams));
-        }
-
-        /*protected override Task<News> UpdateItem(int id, News model)
-        {
-            throw new System.NotImplementedException();
-        }*/
-
-
-        /*protected override Task<News> DeleteItem(int id)
-        {
-            throw new System.NotImplementedException();
-        }*/
 
         [HttpPost]
+        [UserRightsAuthorize(UserRights.AddNews)]
         public async Task<IActionResult> Post([FromBody] CreateNewsCommand command)
         {
             try
             {
-                command.AuthorId = int.Parse(HttpContext.User.Claims.First(x => x.Type == "Id").Value);
-                var news = await CreateItem(command);
-                return Ok(new SaveModelReponse<News>(StatusCodes.Status201Created, news));
+                command.AuthorId = CurrentUserProvider.GetCurrentUser().Id;
+                var news = await Mediator.Send(command);
+                return Created(news);
             }
             catch (ValidationException e)
             {
                 return BadRequest(new ValidationResultModel(e.Errors));
             }
+        }
+
+        [HttpGet]
+        [UserRightsAuthorize(UserRights.News)]
+        public override async Task<IActionResult> Get(QueryParams queryParams)
+        {
+            var result = await Mediator.Send(new GetNewsQuery {WithUnPublishedNews = true}.SetQueryParams(queryParams));
+            return List(result);
+        }
+
+        [HttpGet("{id}")]
+        [UserRightsAuthorize(UserRights.News)]
+        public override async Task<IActionResult> Get(int id)
+        {
+            var news = await Mediator.Send(new GetNewsByIdQuery(id));
+            return Model(news);
+        }
+
+        [HttpDelete]
+        [UserRightsAuthorize(UserRights.FullNews)]
+        public override Task<IActionResult> Delete(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

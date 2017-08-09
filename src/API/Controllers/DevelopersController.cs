@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.Common.Models;
@@ -11,38 +11,32 @@ namespace BioEngine.API.Controllers
 {
     public class DevelopersController : RestController<Developer, int>
     {
-        public DevelopersController(IMediator mediator) : base(mediator)
+        public DevelopersController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
+            currentUserProvider)
         {
         }
 
-        protected override async Task<Developer> GetItem(int id)
+        [HttpGet]
+        [UserRightsAuthorize(UserRights.Developers)]
+        public override async Task<IActionResult> Get(QueryParams queryParams)
         {
-            return await Mediator.Send(new GetDeveloperByIdQuery(id));
+            var result = await Mediator.Send(new GetDevelopersQuery().SetQueryParams(queryParams));
+            return List(result);
         }
 
-        protected override async Task<(IEnumerable<Developer> items, int itemsCount)> GetItems(QueryParams queryParams)
+        [HttpGet("{id}")]
+        [UserRightsAuthorize(UserRights.Developers)]
+        public override async Task<IActionResult> Get(int id)
         {
-            return await Mediator.Send(new GetDevelopersQuery().SetQueryParams(queryParams));
+            var developer = await Mediator.Send(new GetDeveloperByIdQuery(id));
+            return Model(developer);
         }
 
-        /*protected override Task<Developer> UpdateItem(int id, Developer model)
+        [HttpDelete]
+        [UserRightsAuthorize(UserRights.EditDevelopers)]
+        public override Task<IActionResult> Delete(int id)
         {
             throw new System.NotImplementedException();
         }
-
-        protected override Task<Developer> CreateItem(Developer model)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Task<Developer> DeleteItem(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Task<IActionResult> Post<TCommand>(TCommand model)
-        {
-            throw new System.NotImplementedException();
-        }*/
     }
 }

@@ -5,7 +5,6 @@ using System.Net;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using BioEngine.API.Auth;
-using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
@@ -13,7 +12,6 @@ using BioEngine.Common.Ipb;
 using BioEngine.Content.Helpers;
 using BioEngine.Routing;
 using BioEngine.Data;
-using FluentValidation.AspNetCore;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -65,6 +63,7 @@ namespace BioEngine.API
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "tokenAuth";
                 o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
+                o.DevMode = bool.Parse(Configuration["IPB_OAUTH_DEV_MODE"]);
             });
 
             services.AddDistributedMemoryCache();
@@ -73,6 +72,7 @@ namespace BioEngine.API
             services.AddBioEngineRouting();
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
+            services.AddScoped<CurrentUserProvider>();
 
             services.AddSingleton(new IPBApiConfig
             {
@@ -115,9 +115,7 @@ namespace BioEngine.API
                         corsBuilder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod().AllowCredentials();
                     });
             });
-
-            // Add framework services.
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>());
+            services.AddMvc();
 
             // Create the container builder.
             var builder = new ContainerBuilder();

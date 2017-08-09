@@ -118,12 +118,12 @@ namespace BioEngine.API
 
             // Add framework services.
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NewsValidator>());
-            
+
             // Create the container builder.
             var builder = new ContainerBuilder();
-            builder.Populate(services);          
+            builder.Populate(services);
             builder.AddBioEngineData(Configuration);
-            
+
             ApplicationContainer = builder.Build();
 
             return new AutofacServiceProvider(ApplicationContainer);
@@ -138,12 +138,15 @@ namespace BioEngine.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         [UsedImplicitly]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
-            IApplicationLifetime applicationLifetime,BWContext context)
+            IApplicationLifetime applicationLifetime, BWContext context)
         {
             ConfigureLogging(env, loggerFactory);
 
-            context.Database.Migrate();
-            
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
+
             app.UseMiddleware<TokenAuthMiddleware>();
             app.UseCors("allorigins");
             app.UseMvc(routes =>

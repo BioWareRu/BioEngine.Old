@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <AssemblyName>BioEngine.Common</AssemblyName>
@@ -11,11 +10,9 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <RootNamespace>BioEngine.Common</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Interfaces\IAppSettings.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
@@ -25,5 +22,4 @@
     <PackageReference Include="ElasticsearchCrud" Version="2.4.1.1" />
     <PackageReference Include="System.ValueTuple" Version="4.3.1" />
   </ItemGroup>
-
 </Project>

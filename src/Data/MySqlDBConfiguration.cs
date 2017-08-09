@@ -20,7 +20,7 @@ namespace BioEngine.Data
                 Database = DBName,
                 MaximumPoolSize = 300
             };
-            optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString);
+            optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString, b => b.MigrationsAssembly("BioEngine.Common"));
         }
 
         public MySqlDBConfiguration(IConfigurationRoot configuration) : base(configuration)

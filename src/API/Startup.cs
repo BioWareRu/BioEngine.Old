@@ -7,6 +7,7 @@ using Autofac.Extensions.DependencyInjection;
 using BioEngine.API.Auth;
 using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.Base;
+using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Content.Helpers;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -136,9 +138,17 @@ namespace BioEngine.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         [UsedImplicitly]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
-            IApplicationLifetime applicationLifetime)
+            IApplicationLifetime applicationLifetime,BWContext context)
         {
             ConfigureLogging(env, loggerFactory);
+
+            context.Database.Migrate();
+            var logger = loggerFactory.CreateLogger<Startup>();
+            foreach (var migration in context.Database.GetAppliedMigrations())
+            {
+                logger.LogDebug($"Migration: {migration}");
+            }
+            
             app.UseMiddleware<TokenAuthMiddleware>();
             app.UseCors("allorigins");
             app.UseMvc(routes =>

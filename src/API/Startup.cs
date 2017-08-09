@@ -7,7 +7,6 @@ using Autofac.Extensions.DependencyInjection;
 using BioEngine.API.Auth;
 using BioEngine.API.Components.REST.Validators;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Content.Helpers;

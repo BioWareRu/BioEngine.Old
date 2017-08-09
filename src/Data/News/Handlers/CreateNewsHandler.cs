@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
-    internal class CreateNewsHandler : CommandWithReponseHandlerBase<CreateNewsCommand, Common.Models.News>
+    internal class CreateNewsHandler : CommandWithReponseHandlerBase<CreateNewsCommand, int>
     {
         public CreateNewsHandler(IMediator mediator, BWContext dbContext,
             ILogger<CreateNewsHandler> logger,
@@ -21,18 +21,18 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<Common.Models.News> ExecuteCommand(CreateNewsCommand command)
+        protected override async Task<int> ExecuteCommand(CreateNewsCommand createCommand)
         {
-            command.Date = DateTimeOffset.Now.ToUnixTimeSeconds();
-            command.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
+            createCommand.Date = DateTimeOffset.Now.ToUnixTimeSeconds();
+            createCommand.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            await Validate(command);
+            await Validate(createCommand);
 
-            var news = Mapper.Map<CreateNewsCommand, Common.Models.News>(command);
+            var news = Mapper.Map<CreateNewsCommand, Common.Models.News>(createCommand);
             DBContext.News.Add(news);
             await DBContext.SaveChangesAsync();
 
-            return news;
+            return news.Id;
         }
     }
 }

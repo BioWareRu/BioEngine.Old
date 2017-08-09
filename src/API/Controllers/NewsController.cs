@@ -3,11 +3,9 @@ using System.Threading.Tasks;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
-using BioEngine.API.Components.REST.Models;
 using BioEngine.Common.Models;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,18 +21,31 @@ namespace BioEngine.API.Controllers
 
         [HttpPost]
         [UserRightsAuthorize(UserRights.AddNews)]
-        public async Task<IActionResult> Post([FromBody] CreateNewsCommand command)
+        public async Task<IActionResult> Post([FromBody] CreateNewsCommand createCommand)
         {
-            try
+            createCommand.AuthorId = CurrentUserProvider.GetCurrentUser().Id;
+            var newsId = await Mediator.Send(createCommand);
+            return Created(await GetNewsById(newsId));
+        }
+
+        [HttpPut("{id}")]
+        [UserRightsAuthorize(UserRights.AddNews)]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateNewsCommand updateCommand)
+        {
+            var news = await GetNewsById(id);
+            if (news == null)
             {
-                command.AuthorId = CurrentUserProvider.GetCurrentUser().Id;
-                var news = await Mediator.Send(command);
-                return Created(news);
+                return NotFound();
             }
-            catch (ValidationException e)
+
+            if (!CurrentUserProvider.Can(UserRights.EditNews) && news.AuthorId != await CurrentUserProvider.GetUserId())
             {
-                return BadRequest(new ValidationResultModel(e.Errors));
+                return Forbid();
             }
+
+            updateCommand.SetModel(news);
+            await Mediator.Send(updateCommand);
+            return Updated(await GetNewsById(id));
         }
 
         [HttpGet]
@@ -49,7 +60,7 @@ namespace BioEngine.API.Controllers
         [UserRightsAuthorize(UserRights.News)]
         public override async Task<IActionResult> Get(int id)
         {
-            var news = await Mediator.Send(new GetNewsByIdQuery(id));
+            var news = await GetNewsById(id);
             return Model(news);
         }
 
@@ -58,6 +69,11 @@ namespace BioEngine.API.Controllers
         public override Task<IActionResult> Delete(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<News> GetNewsById(int id)
+        {
+            return await Mediator.Send(new GetNewsByIdQuery(id));
         }
     }
 }

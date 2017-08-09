@@ -10,6 +10,7 @@ namespace BioEngine.Data.News
         public NewsMapperProfile()
         {
             CreateMap<CreateNewsCommand, Common.Models.News>();
+            CreateMap<UpdateNewsCommand, Common.Models.News>();
         }
     }
 }

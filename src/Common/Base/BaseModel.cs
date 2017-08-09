@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Search;
 using Newtonsoft.Json;
 
@@ -21,5 +23,9 @@ namespace BioEngine.Common.Base
         {
             return Id;
         }
+
+        [NotMapped]
+        [JsonProperty("publicUrl")]
+        public Uri PublicUrl { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace BioEngine.Data.Core
 {
     internal abstract class
         CommandWithReponseHandlerBase<TCommand, TResponse> : IAsyncRequestHandler<TCommand, TResponse>
-        where TCommand : CommandWithResponseBase<TResponse>
+        where TCommand : CreateCommand<TResponse>
     {
         protected readonly IMediator Mediator;
         protected readonly BWContext DBContext;

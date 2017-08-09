@@ -27,6 +27,7 @@ namespace BioEngine.Routing
             services.AddScoped<FilesUrlManager>();
             services.AddScoped<GalleryUrlManager>();
             services.AddScoped<SearchUrlManager>();
+            services.AddScoped<BioUrlManager>();
         }
     }
 }

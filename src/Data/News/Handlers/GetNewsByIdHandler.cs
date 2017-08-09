@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Queries;
+using BioEngine.Routing;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,13 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class GetNewsByIdHandler : QueryHandlerBase<GetNewsByIdQuery, Common.Models.News>
     {
-        public GetNewsByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetNewsByIdHandler> logger) : base(
+        private readonly BioUrlManager _urlManager;
+
+        public GetNewsByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetNewsByIdHandler> logger,
+            BioUrlManager urlManager) : base(
             mediator, dbContext, logger)
         {
+            _urlManager = urlManager;
         }
 
         protected override async Task<Common.Models.News> RunQuery(GetNewsByIdQuery message)
@@ -28,7 +33,10 @@ namespace BioEngine.Data.News.Handlers
                     .Include(x => x.Developer)
                     .Include(x => x.Topic)
                     .FirstOrDefaultAsync();
-
+            if (news != null)
+            {
+                news.PublicUrl = _urlManager.News.PublicUrl(news, true);
+            }
             return news;
         }
     }

@@ -33,6 +33,11 @@ namespace BioEngine.API.Auth
             return null;
         }
 
+        public async Task<int> GetUserId()
+        {
+            return (await GetCurrentUser()).Id;
+        }
+
         public bool Can(UserRights userRight)
         {
             return _context.HttpContext.User.HasClaim(ClaimTypes.Role, userRight.ToString());

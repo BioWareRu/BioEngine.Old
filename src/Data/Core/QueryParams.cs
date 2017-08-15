@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace BioEngine.Data.Core
             return (IOrderedQueryable<TSource>) result;
         }
 
-        private static readonly Dictionary<Type, ModelStructure> Models = new Dictionary<Type, ModelStructure>();
+        private static readonly ConcurrentDictionary<Type, ModelStructure> Models = new ConcurrentDictionary<Type, ModelStructure>();
 
         private static PropertyDescription GetByName(Type cls, string attrName)
         {
@@ -101,7 +102,7 @@ namespace BioEngine.Data.Core
         {
             if (!Models.ContainsKey(cls))
             {
-                Models.Add(cls, ParseClass(cls));
+                Models.TryAdd(cls, ParseClass(cls));
             }
             return Models[cls];
         }

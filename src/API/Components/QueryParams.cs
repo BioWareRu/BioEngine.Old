@@ -6,14 +6,18 @@ namespace BioEngine.API.Components
 {
     public class QueryParams
     {
-        [FromQuery(Name = "limit")]
-        public int PageSize { get; set; } = 10;
-
         [FromQuery(Name = "offset")]
-        public int? Page { get; set; } = 1;
+        public int Offset { get; set; }
+
+        [FromQuery(Name = "limit")]
+        public int Limit { get; set; } = 20;
 
         [FromQuery(Name = "order")]
         public string OrderBy { get; set; }
+
+        public int PageSize => Limit;
+
+        public int? Page => Offset > 0 ? Offset / Limit + 1 : 1;
     }
 
     public static class ModelListQueryBaseExtensions

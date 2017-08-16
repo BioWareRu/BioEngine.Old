@@ -38,7 +38,7 @@ namespace BioEngine.Data.Core
             return query;
         }
 
-        public Task<TResponse> Handle(TRequest message)
+        public virtual Task<TResponse> Handle(TRequest message)
         {
             Logger.LogInformation($"Run query {GetType().FullName} for message {message.GetType().FullName}");
             var result = RunQuery(message);

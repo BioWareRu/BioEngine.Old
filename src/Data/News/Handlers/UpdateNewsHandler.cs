@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoMapper;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using FluentValidation;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
-    internal class UpdateNewsHandler : CommandWithReponseHandlerBase<UpdateNewsCommand, bool>
+    internal class UpdateNewsHandler : RestCommandHandlerBase<UpdateNewsCommand, bool>
     {
-        public UpdateNewsHandler(IMediator mediator, BWContext dbContext, ILogger<UpdateNewsHandler> logger,
-            IValidator<UpdateNewsCommand>[] validators, IMapper mapper) : base(mediator, dbContext, logger, validators,
-            mapper)
+        public UpdateNewsHandler(HandlerContext<UpdateNewsHandler> context, IValidator<UpdateNewsCommand>[] validators)
+            : base(context, validators)
         {
         }
 

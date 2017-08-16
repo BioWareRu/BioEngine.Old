@@ -1,38 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using BioEngine.Common.DB;
 using FluentValidation;
 using FluentValidation.Results;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
-    internal abstract class
-        CommandWithReponseHandlerBase<TCommand, TResponse> : IAsyncRequestHandler<TCommand, TResponse>
+    internal abstract class RestCommandHandlerBase<TCommand, TResponse> : QueryHandlerBase<TCommand, TResponse>
         where TCommand : CreateCommand<TResponse>
     {
-        protected readonly IMediator Mediator;
-        protected readonly BWContext DBContext;
-        protected readonly ILogger<CommandWithReponseHandlerBase<TCommand, TResponse>> Logger;
-        protected readonly IMapper Mapper;
         private readonly IValidator<TCommand>[] _validators;
 
-
-        public CommandWithReponseHandlerBase(IMediator mediator, BWContext dbContext,
-            ILogger<CommandWithReponseHandlerBase<TCommand, TResponse>> logger, IValidator<TCommand>[] validators,
-            IMapper mapper)
+        protected RestCommandHandlerBase(HandlerContext context, IValidator<TCommand>[] validators) :
+            base(context)
         {
-            Mediator = mediator;
-            DBContext = dbContext;
-            Logger = logger;
             _validators = validators;
-            Mapper = mapper;
         }
 
-        public async Task<TResponse> Handle(TCommand command)
+        public override async Task<TResponse> Handle(TCommand command)
         {
             Logger.LogInformation($"Run command {typeof(TCommand)}");
             return await ExecuteCommand(command);
@@ -50,6 +36,11 @@ namespace BioEngine.Data.Core
             {
                 throw new ValidationException(validattionResuls.SelectMany(x => x.Errors));
             }
+        }
+
+        protected override Task<TResponse> RunQuery(TCommand command)
+        {
+            throw new System.NotImplementedException();
         }
 
         protected abstract Task<TResponse> ExecuteCommand(TCommand command);

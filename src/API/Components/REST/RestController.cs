@@ -58,7 +58,7 @@ namespace BioEngine.API.Components.REST
 
         private IActionResult SaveResponse(int code, T model)
         {
-            return Ok(new SaveModelReponse<T>(code, model));
+            return Ok(new SaveModelResponse<T>(code, model));
         }
 
         protected IActionResult List((IEnumerable<T> items, int itemsCount) result)

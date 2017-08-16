@@ -2,9 +2,9 @@
 
 namespace BioEngine.API.Components.REST.Models
 {
-    public class SaveModelReponse<T> : RestResult
+    public class SaveModelResponse<T> : RestResult
     {
-        public SaveModelReponse(int code, T model) : base(code)
+        public SaveModelResponse(int code, T model) : base(code)
         {
             Model = model;
         }

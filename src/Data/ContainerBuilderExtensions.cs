@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -12,8 +10,6 @@ using BioEngine.Common.Search;
 using BioEngine.Data.Core;
 using MediatR;
 using MediatR.Pipeline;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -86,8 +82,10 @@ namespace BioEngine.Data
             
             /*containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces().InstancePerDependency();
+            */
+            
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
-                .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces().InstancePerDependency();*/
+                .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces().InstancePerDependency();
 
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();

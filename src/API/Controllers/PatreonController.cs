@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.API.Controllers
 {
-    [Route("api/[controller]")]
     public class PatreonController : Controller
     {
         [HttpGet("current-goal")]

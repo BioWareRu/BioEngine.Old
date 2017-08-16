@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
 {
-    [Route("api/[controller]")]
     public class NewsController : RestController<News, int>
     {
         public NewsController(IMediator mediator) : base(mediator)
@@ -24,7 +23,7 @@ namespace BioEngine.API.Controllers
         [UserRightsAuthorize(UserRights.AddNews)]
         public async Task<IActionResult> Post([FromBody] NewsFormModel model, [FromServices] IMapper mapper)
         {
-            var command = new CreateNewsCommand(User);
+            var command = new CreateNewsCommand(CurrentUser);
             mapper.Map(model, command);
             var newsId = await Mediator.Send(command);
             return Created(await GetNewsById(newsId));
@@ -40,7 +39,7 @@ namespace BioEngine.API.Controllers
                 return NotFound();
             }
 
-            if (!HasRights(UserRights.EditNews) && news.AuthorId != User.Id)
+            if (!HasRights(UserRights.EditNews) && news.AuthorId != CurrentUser.Id)
             {
                 return Forbid();
             }

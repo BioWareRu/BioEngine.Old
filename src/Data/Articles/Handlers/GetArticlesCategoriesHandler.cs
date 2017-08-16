@@ -1,21 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
     internal class GetArticlesCategoriesHandler : ModelListQueryHandlerBase<GetArticlesCategoriesQuery, ArticleCat>
     {
-        public GetArticlesCategoriesHandler(IMediator mediator, BWContext dbContext,
-            ILogger<GetArticlesCategoriesHandler> logger) : base(mediator, dbContext, logger)
+        public GetArticlesCategoriesHandler(HandlerContext<GetArticlesCategoriesHandler> context) : base(context)
         {
         }
 

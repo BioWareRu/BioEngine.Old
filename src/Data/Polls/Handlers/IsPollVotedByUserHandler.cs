@@ -1,19 +1,15 @@
 ﻿using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.Polls.Queries;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Polls.Handlers
 {
     [UsedImplicitly]
     internal class IsPollVotedByUserHandler : QueryHandlerBase<IsPollVotedByUserQuery, bool>
     {
-        public IsPollVotedByUserHandler(IMediator mediator, BWContext dbContext,
-            ILogger<IsPollVotedByUserHandler> logger) : base(mediator, dbContext, logger)
+        public IsPollVotedByUserHandler(HandlerContext<IsPollVotedByUserHandler> context) : base(context)
         {
         }
 

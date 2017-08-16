@@ -52,7 +52,7 @@ namespace BioEngine.Data
                 typeof(IAsyncNotificationHandler<>),
                 typeof(ICancellableAsyncNotificationHandler<>)
             };
-            
+
             foreach (var mediatrOpenType in mediatrOpenTypes)
             {
                 containerBuilder
@@ -60,7 +60,7 @@ namespace BioEngine.Data
                     .AsClosedTypesOf(mediatrOpenType)
                     .AsImplementedInterfaces();
             }
-            
+
             containerBuilder.RegisterGeneric(typeof(RequestPostProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
             containerBuilder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
 
@@ -77,13 +77,11 @@ namespace BioEngine.Data
             containerBuilder.Register<MultiInstanceFactory>(ctx =>
             {
                 var c = ctx.Resolve<IComponentContext>();
-                return t => (IEnumerable<object>)c.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
+                return t => (IEnumerable<object>) c.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
             });
-            
-            /*containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
-                .Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces().InstancePerDependency();
-            */
-            
+
+            containerBuilder.RegisterGeneric(typeof(HandlerContext<>)).InstancePerDependency();
+
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces().InstancePerDependency();
 
@@ -101,67 +99,5 @@ namespace BioEngine.Data
             containerBuilder.Register(ctx => ctx.Resolve<MapperConfiguration>().CreateMapper())
                 .As<IMapper>().InstancePerLifetimeScope();
         }
-
-        /*public static ContainerBuilder AddDbContext<TContext>(
-            this ContainerBuilder containerBuilder,
-            Action<DbContextOptionsBuilder> optionsAction = null)
-            where TContext : DbContext
-            => AddDbContext<TContext>(containerBuilder, optionsAction == null
-                ? (Action<IComponentContext, DbContextOptionsBuilder>) null
-                : (p, b) => optionsAction.Invoke(b));
-
-
-        public static ContainerBuilder AddDbContext<TContext>(
-            this ContainerBuilder containerBuilder,
-            Action<IComponentContext, DbContextOptionsBuilder> optionsAction)
-            where TContext : DbContext
-        {
-            if (optionsAction != null)
-            {
-                CheckContextConstructors<TContext>();
-            }
-
-            AddCoreServices<TContext>(containerBuilder, optionsAction);
-
-            containerBuilder.RegisterType<TContext>().AsSelf().InstancePerLifetimeScope();
-
-            return containerBuilder;
-        }
-
-        private static void AddCoreServices<TContext>(
-            ContainerBuilder serviceCollection,
-            Action<IComponentContext, DbContextOptionsBuilder> optionsAction)
-            where TContext : DbContext
-        {
-            serviceCollection.Register(p => DbContextOptionsFactory<TContext>(p, optionsAction))
-                .As<DbContextOptions<TContext>>().InstancePerLifetimeScope();
-
-
-            serviceCollection.Register(p => p.Resolve<DbContextOptions<TContext>>()).As<DbContextOptions>()
-                .InstancePerLifetimeScope();
-        }
-
-        private static DbContextOptions<TContext> DbContextOptionsFactory<TContext>(
-            IComponentContext applicationServiceProvider,
-            Action<IComponentContext, DbContextOptionsBuilder> optionsAction)
-            where TContext : DbContext
-        {
-            var builder = new DbContextOptionsBuilder<TContext>(
-                new DbContextOptions<TContext>(new Dictionary<Type, IDbContextOptionsExtension>()));
-
-            optionsAction?.Invoke(applicationServiceProvider, builder);
-
-            return builder.Options;
-        }
-
-        private static void CheckContextConstructors<TContext>() where TContext : DbContext
-        {
-            var declaredConstructors = typeof(TContext).GetTypeInfo().DeclaredConstructors.ToList();
-            if (declaredConstructors.Count == 1
-                && declaredConstructors[0].GetParameters().Length == 0)
-            {
-                throw new ArgumentException("Error while check context constructors");
-            }
-        }*/
     }
 }

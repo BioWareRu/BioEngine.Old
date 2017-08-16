@@ -1,21 +1,17 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
     internal class GetFileByIdHandler : QueryHandlerBase<GetFileByIdQuery, File>
     {
-        public GetFileByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetFileByIdHandler> logger) : base(
-            mediator, dbContext, logger)
+        public GetFileByIdHandler(HandlerContext<GetFileByIdHandler> context) : base(context)
         {
         }
 

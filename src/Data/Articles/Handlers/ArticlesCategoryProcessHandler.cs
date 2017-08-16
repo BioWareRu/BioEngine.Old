@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
@@ -15,9 +12,8 @@ namespace BioEngine.Data.Articles.Handlers
     internal class
         ArticlesCategoryProcessHandler : CategoryProcessHandlerBase<ArticleCategoryProcessQuery, ArticleCat, Article>
     {
-        public ArticlesCategoryProcessHandler(IMediator mediator, BWContext dbContext,
-            ILogger<ArticlesCategoryProcessHandler> logger,
-            ParentEntityProvider parentEntityProvider) : base(mediator, dbContext, logger, parentEntityProvider)
+        public ArticlesCategoryProcessHandler(HandlerContext<ArticlesCategoryProcessHandler> context,
+            ParentEntityProvider parentEntityProvider) : base(context, parentEntityProvider)
         {
         }
 

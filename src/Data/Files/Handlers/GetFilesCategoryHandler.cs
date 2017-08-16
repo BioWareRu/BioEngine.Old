@@ -1,21 +1,17 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Queries;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Files.Handlers
 {
     [UsedImplicitly]
     internal class GetFilesCategoryHandler : QueryHandlerBase<GetFilesCategoryQuery, FileCat>
     {
-        public GetFilesCategoryHandler(IMediator mediator, BWContext dbContext, ILogger<GetFilesCategoryHandler> logger)
-            : base(mediator, dbContext, logger)
+        public GetFilesCategoryHandler(HandlerContext<GetFilesCategoryHandler> context) : base(context)
         {
         }
 

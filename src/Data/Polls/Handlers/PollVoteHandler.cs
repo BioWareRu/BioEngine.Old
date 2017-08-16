@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Polls.Commands;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Polls.Handlers
 {
     [UsedImplicitly]
     internal class PollVoteHandler : CommandHandlerBase<PollVoteCommand>
     {
-        public PollVoteHandler(IMediator mediator, BWContext dbContext, ILogger<PollVoteHandler> logger) : base(
-            mediator, dbContext, logger)
+        public PollVoteHandler(HandlerContext<PollVoteHandler> context) : base(context)
         {
         }
 

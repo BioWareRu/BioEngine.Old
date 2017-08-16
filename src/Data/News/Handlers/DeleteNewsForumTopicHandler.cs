@@ -1,11 +1,8 @@
 ﻿using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Ipb;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using JetBrains.Annotations;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handlers
 {
@@ -14,9 +11,8 @@ namespace BioEngine.Data.News.Handlers
     {
         private readonly IPBApiHelper _ipbApiHelper;
 
-        public DeleteNewsForumTopicHandler(IMediator mediator, BWContext dbContext,
-            ILogger<DeleteNewsForumTopicHandler> logger,
-            IPBApiHelper ipbApiHelper) : base(mediator, dbContext, logger)
+        public DeleteNewsForumTopicHandler(HandlerContext<DeleteNewsForumTopicHandler> context,
+            IPBApiHelper ipbApiHelper) : base(context)
         {
             _ipbApiHelper = ipbApiHelper;
         }

@@ -1,20 +1,16 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Queries;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handlers
 {
     [UsedImplicitly]
     internal class GetOneNewsHandler : QueryHandlerBase<GetOneNewsQuery, Common.Models.News>
     {
-        public GetOneNewsHandler(IMediator mediator, BWContext dbContext, ILogger<GetOneNewsHandler> logger) : base(
-            mediator, dbContext, logger)
+        public GetOneNewsHandler(HandlerContext<GetOneNewsHandler> context) : base(context)
         {
         }
 

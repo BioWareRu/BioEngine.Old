@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,8 +14,7 @@ namespace BioEngine.Data.Core
     {
         protected abstract Task<TResponse> RunQuery(TRequest message);
 
-        protected QueryHandlerBase(IMediator mediator, BWContext dbContext, ILogger logger) : base(mediator, dbContext,
-            logger)
+        protected QueryHandlerBase(HandlerContext context) : base(context)
         {
         }
 

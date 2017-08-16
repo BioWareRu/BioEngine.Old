@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handlers
 {
@@ -17,8 +14,7 @@ namespace BioEngine.Data.News.Handlers
     {
         private readonly BioUrlManager _urlManager;
 
-        public GetNewsHandler(IMediator mediator, BWContext dbContext, ILogger<GetNewsHandler> logger, BioUrlManager urlManager) : base(mediator,
-            dbContext, logger)
+        public GetNewsHandler(HandlerContext<GetNewsHandler> context, BioUrlManager urlManager) : base(context)
         {
             _urlManager = urlManager;
         }
@@ -50,7 +46,7 @@ namespace BioEngine.Data.News.Handlers
             var data = await GetData(query, message);
             foreach (var newse in data.models)
             {
-                newse.PublicUrl = _urlManager.News.PublicUrl(newse, true    );
+                newse.PublicUrl = _urlManager.News.PublicUrl(newse, true);
             }
             return data;
         }

@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
@@ -15,8 +12,7 @@ namespace BioEngine.Data.Articles.Handlers
     internal class GetArticlesHandler : QueryHandlerBase<GetArticlesQuery, (IEnumerable<Common.Models.Article>
         articles, int count)>
     {
-        public GetArticlesHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticlesHandler> logger) : base(
-            mediator, dbContext, logger)
+        public GetArticlesHandler(HandlerContext<GetArticlesHandler> context) : base(context)
         {
         }
 

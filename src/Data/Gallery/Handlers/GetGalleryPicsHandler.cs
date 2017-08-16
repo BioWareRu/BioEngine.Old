@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 using BioEngine.Data.Gallery.Queries;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Gallery.Handlers
 {
     [UsedImplicitly]
     internal class GetGalleryPicsHandler : ModelListQueryHandlerBase<GetGalleryPicsQuery, GalleryPic>
     {
-        public GetGalleryPicsHandler(IMediator mediator, BWContext dbContext, ILogger<GetGalleryPicsHandler> logger) :
-            base(mediator, dbContext, logger)
+        public GetGalleryPicsHandler(HandlerContext<GetGalleryPicsHandler> context) : base(context)
         {
         }
 

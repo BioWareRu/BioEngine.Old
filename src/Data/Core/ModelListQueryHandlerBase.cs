@@ -2,10 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
@@ -31,8 +28,7 @@ namespace BioEngine.Data.Core
             return (models, totalCount ?? models.Count);
         }
 
-        protected ModelListQueryHandlerBase(IMediator mediator, BWContext dbContext, ILogger logger) : base(mediator,
-            dbContext, logger)
+        protected ModelListQueryHandlerBase(HandlerContext context) : base(context)
         {
         }
     }

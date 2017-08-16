@@ -1,13 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.News.Handlers
 {
@@ -16,9 +13,8 @@ namespace BioEngine.Data.News.Handlers
     {
         private readonly BioUrlManager _urlManager;
 
-        public GetNewsByIdHandler(IMediator mediator, BWContext dbContext, ILogger<GetNewsByIdHandler> logger,
-            BioUrlManager urlManager) : base(
-            mediator, dbContext, logger)
+        public GetNewsByIdHandler(HandlerContext<GetNewsByIdHandler> context,
+            BioUrlManager urlManager) : base(context)
         {
             _urlManager = urlManager;
         }

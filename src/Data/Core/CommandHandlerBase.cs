@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -10,8 +9,7 @@ namespace BioEngine.Data.Core
     {
         protected abstract Task ExecuteCommand(TRequest command);
 
-        protected CommandHandlerBase(IMediator mediator, BWContext dbContext, ILogger logger) : base(mediator,
-            dbContext, logger)
+        protected CommandHandlerBase(HandlerContext context) : base(context)
         {
         }
 

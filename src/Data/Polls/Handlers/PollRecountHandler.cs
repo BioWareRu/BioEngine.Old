@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Data.Core;
 using BioEngine.Data.Polls.Commands;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Polls.Handlers
 {
     [UsedImplicitly]
     internal class PollRecountHandler : CommandHandlerBase<PollRecountCommand>
     {
-        public PollRecountHandler(IMediator mediator, BWContext dbContext, ILogger<PollRecountHandler> logger) : base(
-            mediator, dbContext, logger)
+        public PollRecountHandler(HandlerContext<PollRecountHandler> context) : base(context)
         {
         }
 

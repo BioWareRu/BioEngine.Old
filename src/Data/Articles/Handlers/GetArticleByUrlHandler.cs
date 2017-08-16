@@ -1,21 +1,17 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
 using JetBrains.Annotations;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
     internal class GetArticleByUrlHandler : QueryHandlerBase<GetArticleByUrlQuery, Article>
     {
-        public GetArticleByUrlHandler(IMediator mediator, BWContext dbContext, ILogger<GetArticleByUrlHandler> logger) :
-            base(mediator, dbContext, logger)
+        public GetArticleByUrlHandler(HandlerContext<GetArticleByUrlHandler> context) : base(context)
         {
         }
 

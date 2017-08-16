@@ -1,4 +1,5 @@
-﻿using BioEngine.Common.DB;
+﻿using AutoMapper;
+using BioEngine.Common.DB;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +10,14 @@ namespace BioEngine.Data.Core
         protected readonly BWContext DBContext;
         protected readonly ILogger Logger;
         protected readonly IMediator Mediator;
+        protected readonly IMapper Mapper;
 
-        protected HandlerBase(IMediator mediator, BWContext dbContext, ILogger logger)
+        protected HandlerBase(HandlerContext context)
         {
-            DBContext = dbContext;
-            Logger = logger;
-            Mediator = mediator;
+            DBContext = context.DBContext;
+            Logger = context.Logger;
+            Mediator = context.Mediator;
+            Mapper = context.Mapper;
         }
     }
 }

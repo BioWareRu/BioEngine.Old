@@ -4,6 +4,7 @@ using BioEngine.API.Auth;
 using BioEngine.API.Components.REST.Errors;
 using BioEngine.API.Components.REST.Models;
 using BioEngine.Common.Base;
+using BioEngine.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,16 +18,30 @@ namespace BioEngine.API.Components.REST
     public abstract class RestController<T, TPkType> : Controller where T : BaseModel<TPkType>
     {
         protected readonly IMediator Mediator;
-        protected readonly CurrentUserProvider CurrentUserProvider;
 
-        protected RestController(IMediator mediator, CurrentUserProvider currentUserProvider)
+        protected RestController(IMediator mediator)
         {
             Mediator = mediator;
-            CurrentUserProvider = currentUserProvider;
+        }
+
+        protected User User
+        {
+            get
+            {
+                var feature = HttpContext.Features.Get<ICurrentUserFeature>();
+                return feature.User;
+            }
+        }
+
+        protected bool HasRights(UserRights rights)
+        {
+            return User.HasRight(rights);
         }
 
         public abstract Task<IActionResult> Get(QueryParams queryParams);
+
         public abstract Task<IActionResult> Get(TPkType id);
+
         /*public abstract Task<IActionResult> Post([FromBody] T model);
         public abstract Task<IActionResult> Put(TPkType id, [FromBody] T model);*/
         public abstract Task<IActionResult> Delete(TPkType id);
@@ -40,7 +55,7 @@ namespace BioEngine.API.Components.REST
         {
             return SaveResponse(StatusCodes.Status202Accepted, model);
         }
-        
+
         private IActionResult SaveResponse(int code, T model)
         {
             return Ok(new SaveModelReponse<T>(code, model));

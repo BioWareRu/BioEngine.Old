@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.Variance;
 using AutoMapper;
 using BioEngine.Common.Base;
@@ -10,21 +11,33 @@ using BioEngine.Common.DB;
 using BioEngine.Common.Search;
 using BioEngine.Data.Core;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.Data
 {
     public static class ContainerBuilderExtensions
     {
+        public static ContainerBuilder AddBioEngineData(this IServiceCollection services,
+            IConfigurationRoot configuration)
+        {
+            var dbConfig = new MySqlDBConfiguration(configuration);
+            services.AddDbContext<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.AddBioEngineData(configuration);
+            return builder;
+        }
+
         public static void AddBioEngineData(this ContainerBuilder containerBuilder, IConfigurationRoot configuration)
         {
             containerBuilder.RegisterGeneric(typeof(ElasticSearchProvider<>)).As(typeof(ISearchProvider<>))
                 .InstancePerLifetimeScope();
             containerBuilder.RegisterType<ParentEntityProvider>().InstancePerLifetimeScope();
-            var dbConfig = new MySqlDBConfiguration(configuration);
-            containerBuilder.AddDbContext<BWContext>(builder => dbConfig.Configure(builder));
 
             containerBuilder
                 .RegisterSource(new ContravariantRegistrationSource());
@@ -34,30 +47,47 @@ namespace BioEngine.Data
                 .As<IMediator>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder
-                .Register<SingleInstanceFactory>(ctx =>
-                {
-                    var c = ctx.Resolve<IComponentContext>();
-                    return t =>
-                    {
-                        object o;
-                        return c.TryResolve(t, out o) ? o : null;
-                    };
-                })
-                .InstancePerLifetimeScope();
+            var mediatrOpenTypes = new[]
+            {
+                typeof(IRequestHandler<,>),
+                typeof(IAsyncRequestHandler<,>),
+                typeof(ICancellableAsyncRequestHandler<,>),
+                typeof(INotificationHandler<>),
+                typeof(IAsyncNotificationHandler<>),
+                typeof(ICancellableAsyncNotificationHandler<>)
+            };
+            
+            foreach (var mediatrOpenType in mediatrOpenTypes)
+            {
+                containerBuilder
+                    .RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
+                    .AsClosedTypesOf(mediatrOpenType)
+                    .AsImplementedInterfaces();
+            }
+            
+            containerBuilder.RegisterGeneric(typeof(RequestPostProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
+            containerBuilder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
 
-            containerBuilder
-                .Register<MultiInstanceFactory>(ctx =>
+            containerBuilder.Register<SingleInstanceFactory>(ctx =>
+            {
+                var c = ctx.Resolve<IComponentContext>();
+                return t =>
                 {
-                    var c = ctx.Resolve<IComponentContext>();
-                    return t => (IEnumerable<object>) c.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
-                })
-                .InstancePerLifetimeScope();
+                    object o;
+                    return c.TryResolve(t, out o) ? o : null;
+                };
+            });
 
+            containerBuilder.Register<MultiInstanceFactory>(ctx =>
+            {
+                var c = ctx.Resolve<IComponentContext>();
+                return t => (IEnumerable<object>)c.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
+            });
+            
+            /*containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
+                .Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces().InstancePerDependency();
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
-                .Where(t => t.Name.EndsWith("Handler")).AsImplementedInterfaces();
-            containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
-                .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces();
+                .Where(t => t.Name.EndsWith("Validator")).AsImplementedInterfaces().InstancePerDependency();*/
 
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
@@ -74,7 +104,7 @@ namespace BioEngine.Data
                 .As<IMapper>().InstancePerLifetimeScope();
         }
 
-        public static ContainerBuilder AddDbContext<TContext>(
+        /*public static ContainerBuilder AddDbContext<TContext>(
             this ContainerBuilder containerBuilder,
             Action<DbContextOptionsBuilder> optionsAction = null)
             where TContext : DbContext
@@ -134,6 +164,6 @@ namespace BioEngine.Data
             {
                 throw new ArgumentException("Error while check context constructors");
             }
-        }
+        }*/
     }
 }

@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
@@ -72,7 +74,6 @@ namespace BioEngine.API
             services.AddBioEngineRouting();
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
-            services.AddScoped<CurrentUserProvider>();
 
             services.AddSingleton(new IPBApiConfig
             {
@@ -117,14 +118,23 @@ namespace BioEngine.API
             });
             services.AddMvc();
 
+
+            /*;
             // Create the container builder.
             var builder = new ContainerBuilder();
             builder.Populate(services);
             builder.AddBioEngineData(Configuration);
 
             ApplicationContainer = builder.Build();
+            
+*/
 
-            return new AutofacServiceProvider(ApplicationContainer);
+            var builder = services.AddBioEngineData(Configuration);
+
+            builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
+                .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
+
+            return new AutofacServiceProvider(builder.Build());
         }
 
         private static IPHostEntry TryResolveDns(string redisUrl)

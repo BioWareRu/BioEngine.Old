@@ -23,9 +23,6 @@ namespace BioEngine.Data.News.Handlers
 
         protected override async Task<int> ExecuteCommand(CreateNewsCommand createCommand)
         {
-            createCommand.Date = DateTimeOffset.Now.ToUnixTimeSeconds();
-            createCommand.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
-
             await Validate(createCommand);
 
             var news = Mapper.Map<CreateNewsCommand, Common.Models.News>(createCommand);

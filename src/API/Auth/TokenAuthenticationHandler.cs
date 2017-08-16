@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 using BioEngine.Common.DB;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
+using BioEngine.Data.Users.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.API.Auth
 {
@@ -22,25 +25,27 @@ namespace BioEngine.API.Auth
             ;
 
         private readonly IConfigurationRoot _configuration;
-        private readonly BWContext _dbContext;
         private readonly ILogger<TokenAuthenticationHandler> _logger;
 
         private readonly TokenAuthOptions _options;
 
-        public TokenAuthenticationHandler(BWContext dbContext,
-            IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger,
+        public TokenAuthenticationHandler(IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger,
             IOptions<TokenAuthOptions> options)
         {
-            _dbContext = dbContext;
             _configuration = configuration;
             _logger = logger;
             _options = options.Value;
         }
 
+        protected IMediator GetMediator()
+        {
+            return Context.RequestServices.GetService<IMediator>();
+        }
+
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (_options.DevMode)
-                return HandleAuthenticateDevAsync();
+                return await HandleAuthenticateDevAsync();
             var stopwatch = Stopwatch.StartNew();
             var result = AuthenticateResult.Fail("No token");
             //            throw new NotImplementedException();
@@ -57,6 +62,7 @@ namespace BioEngine.API.Auth
                         if (user != null)
                         {
                             var userTicket = AuthenticationTicket(user);
+                            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user));
                             result = AuthenticateResult.Success(userTicket);
                         }
                         else
@@ -84,10 +90,11 @@ namespace BioEngine.API.Auth
             return userTicket;
         }
 
-        private static AuthenticateResult HandleAuthenticateDevAsync()
+        private async Task<AuthenticateResult> HandleAuthenticateDevAsync()
         {
-            var user = new User {Id = 1, Name = "Admin", GroupId = 4};
+            var user = await GetMediator().Send(new GetUserByIdQuery(1));
             var userTicket = AuthenticationTicket(user);
+            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user));
             return AuthenticateResult.Success(userTicket);
         }
 
@@ -101,11 +108,7 @@ namespace BioEngine.API.Auth
                 {
                     var id = int.Parse(userInfo.Id);
                     user =
-                        await _dbContext.Users.Where(
-                                u => u.Id == id
-                            )
-                            .Include(x => x.SiteTeamMember)
-                            .FirstOrDefaultAsync();
+                        await GetMediator().Send(new GetUserByIdQuery(id));
                     if (user != null)
                         TokenUsers.TryAdd(token, user);
                 }
@@ -135,6 +138,21 @@ namespace BioEngine.API.Auth
             var userInformation = new IpbUserInfo(msg, _logger);
 
             return userInformation;
+        }
+    }
+
+    public interface ICurrentUserFeature
+    {
+        User User { get; }
+    }
+
+    public class CurrentUserFeature : ICurrentUserFeature
+    {
+        public User User { get; }
+
+        public CurrentUserFeature(User user)
+        {
+            User = user;
         }
     }
 }

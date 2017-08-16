@@ -11,8 +11,7 @@ namespace BioEngine.API.Controllers
 {
     public class GamesController : RestController<Game, int>
     {
-        public GamesController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
-            currentUserProvider)
+        public GamesController(IMediator mediator) : base(mediator)
         {
         }
 

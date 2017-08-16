@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using BioEngine.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -28,7 +27,7 @@ namespace BioEngine.API.Auth
         }
     }
 
-    public class UserRightsCheckFilter : Attribute, IAsyncAuthorizationFilter
+    public class UserRightsCheckFilter : Attribute, IAuthorizationFilter
     {
         private readonly UserRights[] _userRights;
 
@@ -37,10 +36,10 @@ namespace BioEngine.API.Auth
             _userRights = userRights;
         }
 
-        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
             var ok = true;
-            var user = await context.HttpContext.RequestServices.GetService<CurrentUserProvider>().GetCurrentUser();
+            var user = context.HttpContext.Features.Get<ICurrentUserFeature>().User;
             foreach (var userRight in _userRights)
             {
                 ok = user.HasRight(userRight);

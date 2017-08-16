@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
+using BioEngine.API.Models.News;
 using BioEngine.Common.Models;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
@@ -14,23 +16,23 @@ namespace BioEngine.API.Controllers
     [Route("api/[controller]")]
     public class NewsController : RestController<News, int>
     {
-        public NewsController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
-            currentUserProvider)
+        public NewsController(IMediator mediator) : base(mediator)
         {
         }
 
         [HttpPost]
         [UserRightsAuthorize(UserRights.AddNews)]
-        public async Task<IActionResult> Post([FromBody] CreateNewsCommand createCommand)
+        public async Task<IActionResult> Post([FromBody] NewsFormModel model, [FromServices] IMapper mapper)
         {
-            createCommand.AuthorId = CurrentUserProvider.GetCurrentUser().Id;
-            var newsId = await Mediator.Send(createCommand);
+            var command = new CreateNewsCommand(User);
+            mapper.Map(model, command);
+            var newsId = await Mediator.Send(command);
             return Created(await GetNewsById(newsId));
         }
 
         [HttpPut("{id}")]
         [UserRightsAuthorize(UserRights.AddNews)]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateNewsCommand updateCommand)
+        public async Task<IActionResult> Put(int id, [FromBody] NewsFormModel model, [FromServices] IMapper mapper)
         {
             var news = await GetNewsById(id);
             if (news == null)
@@ -38,12 +40,13 @@ namespace BioEngine.API.Controllers
                 return NotFound();
             }
 
-            if (!CurrentUserProvider.Can(UserRights.EditNews) && news.AuthorId != await CurrentUserProvider.GetUserId())
+            if (!HasRights(UserRights.EditNews) && news.AuthorId != User.Id)
             {
                 return Forbid();
             }
 
-            updateCommand.SetModel(news);
+            var updateCommand = new UpdateNewsCommand(news);
+            mapper.Map(model, updateCommand);
             await Mediator.Send(updateCommand);
             return Updated(await GetNewsById(id));
         }

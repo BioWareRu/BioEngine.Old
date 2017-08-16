@@ -11,8 +11,7 @@ namespace BioEngine.API.Controllers
 {
     public class TopicsController : RestController<Topic, int>
     {
-        public TopicsController(IMediator mediator, CurrentUserProvider currentUserProvider) : base(mediator,
-            currentUserProvider)
+        public TopicsController(IMediator mediator) : base(mediator)
         {
         }
 

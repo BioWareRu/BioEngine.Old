@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace BioEngine.Data.News.Commands
 {
     [UsedImplicitly]
-    public class UpdateNewsCommand : UpdateCommand<Common.Models.News>, IChildModelCommand
+    public sealed class UpdateNewsCommand : UpdateCommand<Common.Models.News>, IChildModelCommand
     {
         public string Source { get; set; }
         public string Url { get; set; }
@@ -15,6 +15,10 @@ namespace BioEngine.Data.News.Commands
         public int? DeveloperId { get; set; }
         public int? TopicId { get; set; }
         public long LastChangeDate { get; set; }
-        public override Common.Models.News Model { get; protected set; }
+
+        public UpdateNewsCommand(Common.Models.News news)
+        {
+            Model = news;
+        }
     }
 }

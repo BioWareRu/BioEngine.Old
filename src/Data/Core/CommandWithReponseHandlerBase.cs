@@ -34,6 +34,7 @@ namespace BioEngine.Data.Core
 
         public async Task<TResponse> Handle(TCommand command)
         {
+            Logger.LogInformation($"Run command {typeof(TCommand)}");
             return await ExecuteCommand(command);
         }
 

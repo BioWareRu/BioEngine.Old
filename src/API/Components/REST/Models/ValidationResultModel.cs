@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BioEngine.API.Extensions;
 using FluentValidation.Results;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +26,7 @@ namespace BioEngine.API.Components.REST.Models
                 IsSuccess = false;
                 Message = "Validation Failed";
                 Errors = validationFailures
-                    .Select(error => new ValidationError(error.PropertyName, error.ErrorMessage))
+                    .Select(error => new ValidationError(error.PropertyName.ToCamelCase(), error.ErrorMessage))
                     .ToList();
             }
         }

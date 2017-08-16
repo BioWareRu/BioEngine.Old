@@ -65,7 +65,8 @@ namespace BioEngine.API
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "tokenAuth";
                 o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
-                o.DevMode = bool.Parse(Configuration["IPB_OAUTH_DEV_MODE"]);
+                bool.TryParse(Configuration["IPB_OAUTH_DEV_MODE"] ?? "", out bool devMode);
+                o.DevMode = devMode;
             });
 
             services.AddDistributedMemoryCache();
@@ -119,22 +120,13 @@ namespace BioEngine.API
             services.AddMvc();
 
 
-            /*;
-            // Create the container builder.
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
-            builder.AddBioEngineData(Configuration);
-
-            ApplicationContainer = builder.Build();
-            
-*/
-
             var builder = services.AddBioEngineData(Configuration);
 
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
+            ApplicationContainer = builder.Build();
 
-            return new AutofacServiceProvider(builder.Build());
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         private static IPHostEntry TryResolveDns(string redisUrl)

@@ -3,9 +3,6 @@ version: '2'
 services:
   resizr:
     image: resizr:dev
-    build:
-      args:
-        source: ${DOCKER_BUILD_SOURCE}
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
@@ -18,9 +15,6 @@ services:
 
   site:
     image: site:dev
-    build:
-      args:
-        source: ${DOCKER_BUILD_SOURCE}
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
@@ -33,9 +27,6 @@ services:
 
   api:
     image: bioengine.api:dev
-    build:
-      args:
-        source: ${DOCKER_BUILD_SOURCE}
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:

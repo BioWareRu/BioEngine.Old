@@ -76,5 +76,47 @@ namespace BioEngine.API.Controllers
         {
             return await Mediator.Send(new GetNewsByIdQuery(id));
         }
+
+        [HttpPut("{id}/publish")]
+        [UserRightsAuthorize(UserRights.PubNews)]
+        public async Task<IActionResult> Publish(int id)
+        {
+            var news = await GetNewsById(id);
+
+            if (news == null)
+            {
+                return NotFound();
+            }
+
+            if (news.Pub == 1)
+            {
+                return BadRequest();
+            }
+
+            await Mediator.Send(new PublishNewsCommand(news));
+
+            return Ok();
+        }
+        
+        [HttpPut("{id}/unpublish")]
+        [UserRightsAuthorize(UserRights.PubNews)]
+        public async Task<IActionResult> UnPublish(int id)
+        {
+            var news = await GetNewsById(id);
+
+            if (news == null)
+            {
+                return NotFound();
+            }
+
+            if (news.Pub == 0)
+            {
+                return BadRequest();
+            }
+
+            await Mediator.Send(new UnPublishNewsCommand(news));
+
+            return Ok();
+        }
     }
 }

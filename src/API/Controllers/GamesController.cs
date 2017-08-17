@@ -4,14 +4,13 @@ using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.Common.Models;
 using BioEngine.Data.Base.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
 {
     public class GamesController : RestController<Game, int>
     {
-        public GamesController(IMediator mediator) : base(mediator)
+        public GamesController(RestContext<GamesController> context) : base(context)
         {
         }
 

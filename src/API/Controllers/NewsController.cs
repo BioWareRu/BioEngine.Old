@@ -8,14 +8,13 @@ using BioEngine.API.Models.News;
 using BioEngine.Common.Models;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
 {
     public class NewsController : RestController<News, int>
     {
-        public NewsController(IMediator mediator) : base(mediator)
+        public NewsController(RestContext<NewsController> context) : base(context)
         {
         }
 

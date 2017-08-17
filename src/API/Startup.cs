@@ -7,6 +7,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using BioEngine.API.Auth;
+using BioEngine.API.Components.REST;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
@@ -124,6 +125,9 @@ namespace BioEngine.API
 
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
+            
+            builder.RegisterGeneric(typeof(RestContext<>)).InstancePerDependency();
+            
             ApplicationContainer = builder.Build();
 
             return new AutofacServiceProvider(ApplicationContainer);

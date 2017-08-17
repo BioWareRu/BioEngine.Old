@@ -1,5 +1,4 @@
 ﻿using System.Text.Encodings.Web;
-using BioEngine.Common.DB;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;

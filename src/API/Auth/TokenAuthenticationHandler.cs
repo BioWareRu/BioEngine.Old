@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
 using BioEngine.Data.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+// ReSharper disable once RedundantUsingDirective
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.API.Auth
@@ -44,8 +42,6 @@ namespace BioEngine.API.Auth
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (_options.DevMode)
-                return await HandleAuthenticateDevAsync();
             var stopwatch = Stopwatch.StartNew();
             var result = AuthenticateResult.Fail("No token");
             //            throw new NotImplementedException();
@@ -58,11 +54,13 @@ namespace BioEngine.API.Auth
 
                     if (!string.IsNullOrEmpty(tokenString))
                     {
+                        if (_options.DevMode)
+                            return await HandleAuthenticateDevAsync(tokenString);
                         var user = await GetUser(tokenString);
                         if (user != null)
                         {
                             var userTicket = AuthenticationTicket(user);
-                            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user));
+                            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user, tokenString));
                             result = AuthenticateResult.Success(userTicket);
                         }
                         else
@@ -90,11 +88,11 @@ namespace BioEngine.API.Auth
             return userTicket;
         }
 
-        private async Task<AuthenticateResult> HandleAuthenticateDevAsync()
+        private async Task<AuthenticateResult> HandleAuthenticateDevAsync(string token)
         {
             var user = await GetMediator().Send(new GetUserByIdQuery(1));
             var userTicket = AuthenticationTicket(user);
-            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user));
+            Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user, token));
             return AuthenticateResult.Success(userTicket);
         }
 
@@ -144,15 +142,18 @@ namespace BioEngine.API.Auth
     public interface ICurrentUserFeature
     {
         User User { get; }
+        string Token { get; }
     }
 
     public class CurrentUserFeature : ICurrentUserFeature
     {
         public User User { get; }
+        public string Token { get; }
 
-        public CurrentUserFeature(User user)
+        public CurrentUserFeature(User user, string token)
         {
             User = user;
+            Token = token;
         }
     }
 }

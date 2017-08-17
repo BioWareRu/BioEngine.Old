@@ -9,6 +9,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.API.Components.REST
 {
@@ -18,10 +21,16 @@ namespace BioEngine.API.Components.REST
     public abstract class RestController<T, TPkType> : Controller where T : BaseModel<TPkType>
     {
         protected readonly IMediator Mediator;
+        protected readonly IConfiguration Configuration;
+        protected readonly AppSettings AppSettings;
+        protected readonly ILogger Logger;
 
-        protected RestController(IMediator mediator)
+        protected RestController(RestContext context)
         {
-            Mediator = mediator;
+            Mediator = context.Mediator;
+            AppSettings = context.AppSettings;
+            Logger = context.Logger;
+            Configuration = context.Configuration;
         }
 
         protected User CurrentUser
@@ -71,6 +80,31 @@ namespace BioEngine.API.Components.REST
                 return NotFound(new NotFoundError());
             }
             return Ok(model);
+        }
+    }
+
+    public abstract class RestContext
+    {
+        protected RestContext(IMediator mediator, IConfiguration configuration, AppSettings appSettings, ILogger logger)
+        {
+            Mediator = mediator;
+            Configuration = configuration;
+            AppSettings = appSettings;
+            Logger = logger;
+        }
+
+        public IMediator Mediator { get; }
+        public IConfiguration Configuration { get; }
+        public AppSettings AppSettings { get; }
+        public ILogger Logger { get; }
+    }
+
+    public class RestContext<T> : RestContext
+    {
+        public RestContext(IMediator mediator, IConfigurationRoot configuration, IOptions<AppSettings> appSettings,
+            ILogger<T> logger) : base(mediator, configuration, appSettings.Value,
+            logger)
+        {
         }
     }
 }

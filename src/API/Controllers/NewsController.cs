@@ -1,13 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
+using BioEngine.API.Components.REST.Models;
 using BioEngine.API.Models.News;
 using BioEngine.Common.Models;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
@@ -67,9 +69,23 @@ namespace BioEngine.API.Controllers
 
         [HttpDelete]
         [UserRightsAuthorize(UserRights.FullNews)]
-        public override Task<IActionResult> Delete(int id)
+        public override async Task<IActionResult> Delete(int id)
         {
-            throw new NotImplementedException();
+            var news = await GetNewsById(id);
+
+            if (news == null)
+            {
+                return NotFound();
+            }
+
+            var result = await Mediator.Send(new DeleteNewsCommand(news));
+
+            if (result)
+            {
+                return Deleted();
+            }
+            return Errors(StatusCodes.Status500InternalServerError,
+                new List<IErrorInterface> {new RestError("Can't delete news")});
         }
 
         private async Task<News> GetNewsById(int id)
@@ -97,7 +113,7 @@ namespace BioEngine.API.Controllers
 
             return Ok();
         }
-        
+
         [HttpPut("{id}/unpublish")]
         [UserRightsAuthorize(UserRights.PubNews)]
         public async Task<IActionResult> UnPublish(int id)

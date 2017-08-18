@@ -63,9 +63,19 @@ namespace BioEngine.API.Components.REST
             return SaveResponse(StatusCodes.Status202Accepted, model);
         }
 
+        protected IActionResult Deleted()
+        {
+            return SaveResponse(StatusCodes.Status204NoContent, null);
+        }
+
+        protected IActionResult Errors(int code, IEnumerable<IErrorInterface> errors)
+        {
+            return new ObjectResult(new RestResult(code, errors)) {StatusCode = code};
+        }
+
         private IActionResult SaveResponse(int code, T model)
         {
-            return Ok(new SaveModelResponse<T>(code, model));
+            return new ObjectResult(new SaveModelResponse<T>(code, model)) {StatusCode = code};
         }
 
         protected IActionResult List((IEnumerable<T> items, int itemsCount) result)

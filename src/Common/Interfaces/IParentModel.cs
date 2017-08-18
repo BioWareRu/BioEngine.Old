@@ -11,5 +11,7 @@ namespace BioEngine.Common.Interfaces
         string ParentUrl { get; }
 
         string DisplayTitle { get; }
+        
+        string TwitterTag { get; }
     }
 }

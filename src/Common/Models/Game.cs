@@ -82,5 +82,6 @@ namespace BioEngine.Common.Models
         public override string ParentUrl => Url;
         public override string DisplayTitle => Title;
         public override string Icon => SmallLogo;
+        public override string TwitterTag => TweetTag;
     }
 }

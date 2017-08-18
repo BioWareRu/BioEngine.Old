@@ -5,6 +5,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
     <ProjectReference Include="..\Routing\BioEngine.Routing.csproj" />
+    <ProjectReference Include="..\Social\BioEngine.Social.csproj" />
+    <ProjectReference Include="..\Social\Social.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.1" />

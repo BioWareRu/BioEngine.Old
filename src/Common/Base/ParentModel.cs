@@ -16,6 +16,9 @@ namespace BioEngine.Common.Base
 
         [UsedImplicitly]
         public virtual string DisplayTitle { get; }
+        
+        [UsedImplicitly]
+        public virtual string TwitterTag { get; }
     }
 
     public enum ParentType

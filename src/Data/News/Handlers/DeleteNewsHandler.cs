@@ -9,8 +9,9 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class DeleteNewsHandler : RestCommandHandlerBase<DeleteNewsCommand, bool>
     {
-        public DeleteNewsHandler(HandlerContext context, IValidator<DeleteNewsCommand>[] validators) : base(context,
-            validators)
+        public DeleteNewsHandler(HandlerContext<DeleteNewsHandler> context, IValidator<DeleteNewsCommand>[] validators)
+            : base(context,
+                validators)
         {
         }
 

@@ -28,6 +28,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
+using Social;
 using StackExchange.Redis;
 
 namespace BioEngine.API
@@ -88,6 +89,8 @@ namespace BioEngine.API
                 Configuration["BE_PATREON_API_KEY"]));
             services.AddSingleton<PatreonApiHelper>();
 
+            services.AddBioEngineSocial(Configuration);
+
             services.AddSingleton(Configuration);
             //services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
 
@@ -125,9 +128,9 @@ namespace BioEngine.API
 
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
-            
+
             builder.RegisterGeneric(typeof(RestContext<>)).InstancePerDependency();
-            
+
             ApplicationContainer = builder.Build();
 
             return new AutofacServiceProvider(ApplicationContainer);

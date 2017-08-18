@@ -4,6 +4,7 @@ using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using FluentValidation;
 using JetBrains.Annotations;
+using Social;
 
 namespace BioEngine.Data.News.Handlers
 {
@@ -21,7 +22,14 @@ namespace BioEngine.Data.News.Handlers
 
             await Validate(command);
 
+            var needTweetUpd = command.Model.Pub == 1 &&
+                               (command.Title != command.Model.Title || command.Url != command.Model.Url);
+
             Mapper.Map(command, command.Model);
+            if (needTweetUpd)
+            {
+                await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
+            }
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();

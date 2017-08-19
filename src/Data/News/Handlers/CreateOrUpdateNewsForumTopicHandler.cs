@@ -24,8 +24,6 @@ namespace BioEngine.Data.News.Handlers
             {
                 command.News.ForumTopicId = result.topicId;
                 command.News.ForumPostId = result.postId;
-                DBContext.Update(command.News);
-                await DBContext.SaveChangesAsync();
             }
         }
     }

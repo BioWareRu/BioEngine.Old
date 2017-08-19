@@ -5,7 +5,6 @@ using BioEngine.Data.News.Commands;
 using BioEngine.Social;
 using FluentValidation;
 using JetBrains.Annotations;
-using Social;
 
 namespace BioEngine.Data.News.Handlers
 {
@@ -31,6 +30,8 @@ namespace BioEngine.Data.News.Handlers
             {
                 await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
             }
+            
+            await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();

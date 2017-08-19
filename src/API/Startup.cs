@@ -63,12 +63,12 @@ namespace BioEngine.API
         [UsedImplicitly]
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            bool.TryParse(Configuration["IPB_OAUTH_DEV_MODE"] ?? "", out bool devMode);
             services.Configure<TokenAuthOptions>(o =>
             {
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "tokenAuth";
                 o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
-                bool.TryParse(Configuration["IPB_OAUTH_DEV_MODE"] ?? "", out bool devMode);
                 o.DevMode = devMode;
             });
 
@@ -79,12 +79,14 @@ namespace BioEngine.API
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
 
-            services.AddSingleton(new IPBApiConfig
+            var ipbConfig = new IPBApiConfig
             {
                 ApiKey = Configuration["BE_IPB_API_KEY"],
                 ApiUrl = Configuration["BE_IPB_API_URL"],
-                NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
-            });
+                NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"],
+            };
+            ipbConfig.DevMode = devMode;
+            services.AddSingleton(ipbConfig);
 
             services.AddSingleton(new PatreonConfig(new Uri(Configuration["BE_PATREON_API_URL"]),
                 Configuration["BE_PATREON_API_KEY"]));

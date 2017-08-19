@@ -67,7 +67,7 @@ namespace BioEngine.API.Controllers
             return Model(news);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [UserRightsAuthorize(UserRights.FullNews)]
         public override async Task<IActionResult> Delete(int id)
         {

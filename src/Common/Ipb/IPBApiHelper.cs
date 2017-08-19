@@ -60,6 +60,11 @@ namespace BioEngine.Common.Ipb
         public async Task<(int topicId, int postId)> CreateOrUpdateNewsTopic(News news)
         {
             (int topicId, int postId) result = (news.ForumTopicId, news.ForumPostId);
+            if (_ipbApiConfig.DevMode)
+            {
+                var rnd = new Random();
+                return (rnd.Next(1, 1000), rnd.Next(1000, 10000));
+            }
             if (news.ForumTopicId == 0)
             {
                 var topicCreateResponse = await DoApiRequest("/forums/topics",
@@ -149,6 +154,10 @@ namespace BioEngine.Common.Ipb
 
         public async Task<bool> DeleteNewsTopic(News news)
         {
+            if (_ipbApiConfig.DevMode)
+            {
+                return true;
+            }
             var topicDeleteResponse = await DoDeleteApiRequest("/forums/topics/" + news.ForumTopicId);
             if (topicDeleteResponse.IsSuccessStatusCode)
             {

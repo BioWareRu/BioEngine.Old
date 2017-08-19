@@ -4,58 +4,35 @@ using BioEngine.Routing.Files;
 using BioEngine.Routing.Gallery;
 using BioEngine.Routing.News;
 using BioEngine.Routing.Search;
+using JetBrains.Annotations;
 
 namespace BioEngine.Routing
 {
+    [UsedImplicitly]
     public class BioUrlManager
     {
-        private readonly BaseUrlManager _baseUrlManager;
-        private readonly NewsUrlManager _newsUrlManager;
-        private readonly ArticlesUrlManager _articlesUrlManager;
-        private readonly FilesUrlManager _filesUrlManager;
-        private readonly GalleryUrlManager _galleryUrlManager;
-        private readonly SearchUrlManager _searchUrlManager;
-
         public BioUrlManager(BaseUrlManager baseUrlManager, NewsUrlManager newsUrlManager,
             ArticlesUrlManager articlesUrlManager, FilesUrlManager filesUrlManager, GalleryUrlManager galleryUrlManager,
             SearchUrlManager searchUrlManager)
         {
-            _baseUrlManager = baseUrlManager;
-            _newsUrlManager = newsUrlManager;
-            _articlesUrlManager = articlesUrlManager;
-            _filesUrlManager = filesUrlManager;
-            _galleryUrlManager = galleryUrlManager;
-            _searchUrlManager = searchUrlManager;
+            Base = baseUrlManager;
+            News = newsUrlManager;
+            Articles = articlesUrlManager;
+            Files = filesUrlManager;
+            Gallery = galleryUrlManager;
+            Search = searchUrlManager;
         }
 
-        public BaseUrlManager Base
-        {
-            get => _baseUrlManager;
-        }
+        public BaseUrlManager Base { get; }
 
-        public NewsUrlManager News
-        {
-            get => _newsUrlManager;
-        }
+        public NewsUrlManager News { get; }
 
-        public ArticlesUrlManager Articles
-        {
-            get => _articlesUrlManager;
-        }
+        public ArticlesUrlManager Articles { get; }
 
-        public FilesUrlManager Files
-        {
-            get => _filesUrlManager;
-        }
+        public FilesUrlManager Files { get; }
 
-        public GalleryUrlManager Gallery
-        {
-            get => _galleryUrlManager;
-        }
+        public GalleryUrlManager Gallery { get; }
 
-        public SearchUrlManager Search
-        {
-            get => _searchUrlManager;
-        }
+        public SearchUrlManager Search { get; }
     }
 }

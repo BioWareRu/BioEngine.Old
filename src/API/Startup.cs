@@ -45,6 +45,7 @@ namespace BioEngine.API
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
+                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
                 .AddEnvironmentVariables();
 
             if (env.IsDevelopment())

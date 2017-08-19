@@ -17,6 +17,7 @@ namespace BioEngine.API.Components.REST
 {
     [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
     [ValidationExceptionsFilter]
+    [UserExceptionFilter]
     [Route("v1/[controller]")]
     public abstract class RestController<T, TPkType> : Controller where T : BaseModel<TPkType>
     {

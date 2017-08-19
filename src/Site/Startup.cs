@@ -126,9 +126,7 @@ namespace BioEngine.Site
                 services.AddAntiforgery(opts => opts.CookieName = "beAntiforgeryCookie");
             }
 
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
-            builder.AddBioEngineData(Configuration);
+            var builder = services.AddBioEngineData(Configuration);
 
             ApplicationContainer = builder.Build();
 

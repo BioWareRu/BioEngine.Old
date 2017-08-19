@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
+using BioEngine.Social;
 using FluentValidation;
 using JetBrains.Annotations;
 using Social;

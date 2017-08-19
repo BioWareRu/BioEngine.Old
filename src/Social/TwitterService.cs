@@ -1,33 +1,45 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using BioEngine.Common.Base;
 using JetBrains.Annotations;
 using Tweetinvi;
 using Tweetinvi.Models;
 
-namespace Social
+namespace BioEngine.Social
 {
     [UsedImplicitly]
     public class TwitterService
     {
-        private readonly TwitterCredentials _credentials;
-
         public TwitterService(TwitterServiceConfiguration configuration)
         {
-            _credentials = new TwitterCredentials(configuration.ConsumerKey, configuration.ConsumerSecret,
-                configuration.AccessToken, configuration.AcessTokenSecret);
+            Auth.SetCredentials(new TwitterCredentials(configuration.ConsumerKey, configuration.ConsumerSecret,
+                configuration.AccessToken, configuration.AcessTokenSecret));
         }
 
-        public async Task<long> CreateTweet(string text)
+        public long CreateTweet(string text)
         {
-            var tweet = await Auth.ExecuteOperationWithCredentials(_credentials, () => TweetAsync.PublishTweet(text));
-
+            var tweet = Tweet.PublishTweet(text);
+            CheckExceptions();
             return tweet.Id;
         }
 
-        public async Task<bool> DeleteTweet(long tweetId)
+        public bool DeleteTweet(long tweetId)
         {
-            var result =
-                await Auth.ExecuteOperationWithCredentials(_credentials, () => TweetAsync.DestroyTweet(tweetId));
+            var result = Tweet.DestroyTweet(tweetId);
+            CheckExceptions("Невозможно удалить старый твит");
             return result;
+        }
+
+        private void CheckExceptions(string message = null)
+        {
+            var exc = ExceptionHandler.GetLastException();
+            if (exc != null)
+            {
+                if (exc.TwitterExceptionInfos.Any(x => x.Message == "Status is over 140 characters."))
+                {
+                    throw new TooLongTweetTextException();
+                }
+                throw new TwitterException(!string.IsNullOrEmpty(message) ? message : exc.TwitterDescription);
+            }
         }
     }
 
@@ -52,5 +64,19 @@ namespace Social
     {
         CreateOrUpdate,
         Delete
+    }
+
+    public class TwitterException : UserException
+    {
+        public TwitterException(string message) : base(message)
+        {
+        }
+    }
+
+    public class TooLongTweetTextException : TwitterException
+    {
+        public TooLongTweetTextException() : base("Текст твита больше 140 символов")
+        {
+        }
     }
 }

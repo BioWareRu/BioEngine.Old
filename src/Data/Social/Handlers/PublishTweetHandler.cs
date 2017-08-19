@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.Social.Commands;
+using BioEngine.Social;
 using JetBrains.Annotations;
 using Social;
 
@@ -19,7 +20,7 @@ namespace BioEngine.Data.Social.Handlers
 
         protected override async Task<long> RunQuery(PublishTweetCommand command)
         {
-            var tweetId = await _twitterService.CreateTweet(command.Text);
+            var tweetId = await Task.FromResult(_twitterService.CreateTweet(command.Text));
 
             return tweetId;
         }

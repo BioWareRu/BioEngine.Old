@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.Social.Commands;
+using BioEngine.Social;
 using JetBrains.Annotations;
 using Social;
 
@@ -19,7 +20,7 @@ namespace BioEngine.Data.Social.Handlers
 
         protected override async Task<bool> RunQuery(DeleteTweetCommand command)
         {
-            var result = await _twitterService.DeleteTweet(command.TweetId);
+            var result = await Task.FromResult(_twitterService.DeleteTweet(command.TweetId));
 
             return result;
         }

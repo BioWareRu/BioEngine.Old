@@ -23,16 +23,17 @@ namespace BioEngine.Data
             var dbConfig = new MySqlDBConfiguration(configuration);
             services.AddDbContext<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));
 
+            services.Configure<ElasticSearchProviderConfig>(o => { o.Url = configuration["BE_ES_URL"]; });
+
             var builder = new ContainerBuilder();
             builder.Populate(services);
-            builder.AddBioEngineData(configuration);
+            builder.AddBioEngineData();
             return builder;
         }
 
-        public static void AddBioEngineData(this ContainerBuilder containerBuilder, IConfigurationRoot configuration)
+        public static void AddBioEngineData(this ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterGeneric(typeof(ElasticSearchProvider<>)).As(typeof(ISearchProvider<>))
-                .InstancePerLifetimeScope();
+            containerBuilder.RegisterGeneric(typeof(ElasticSearchProvider<>)).AsImplementedInterfaces();
             containerBuilder.RegisterType<ParentEntityProvider>().InstancePerLifetimeScope();
 
             containerBuilder

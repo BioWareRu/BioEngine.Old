@@ -14,7 +14,6 @@ using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
 using MediatR;
 

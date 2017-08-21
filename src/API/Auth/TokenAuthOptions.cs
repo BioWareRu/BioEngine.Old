@@ -6,5 +6,6 @@ namespace BioEngine.API.Auth
     {
         public string ClientId { get; set; }
         public bool DevMode { get; set; }
+        public string UserInformationEndpointUrl { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,11 +16,11 @@ namespace BioEngine.Content.Helpers
         private readonly Uri _apiUrl;
         private readonly HttpClient _httpClient;
 
-        public PatreonApiHelper(PatreonConfig config)
+        public PatreonApiHelper(IOptions<PatreonConfig> config)
         {
-            _apiUrl = config.ApiUrl;
+            _apiUrl = config.Value.ApiUrl;
             _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.Value.ApiKey}");
         }
 
         private async Task<string> GetReponseJson(string path)
@@ -90,13 +91,7 @@ namespace BioEngine.Content.Helpers
 
     public class PatreonConfig
     {
-        public PatreonConfig(Uri apiUrl, string apiKey)
-        {
-            ApiUrl = apiUrl;
-            ApiKey = apiKey;
-        }
-
-        public Uri ApiUrl { get; }
-        public string ApiKey { get; }
+        public Uri ApiUrl { get; set; }
+        public string ApiKey { get; set; }
     }
 }

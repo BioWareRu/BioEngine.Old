@@ -90,22 +90,25 @@ namespace BioEngine.Site
 
             services.AddBioEngineRouting();
 
-            services.AddSingleton(Configuration);
-
             services.AddScoped<BannerProvider>();
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
             services.AddScoped<IChannelProvider, RssProvider>();
 
-            services.AddSingleton(new IPBApiConfig
+            services.Configure<IPBApiConfig>(o =>
             {
-                ApiKey = Configuration["BE_IPB_API_KEY"],
-                ApiUrl = Configuration["BE_IPB_API_URL"],
-                NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"]
+                o.ApiKey = Configuration["BE_IPB_API_KEY"];
+                o.ApiUrl = Configuration["BE_IPB_API_URL"];
+                o.NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"];
+                o.DevMode = false;
             });
+            services.Configure<PatreonConfig>(o =>
+            {
+                o.ApiKey = Configuration["BE_PATREON_API_KEY"];
+                o.ApiUrl = new Uri(Configuration["BE_PATREON_API_URL"]);
+            });
+            services.Configure<AdminAccessConfig>(o => o.AdminAccessToken = Configuration["BE_ADMIN_ACCESS_TOKEN"]);
 
-            services.AddSingleton(new PatreonConfig(new Uri(Configuration["BE_PATREON_API_URL"]),
-                Configuration["BE_PATREON_API_KEY"]));
             services.AddSingleton<PatreonApiHelper>();
 
             if (_env.IsProduction())

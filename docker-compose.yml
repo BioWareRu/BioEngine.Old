@@ -19,9 +19,12 @@ services:
       - .:/app
       - /var/data/bwcore/mysql:/var/lib/mysql
   elasticsearch:
-    image: elasticsearch:alpine
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
     volumes:
       - /var/data/bwcore/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
     ports:
       - 9200:9200
   site:

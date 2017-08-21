@@ -8,6 +8,7 @@ using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -24,10 +25,10 @@ namespace BioEngine.Common.Ipb
         private static readonly Regex BlockQuoteRegex =
             new Regex("<blockquote.*?>(.+?)<\\/blockquote>", RegexOptions.Singleline);
 
-        public IPBApiHelper(IPBApiConfig ipbApiConfig, IContentHelperInterface contextHelper,
+        public IPBApiHelper(IOptions<IPBApiConfig> ipbApiConfig, IContentHelperInterface contextHelper,
             ILogger<IPBApiHelper> logger)
         {
-            _ipbApiConfig = ipbApiConfig;
+            _ipbApiConfig = ipbApiConfig.Value;
             _contextHelper = contextHelper;
             _logger = logger;
             _client = new HttpClient();

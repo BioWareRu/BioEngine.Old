@@ -4,6 +4,9 @@ using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+// ReSharper disable once RedundantUsingDirective
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.API.Controllers
 {
@@ -16,7 +19,9 @@ namespace BioEngine.API.Controllers
         [HttpGet]
         public override async Task<IActionResult> Get(QueryParams queryParams)
         {
-            return Ok(new APISettings(Configuration, HttpContext.Features.Get<ICurrentUserFeature>().Token));
+            var apiSettings = HttpContext.RequestServices.GetService<IOptions<APISettings>>().Value;
+            apiSettings.UserToken = HttpContext.Features.Get<ICurrentUserFeature>().Token;
+            return Ok(apiSettings);
         }
 
         [HttpGet("{id}")]

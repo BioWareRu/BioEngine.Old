@@ -9,6 +9,6 @@ namespace BioEngine.Common.Search
 
         void AddUpdateEntity(T entitity);
         void AddUpdateEntities(IEnumerable<T> entities);
-        void DeleteEntity(long updateId);
+        void DeleteEntity(T entitity);
     }
 }

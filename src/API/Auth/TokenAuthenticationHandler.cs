@@ -9,7 +9,6 @@ using BioEngine.Common.Models;
 using BioEngine.Data.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 // ReSharper disable once RedundantUsingDirective
@@ -22,20 +21,18 @@ namespace BioEngine.API.Auth
         private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>()
             ;
 
-        private readonly IConfigurationRoot _configuration;
         private readonly ILogger<TokenAuthenticationHandler> _logger;
 
         private readonly TokenAuthOptions _options;
 
-        public TokenAuthenticationHandler(IConfigurationRoot configuration, ILogger<TokenAuthenticationHandler> logger,
+        public TokenAuthenticationHandler(ILogger<TokenAuthenticationHandler> logger,
             IOptions<TokenAuthOptions> options)
         {
-            _configuration = configuration;
             _logger = logger;
             _options = options.Value;
         }
 
-        protected IMediator GetMediator()
+        private IMediator GetMediator()
         {
             return Context.RequestServices.GetService<IMediator>();
         }
@@ -116,7 +113,7 @@ namespace BioEngine.API.Auth
 
         private async Task<IpbUserInfo> GetUserInformation(string token)
         {
-            var userInformationEndpoint = _configuration["Data:OAuth:UserInformationEndpoint"];
+            var userInformationEndpoint = _options.UserInformationEndpointUrl;
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);

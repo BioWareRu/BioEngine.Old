@@ -8,6 +8,7 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.API.Components.REST;
+using BioEngine.API.Models;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
 using BioEngine.Common.Interfaces;
@@ -69,6 +70,7 @@ namespace BioEngine.API
                 o.AutomaticChallenge = true;
                 o.AuthenticationScheme = "tokenAuth";
                 o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
+                o.UserInformationEndpointUrl = Configuration["Data:OAuth:UserInformationEndpoint"];
                 o.DevMode = devMode;
             });
 
@@ -79,23 +81,17 @@ namespace BioEngine.API
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
 
-            var ipbConfig = new IPBApiConfig
+            services.Configure<IPBApiConfig>(o =>
             {
-                ApiKey = Configuration["BE_IPB_API_KEY"],
-                ApiUrl = Configuration["BE_IPB_API_URL"],
-                NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"],
-            };
-            ipbConfig.DevMode = devMode;
-            services.AddSingleton(ipbConfig);
+                o.ApiKey = Configuration["BE_IPB_API_KEY"];
+                o.ApiUrl = Configuration["BE_IPB_API_URL"];
+                o.NewsForumId = Configuration["BE_IPB_NEWS_FORUM_ID"];
+                o.DevMode = devMode;
+            });
 
-            services.AddSingleton(new PatreonConfig(new Uri(Configuration["BE_PATREON_API_URL"]),
-                Configuration["BE_PATREON_API_KEY"]));
-            services.AddSingleton<PatreonApiHelper>();
+            services.Configure<APISettings>(o => o.FileBrowserUrl = Configuration["API_FILE_BROWSER_URL"]);
 
             services.AddBioEngineSocial(Configuration);
-
-            services.AddSingleton(Configuration);
-            //services.AddSingleton<DBConfiguration, MySqlDBConfiguration>();
 
             if (_env.IsProduction())
             {

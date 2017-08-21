@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
@@ -10,18 +9,15 @@ using BioEngine.Data.News.Commands;
 using BioEngine.Data.News.Queries;
 using BioEngine.Routing;
 using BioEngine.Site.Base;
+using BioEngine.Site.Components;
 using BioEngine.Site.ViewModels;
 using BioEngine.Site.ViewModels.News;
 using cloudscribe.Syndication.Models.Rss;
 using cloudscribe.Syndication.Web;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog.Context;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
 
 namespace BioEngine.Site.Controllers
 {
@@ -252,76 +248,57 @@ namespace BioEngine.Site.Controllers
 
         [HttpGet("/news/update-forum-post/{newsId:int}.html")]
         public async Task<IActionResult> CreateOrUpdateNewsTopic(int newsId, string accessToken,
-            [FromServices] IConfigurationRoot configuration)
+            [FromServices] IOptions<AdminAccessConfig> adminAccessConfig)
         {
-            if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])
+            if (accessToken != adminAccessConfig.Value.AdminAccessToken)
             {
                 Response.StatusCode = 403;
                 return new EmptyResult();
             }
             if (newsId == 0)
                 return new BadRequestResult();
-            var logProperties = new List<ILogEventEnricher>
-            {
-                new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
-                new PropertyEnricher("BE_IPB_API_URL", configuration["BE_IPB_API_URL"]),
-                new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
-            };
 
             var news = await Mediator.Send(new GetNewsByIdQuery(newsId));
 
             if (news == null)
                 return new NotFoundResult();
 
-            using (LogContext.Push(logProperties.ToArray()))
+            await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(news));
+            if (news.ForumTopicId > 0 && news.ForumPostId > 0)
             {
-                await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(news));
-                if (news.ForumTopicId > 0 && news.ForumPostId > 0)
-                {
-                    Response.StatusCode = 200;
-                    return new EmptyResult();
-                }
-
-                Response.StatusCode = 500;
+                Response.StatusCode = 200;
                 return new EmptyResult();
             }
+
+            Response.StatusCode = 500;
+            return new EmptyResult();
         }
 
         [HttpGet("/news/delete-forum-post/{newsId:int}.html")]
         public async Task<IActionResult> DeleteNewsTopic(int newsId, string accessToken,
-            [FromServices] IConfigurationRoot configuration)
+            [FromServices] IOptions<AdminAccessConfig> adminAccessConfig)
         {
-            if (accessToken != configuration["BE_ADMIN_ACCESS_TOKEN"])
+            if (accessToken != adminAccessConfig.Value.AdminAccessToken)
             {
                 Response.StatusCode = 403;
                 return new EmptyResult();
             }
             if (newsId == 0)
                 return new BadRequestResult();
-            var logProperties = new List<ILogEventEnricher>
-            {
-                new PropertyEnricher("BE_IPB_API_KEY", configuration["BE_IPB_API_KEY"]),
-                new PropertyEnricher("BE_IPB_API_URL", configuration["BE_IPB_API_URL"]),
-                new PropertyEnricher("BE_IPB_NEWS_FORUM_ID", configuration["BE_IPB_NEWS_FORUM_ID"])
-            };
-
             var news = await Mediator.Send(new GetNewsByIdQuery(newsId));
 
             if (news == null)
                 return new NotFoundResult();
 
-            using (LogContext.Push(logProperties.ToArray()))
+            await Mediator.Publish(new DeleteNewsForumTopicCommand(news));
+            if (news.ForumTopicId == 0)
             {
-                await Mediator.Publish(new DeleteNewsForumTopicCommand(news));
-                if (news.ForumTopicId == 0)
-                {
-                    Response.StatusCode = 200;
-                    return new EmptyResult();
-                }
-
-                Response.StatusCode = 500;
+                Response.StatusCode = 200;
                 return new EmptyResult();
             }
+
+            Response.StatusCode = 500;
+            return new EmptyResult();
         }
     }
 }

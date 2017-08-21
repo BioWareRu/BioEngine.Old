@@ -6,12 +6,10 @@ namespace BioEngine.API.Models
 {
     public class APISettings : BaseModel<int>
     {
-        [JsonProperty]
-        public string FileBrowserUrl { get; }
+        [JsonProperty("fileBrowserUrl")]
+        public string FileBrowserUrlWithToken => $"{FileBrowserUrl}?token={UserToken}";
 
-        public APISettings(IConfiguration configuration, string token)
-        {
-            FileBrowserUrl = $"{configuration["API_FILE_BROWSER_URL"]}?token={token}";
-        }
+        public string FileBrowserUrl { get; set; }
+        public string UserToken { get; set; }
     }
 }

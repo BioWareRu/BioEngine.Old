@@ -6,16 +6,16 @@ using ElasticsearchCRUD.Model.SearchModel;
 using ElasticsearchCRUD.Model.SearchModel.Queries;
 using ElasticsearchCRUD.Model.SearchModel.Sorting;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BioEngine.Common.Search
 {
     [UsedImplicitly]
     public class ElasticSearchProvider<T> : ISearchProvider<T>, IDisposable where T : ISearchModel
     {
-        public ElasticSearchProvider(IConfigurationRoot configuration)
+        public ElasticSearchProvider(IOptions<ElasticSearchProviderConfig> config)
         {
-            _context = new ElasticsearchContext(configuration["BE_ES_URL"], _elasticSearchMappingResolver);
+            _context = new ElasticsearchContext(config.Value.Url, _elasticSearchMappingResolver);
         }
 
         private readonly IElasticsearchMappingResolver _elasticSearchMappingResolver =
@@ -66,7 +66,7 @@ namespace BioEngine.Common.Search
         public void AddUpdateEntity(T entity)
         {
             _context.AddUpdateDocument(entity, entity.GetId());
-            _context.SaveChanges();
+            _context.SaveChangesAndInitMappings();
         }
 
         public void AddUpdateEntities(IEnumerable<T> entities)
@@ -75,12 +75,12 @@ namespace BioEngine.Common.Search
             {
                 _context.AddUpdateDocument(entity, entity.GetId());
             }
-            _context.SaveChanges();
+            _context.SaveChangesAndInitMappings();
         }
 
-        public void DeleteEntity(long deleteId)
+        public void DeleteEntity(T entitity)
         {
-            _context.DeleteDocument<T>(deleteId);
+            _context.DeleteDocument<T>(entitity.GetId());
             _context.SaveChanges();
         }
 

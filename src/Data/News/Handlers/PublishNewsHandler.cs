@@ -32,7 +32,7 @@ namespace BioEngine.Data.News.Handlers
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
-            _newsSearchProvider.AddUpdateEntity(command.Model);
+            await _newsSearchProvider.AddUpdateEntity(command.Model);
 
             return true;
         }

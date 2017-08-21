@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BioEngine.Common.Search
 {
     public interface ISearchProvider<T> where T : ISearchModel
     {
-        IEnumerable<T> Search(string term, int limit);
-        long Count(string term);
+        Task<IEnumerable<T>> Search(string term, int limit);
+        Task<long> Count(string term);
 
-        void AddUpdateEntity(T entitity);
-        void AddUpdateEntities(IEnumerable<T> entities);
-        void DeleteEntity(T entitity);
+        Task AddUpdateEntity(T entitity);
+        Task AddUpdateEntities(IEnumerable<T> entities);
+        Task DeleteEntity(T entitity);
     }
 }

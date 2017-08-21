@@ -33,7 +33,7 @@ namespace BioEngine.Data.News.Handlers
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
             
-            _newsSearchProvider.DeleteEntity(command.Model);
+            await _newsSearchProvider.DeleteEntity(command.Model);
             
             return true;
         }

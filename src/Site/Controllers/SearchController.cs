@@ -14,6 +14,8 @@ using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+// ReSharper disable once RedundantUsingDirective
+using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
 using MediatR;
 
@@ -39,8 +41,8 @@ namespace BioEngine.Site.Controllers
                 var limit = hasBlock ? 0 : 5;
                 if (!hasBlock || block == "games")
                 {
-                    var games = SearchEntities<Game>(query, limit);
-                    var gamesCount = CountEntities<Game>(query);
+                    var games = await SearchEntities<Game>(query, limit);
+                    var gamesCount = await CountEntities<Game>(query);
                     var searchBlock = CreateSearchBlock("Игры", Url.Search().BlockUrl("games", query), gamesCount,
                         games, x => x.Title,
                         x => Url.Base().PublicUrl(x),
@@ -50,8 +52,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "news")
                 {
-                    var news = SearchEntities<News>(query, limit);
-                    var newsCount = CountEntities<News>(query);
+                    var news = await SearchEntities<News>(query, limit);
+                    var newsCount = await CountEntities<News>(query);
                     var searchBlock = CreateSearchBlock("Новости", Url.Search().BlockUrl("news", query), newsCount,
                         news, x => x.Title,
                         x => Url.News().PublicUrl(x),
@@ -61,8 +63,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "articles")
                 {
-                    var articles = SearchEntities<Article>(query, limit);
-                    var articlesCount = CountEntities<Article>(query);
+                    var articles = await SearchEntities<Article>(query, limit);
+                    var articlesCount = await CountEntities<Article>(query);
                     var searchBlock = CreateSearchBlock("Статьи", Url.Search().BlockUrl("articles", query),
                         articlesCount,
                         articles, x => x.Title,
@@ -73,8 +75,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "articlesCats")
                 {
-                    var articlesCats = SearchEntities<ArticleCat>(query, limit);
-                    var articlesCatsCount = CountEntities<ArticleCat>(query);
+                    var articlesCats = await SearchEntities<ArticleCat>(query, limit);
+                    var articlesCatsCount = await CountEntities<ArticleCat>(query);
                     var searchBlock = CreateSearchBlock("Категории статей",
                         Url.Search().BlockUrl("articlesCats", query),
                         articlesCatsCount,
@@ -86,8 +88,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "files")
                 {
-                    var files = SearchEntities<File>(query, limit);
-                    var filesCount = CountEntities<File>(query);
+                    var files = await SearchEntities<File>(query, limit);
+                    var filesCount = await CountEntities<File>(query);
                     var searchBlock = CreateSearchBlock("Файлы", Url.Search().BlockUrl("files", query),
                         filesCount,
                         files, x => x.Title,
@@ -98,8 +100,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "filesCat")
                 {
-                    var fileCats = SearchEntities<FileCat>(query, limit);
-                    var fileCatsCount = CountEntities<FileCat>(query);
+                    var fileCats = await SearchEntities<FileCat>(query, limit);
+                    var fileCatsCount = await CountEntities<FileCat>(query);
                     var searchBlock = CreateSearchBlock("Категории файлов",
                         Url.Search().BlockUrl("filesCat", query),
                         fileCatsCount,
@@ -111,8 +113,8 @@ namespace BioEngine.Site.Controllers
 
                 if (!hasBlock || block == "galleryCats")
                 {
-                    var galleryCats = SearchEntities<GalleryCat>(query, limit);
-                    var galleryCatsCount = CountEntities<GalleryCat>(query);
+                    var galleryCats = await SearchEntities<GalleryCat>(query, limit);
+                    var galleryCatsCount = await CountEntities<GalleryCat>(query);
                     var searchBlock = CreateSearchBlock("Категории картинок",
                         Url.Search().BlockUrl("galleryCats", query),
                         galleryCatsCount,
@@ -137,33 +139,35 @@ namespace BioEngine.Site.Controllers
             return block;
         }
 
-        private IEnumerable<T> SearchEntities<T>(string query, int limit = 0) where T : ISearchModel
+        private ISearchProvider<T> GetSearchProvider<T>() where T : ISearchModel
         {
-            var provider = HttpContext.RequestServices.GetService<ISearchProvider<T>>();
-            return provider.Search(query, limit);
+            return HttpContext.RequestServices.GetService<ISearchProvider<T>>();
         }
 
-        private long CountEntities<T>(string query) where T : ISearchModel
+        private async Task<IEnumerable<T>> SearchEntities<T>(string query, int limit = 0) where T : ISearchModel
         {
-            var provider = HttpContext.RequestServices.GetService<ISearchProvider<T>>();
-            return provider.Count(query);
+            return await GetSearchProvider<T>().Search(query, limit);
         }
 
-        private void AddEntities<T>(IEnumerable<T> entities) where T : ISearchModel
+        private async Task<long> CountEntities<T>(string query) where T : ISearchModel
         {
-            var provider = HttpContext.RequestServices.GetService<ISearchProvider<T>>();
-            provider.AddUpdateEntities(entities);
+            return await GetSearchProvider<T>().Count(query);
+        }
+
+        private async Task AddEntities<T>(IEnumerable<T> entities) where T : ISearchModel
+        {
+            await GetSearchProvider<T>().AddUpdateEntities(entities);
         }
 
         public async Task<string> Reindex()
         {
-            AddEntities((await Mediator.Send(new GetGamesQuery())).models);
-            AddEntities((await Mediator.Send(new GetNewsQuery())).models);
-            AddEntities((await Mediator.Send(new GetArticlesQuery())).models);
-            AddEntities((await Mediator.Send(new GetArticlesCategoriesQuery())).models);
-            AddEntities((await Mediator.Send(new GetFilesQuery())).models);
-            AddEntities((await Mediator.Send(new GetFilesCategoriesQuery())).models);
-            AddEntities((await Mediator.Send(new GetGalleryCategoriesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetGamesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetNewsQuery())).models);
+            await AddEntities((await Mediator.Send(new GetArticlesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetArticlesCategoriesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetFilesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetFilesCategoriesQuery())).models);
+            await AddEntities((await Mediator.Send(new GetGalleryCategoriesQuery())).models);
             return "done";
         }
     }

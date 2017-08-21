@@ -1,98 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using ElasticsearchCRUD;
-using ElasticsearchCRUD.Model.SearchModel;
-using ElasticsearchCRUD.Model.SearchModel.Queries;
-using ElasticsearchCRUD.Model.SearchModel.Sorting;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
+using Nest;
 
 namespace BioEngine.Common.Search
 {
     [UsedImplicitly]
-    public class ElasticSearchProvider<T> : ISearchProvider<T>, IDisposable where T : ISearchModel
+    public class ElasticSearchProvider<T> : ISearchProvider<T> where T : class, ISearchModel, new()
     {
         public ElasticSearchProvider(IOptions<ElasticSearchProviderConfig> config)
         {
-            _context = new ElasticsearchContext(config.Value.Url, _elasticSearchMappingResolver);
+            var settings = new ConnectionSettings(new Uri(config.Value.Url));
+
+            _client = new ElasticClient(settings);
         }
 
-        private readonly IElasticsearchMappingResolver _elasticSearchMappingResolver =
-            new ElasticsearchMappingResolver();
-
-        private readonly ElasticsearchContext _context;
-
-        public IEnumerable<T> Search(string term, int limit = 100)
+        public async Task<IEnumerable<T>> Search(string term, int limit = 100)
         {
-            var results = _context.Search<T>(BuildQueryStringSearch(term, limit));
-            return results.PayloadResult.Hits != null
-                ? results.PayloadResult.Hits?.HitsResult.Select(t => t.Source)
-                : new List<T>();
+            var results = await _client.SearchAsync<T>(x => GetSearchRequest(x, term, limit));
+            return results.Documents;
         }
 
-        public long Count(string term)
+        public async Task<long> Count(string term)
         {
-            var resultsCount = _context.Count<T>(BuildQueryStringSearch(term));
-            return resultsCount;
+            var names = GetSearchText(term);
+            var resultsCount = await _client.CountAsync<T>(x =>
+                x.Query(q => q.QueryString(qs => qs.AllFields().Query(names))).Index(GetIndexName()));
+            return resultsCount.Count;
         }
 
-        private ElasticsearchCRUD.Model.SearchModel.Search BuildQueryStringSearch(string term, int limit = 0)
+
+        private SearchDescriptor<T> GetSearchRequest(SearchDescriptor<T> descriptor, string term, int limit = 0)
+        {
+            var names = GetSearchText(term);
+
+            return descriptor.Query(q => q.QueryString(x => x.AllFields().Query(names)))
+                .Sort(s => s.Descending("_score").Descending("id")).Size(limit > 0 ? limit : 20).Index(GetIndexName());
+        }
+
+        private static string GetSearchText(string term)
         {
             var names = "";
             if (term != null)
             {
                 names = term.Replace("+", " OR *");
             }
-
-            var search = new ElasticsearchCRUD.Model.SearchModel.Search
-            {
-                Query = new Query(new QueryStringQuery(names + "*"))
-            };
-
-            if (limit > 0)
-            {
-                search.Size = limit;
-            }
-            search.Sort = new SortHolder(new List<ISort>()
-            {
-                new SortStandard("_score") {Order = OrderEnum.desc},
-                new SortStandard("id") {Order = OrderEnum.desc}
-            });
-
-            return search;
+            names = names + "*";
+            return names;
         }
 
-        public void AddUpdateEntity(T entity)
+        private string GetIndexName()
         {
-            _context.AddUpdateDocument(entity, entity.GetId());
-            _context.SaveChangesAndInitMappings();
+            return typeof(T).Name.ToLower();
         }
 
-        public void AddUpdateEntities(IEnumerable<T> entities)
+        public async Task AddUpdateEntity(T entity)
         {
-            foreach (var entity in entities)
-            {
-                _context.AddUpdateDocument(entity, entity.GetId());
-            }
-            _context.SaveChangesAndInitMappings();
+            await _client.IndexAsync(entity, idx => idx.Index(GetIndexName()));
         }
 
-        public void DeleteEntity(T entitity)
+        public async Task AddUpdateEntities(IEnumerable<T> entities)
         {
-            _context.DeleteDocument<T>(entitity.GetId());
-            _context.SaveChanges();
+            await _client.IndexManyAsync(entities, GetIndexName());
         }
 
-        private bool _isDisposed;
-
-        public void Dispose()
+        public async Task DeleteEntity(T entitity)
         {
-            if (_isDisposed)
-            {
-                _isDisposed = true;
-                _context.Dispose();
-            }
+            await _client.DeleteAsync<T>(entitity, idx => idx.Index(GetIndexName()));
         }
+
+        private ElasticClient _client;
     }
 }

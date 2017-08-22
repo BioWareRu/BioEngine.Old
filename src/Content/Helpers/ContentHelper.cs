@@ -79,6 +79,10 @@ namespace BioEngine.Content.Helpers
 
         public async Task<string> ReplacePlaceholders(string text)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
             foreach (var contentPlaceholder in _placeholders)
             {
                 var matches = contentPlaceholder.Regex.Matches(text);

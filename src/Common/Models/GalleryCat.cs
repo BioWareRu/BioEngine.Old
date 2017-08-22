@@ -26,7 +26,7 @@ namespace BioEngine.Common.Models
         public string Url { get; set; }
 
         [ForeignKey(nameof(Pid))]
-        public GalleryCat ParentCat { get; set; }
+        public virtual GalleryCat ParentCat { get; set; }
 
         [InverseProperty(nameof(ParentCat))]
         public List<GalleryCat> Children { get; set; }

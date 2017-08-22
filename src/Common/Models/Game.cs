@@ -75,7 +75,7 @@ namespace BioEngine.Common.Models
         public string VotedUsers { get; set; }
 
         [ForeignKey(nameof(DeveloperId))]
-        public Developer Developer { get; set; }
+        public virtual Developer Developer { get; set; }
 
         [JsonProperty]
         public override ParentType Type { get; } = ParentType.Game;

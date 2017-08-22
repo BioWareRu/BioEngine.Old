@@ -46,7 +46,7 @@ namespace BioEngine.Common.Models
 
 
         [ForeignKey(nameof(CatId))]
-        public FileCat Cat { get; set; }
+        public virtual FileCat Cat { get; set; }
 
         [NotMapped]
         public double SizeInMb => Math.Round((double) Size / 1024 / 1024, 2);

@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
-using BioEngine.Common.Search;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Base.Queries;
 using BioEngine.Data.Files.Queries;
 using BioEngine.Data.Gallery.Queries;
 using BioEngine.Data.News.Queries;
+using BioEngine.Data.Search.Commands;
+using BioEngine.Data.Search.Queries;
 using BioEngine.Site.Base;
 using BioEngine.Site.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@ using Microsoft.Extensions.Options;
 // ReSharper disable once RedundantUsingDirective
 using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
+using BioEngine.Search.Interfaces;
+using BioEngine.Site.Components;
 using MediatR;
 
 namespace BioEngine.Site.Controllers
@@ -46,7 +49,7 @@ namespace BioEngine.Site.Controllers
                     var searchBlock = CreateSearchBlock("Игры", Url.Search().BlockUrl("games", query), gamesCount,
                         games, x => x.Title,
                         x => Url.Base().PublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.NewsDesc));
+                        x => _contentHelper.ReplacePlaceholders(x.Desc));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -139,36 +142,48 @@ namespace BioEngine.Site.Controllers
             return block;
         }
 
-        private ISearchProvider<T> GetSearchProvider<T>() where T : ISearchModel
+        private async Task<IEnumerable<T>> SearchEntities<T>(string query, int limit = 0) where T : IBaseModel
         {
-            return HttpContext.RequestServices.GetService<ISearchProvider<T>>();
+            return await Mediator.Send(new SearchEntitiesQuery<T>(query, limit));
         }
 
-        private async Task<IEnumerable<T>> SearchEntities<T>(string query, int limit = 0) where T : ISearchModel
+        private async Task<long> CountEntities<T>(string query) where T : IBaseModel
         {
-            return await GetSearchProvider<T>().Search(query, limit);
-        }
-
-        private async Task<long> CountEntities<T>(string query) where T : ISearchModel
-        {
-            return await GetSearchProvider<T>().Count(query);
-        }
-
-        private async Task AddEntities<T>(IEnumerable<T> entities) where T : ISearchModel
-        {
-            await GetSearchProvider<T>().AddUpdateEntities(entities);
+            return await Mediator.Send(new CountEntitiesQuery<T>(query));
         }
 
         public async Task<string> Reindex()
         {
-            await AddEntities((await Mediator.Send(new GetGamesQuery())).models);
-            await AddEntities((await Mediator.Send(new GetNewsQuery())).models);
-            await AddEntities((await Mediator.Send(new GetArticlesQuery())).models);
-            await AddEntities((await Mediator.Send(new GetArticlesCategoriesQuery())).models);
-            await AddEntities((await Mediator.Send(new GetFilesQuery())).models);
-            await AddEntities((await Mediator.Send(new GetFilesCategoriesQuery())).models);
-            await AddEntities((await Mediator.Send(new GetGalleryCategoriesQuery())).models);
+            await Mediator.Publish(
+                new IndexEntitiesCommand<Game>((await Mediator.Send(new GetGamesQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<News>((await Mediator.Send(new GetNewsQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<Article>((await Mediator.Send(new GetArticlesQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<ArticleCat>((await Mediator.Send(new GetArticlesCategoriesQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<File>((await Mediator.Send(new GetFilesQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<FileCat>((await Mediator.Send(new GetFilesCategoriesQuery())).models));
+            await Mediator.Publish(
+                new IndexEntitiesCommand<GalleryCat>((await Mediator.Send(new GetGalleryCategoriesQuery())).models));
             return "done";
+        }
+
+        public async Task<IActionResult> Clean(string accessToken,
+            [FromServices] IOptions<AdminAccessConfig> adminAccessConfig,
+            [FromServices] IEnumerable<ISearchProvider> searchProviders)
+        {
+            if (accessToken != adminAccessConfig.Value.AdminAccessToken)
+            {
+                return Forbid();
+            }
+            foreach (var searchProvider in searchProviders)
+            {
+                await searchProvider.DeleteIndex();
+            }
+            return Ok("done");
         }
     }
 }

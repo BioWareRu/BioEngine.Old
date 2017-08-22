@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioEngine.Site.Tests", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioEngine.Social", "src\Social\BioEngine.Social.csproj", "{88C3F138-4A22-415A-9028-865A256DFB38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search", "src\Search\BioEngine.Search.csproj", "{94825FA1-7D8A-4085-884D-FE18BD087454}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{88C3F138-4A22-415A-9028-865A256DFB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88C3F138-4A22-415A-9028-865A256DFB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88C3F138-4A22-415A-9028-865A256DFB38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94825FA1-7D8A-4085-884D-FE18BD087454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94825FA1-7D8A-4085-884D-FE18BD087454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94825FA1-7D8A-4085-884D-FE18BD087454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94825FA1-7D8A-4085-884D-FE18BD087454}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

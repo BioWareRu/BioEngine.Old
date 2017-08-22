@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BioEngine.Common.Search;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
+using BioEngine.Data.Search.Commands;
 using BioEngine.Social;
 using FluentValidation;
 using JetBrains.Annotations;
@@ -12,14 +12,9 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class PublishNewsHandler : RestCommandHandlerBase<PublishNewsCommand, bool>
     {
-        private readonly ISearchProvider<Common.Models.News> _newsSearchProvider;
-
         public PublishNewsHandler(HandlerContext<PublishNewsHandler> context,
-            IValidator<PublishNewsCommand>[] validators, ISearchProvider<Common.Models.News> newsSearchProvider) : base(
-            context,
-            validators)
+            IValidator<PublishNewsCommand>[] validators) : base(context, validators)
         {
-            _newsSearchProvider = newsSearchProvider;
         }
 
         protected override async Task<bool> ExecuteCommand(PublishNewsCommand command)
@@ -27,12 +22,12 @@ namespace BioEngine.Data.News.Handlers
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
             command.Model.Pub = 1;
 
-            await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
-
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
-            await _newsSearchProvider.AddUpdateEntity(command.Model);
+            await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
+
+            await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
 
             return true;
         }

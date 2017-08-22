@@ -13,6 +13,7 @@ namespace BioEngine.Common.Models
 
         [JsonProperty]
         public string Title { get; set; }
+
         [JsonProperty]
 
         public string Url { get; set; }
@@ -30,8 +31,8 @@ namespace BioEngine.Common.Models
         public int Articles { get; set; }
 
         [ForeignKey(nameof(Pid))]
-        public ArticleCat ParentCat { get; set; }
-        
+        public virtual ArticleCat ParentCat { get; set; }
+
         [InverseProperty(nameof(ParentCat))]
         public List<ArticleCat> Children { get; set; }
 

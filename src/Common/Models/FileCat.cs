@@ -25,7 +25,7 @@ namespace BioEngine.Common.Models
         public string Url { get; set; }
 
         [ForeignKey(nameof(Pid))]
-        public FileCat ParentCat { get; set; }
+        public virtual FileCat ParentCat { get; set; }
 
         [InverseProperty(nameof(ParentCat))]
         public List<FileCat> Children { get; set; }

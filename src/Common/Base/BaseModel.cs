@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using BioEngine.Common.Search;
 using Newtonsoft.Json;
 
 namespace BioEngine.Common.Base
@@ -12,7 +11,7 @@ namespace BioEngine.Common.Base
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class BaseModel<TPkType> : IBaseModel, ISearchModel
+    public abstract class BaseModel<TPkType> : IBaseModel
     {
         [Key]
         [Required]

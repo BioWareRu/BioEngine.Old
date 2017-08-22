@@ -6,8 +6,9 @@ using Autofac.Features.Variance;
 using AutoMapper;
 using BioEngine.Common.Base;
 using BioEngine.Common.DB;
-using BioEngine.Common.Search;
 using BioEngine.Data.Core;
+using BioEngine.Data.Search.Handlers;
+using BioEngine.Search;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ namespace BioEngine.Data
             var dbConfig = new MySqlDBConfiguration(configuration);
             services.AddDbContext<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));
 
-            services.Configure<ElasticSearchProviderConfig>(o => { o.Url = configuration["BE_ES_URL"]; });
+            services.AddBioEngineSearch(configuration);
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -33,7 +34,7 @@ namespace BioEngine.Data
 
         public static void AddBioEngineData(this ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterGeneric(typeof(ElasticSearchProvider<>)).AsImplementedInterfaces();
+            containerBuilder.AddBioEngineSearch();
             containerBuilder.RegisterType<ParentEntityProvider>().InstancePerLifetimeScope();
 
             containerBuilder
@@ -88,6 +89,17 @@ namespace BioEngine.Data
 
             containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
                 .Where(t => t.Name.EndsWith("MapperProfile")).As<Profile>();
+
+            containerBuilder.RegisterGeneric(typeof(SearchEntitiesHandler<>)).AsImplementedInterfaces()
+                .InstancePerDependency();
+            containerBuilder.RegisterGeneric(typeof(CountEntitiesHandler<>)).AsImplementedInterfaces()
+                .InstancePerDependency();
+            containerBuilder.RegisterGeneric(typeof(IndexEntitiesHandler<>)).AsImplementedInterfaces()
+                .InstancePerDependency();
+            containerBuilder.RegisterGeneric(typeof(IndexEntityHandler<>)).AsImplementedInterfaces()
+                .InstancePerDependency();
+            containerBuilder.RegisterGeneric(typeof(DeleteEntityFromIndexHandler<>)).AsImplementedInterfaces()
+                .InstancePerDependency();
 
             containerBuilder.Register(context => new MapperConfiguration(cfg =>
             {

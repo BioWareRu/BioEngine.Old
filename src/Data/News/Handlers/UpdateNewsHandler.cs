@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BioEngine.Common.Search;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
+using BioEngine.Data.Search.Commands;
 using BioEngine.Social;
 using FluentValidation;
 using JetBrains.Annotations;
@@ -12,14 +12,9 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class UpdateNewsHandler : RestCommandHandlerBase<UpdateNewsCommand, bool>
     {
-        private readonly ISearchProvider<Common.Models.News> _newsSearchProvider;
-
-
-        public UpdateNewsHandler(HandlerContext<UpdateNewsHandler> context, IValidator<UpdateNewsCommand>[] validators,
-            ISearchProvider<Common.Models.News> newsSearchProvider)
+        public UpdateNewsHandler(HandlerContext<UpdateNewsHandler> context, IValidator<UpdateNewsCommand>[] validators)
             : base(context, validators)
         {
-            _newsSearchProvider = newsSearchProvider;
         }
 
         protected override async Task<bool> ExecuteCommand(UpdateNewsCommand command)
@@ -39,7 +34,10 @@ namespace BioEngine.Data.News.Handlers
 
             await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
 
-            await _newsSearchProvider.AddUpdateEntity(command.Model);
+            if (command.Model.Pub == 1)
+            {
+                await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
+            }
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();

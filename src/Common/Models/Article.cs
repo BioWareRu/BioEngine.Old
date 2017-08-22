@@ -45,6 +45,6 @@ namespace BioEngine.Common.Models
         public User Author { get; set; }
 
         [ForeignKey(nameof(CatId))]
-        public ArticleCat Cat { get; set; }
+        public virtual ArticleCat Cat { get; set; }
     }
 }

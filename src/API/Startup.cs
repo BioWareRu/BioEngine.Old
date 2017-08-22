@@ -80,6 +80,7 @@ namespace BioEngine.API
             services.AddBioEngineRouting();
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
+            services.AddSingleton<PatreonApiHelper>();
 
             services.Configure<IPBApiConfig>(o =>
             {

@@ -1,4 +1,4 @@
-﻿namespace BioEngine.Common.Search
+﻿namespace BioEngine.Search.ElasticSearch
 {
     public class ElasticSearchProviderConfig
     {

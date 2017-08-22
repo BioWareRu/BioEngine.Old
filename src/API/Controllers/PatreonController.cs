@@ -11,7 +11,7 @@ namespace BioEngine.API.Controllers
     public class PatreonController : Controller
     {
         [HttpGet("current-goal")]
-        public async Task<PatreonGoal> CurrentGoal([FromServices] PatreonApiHelper apiHelper,
+        public async Task<IActionResult> CurrentGoal([FromServices] PatreonApiHelper apiHelper,
             [FromServices] IMemoryCache cache, [FromServices] ILogger<PatreonController> logger)
         {
             var currentGoal = cache.Get<PatreonGoal>("patreonCurrentGoal");
@@ -27,7 +27,7 @@ namespace BioEngine.API.Controllers
                     logger.LogError($"Error while loading patreon goals: {ex.Message}");
                 }
             }
-            return currentGoal;
+            return Ok(currentGoal);
         }
     }
 }

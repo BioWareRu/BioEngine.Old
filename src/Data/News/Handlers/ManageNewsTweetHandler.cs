@@ -5,7 +5,6 @@ using BioEngine.Data.News.Commands;
 using BioEngine.Data.Social.Commands;
 using BioEngine.Social;
 using JetBrains.Annotations;
-using Social;
 
 namespace BioEngine.Data.News.Handlers
 {

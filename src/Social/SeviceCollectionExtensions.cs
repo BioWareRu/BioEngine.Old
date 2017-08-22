@@ -1,8 +1,7 @@
-﻿using BioEngine.Social;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Social
+namespace BioEngine.Social
 {
     public static class SeviceCollectionExtensions
     {

@@ -1,6 +1,5 @@
 ﻿using BioEngine.Data.Core;
 using BioEngine.Social;
-using Social;
 
 namespace BioEngine.Data.News.Commands
 {

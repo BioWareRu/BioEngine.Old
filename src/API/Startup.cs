@@ -16,6 +16,7 @@ using BioEngine.Common.Ipb;
 using BioEngine.Content.Helpers;
 using BioEngine.Routing;
 using BioEngine.Data;
+using BioEngine.Social;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -29,7 +30,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
-using Social;
 using StackExchange.Redis;
 
 namespace BioEngine.API

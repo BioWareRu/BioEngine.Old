@@ -3,7 +3,6 @@ using BioEngine.Data.Core;
 using BioEngine.Data.Social.Commands;
 using BioEngine.Social;
 using JetBrains.Annotations;
-using Social;
 
 namespace BioEngine.Data.Social.Handlers
 {

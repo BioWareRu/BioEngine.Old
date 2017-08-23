@@ -104,11 +104,6 @@ namespace BioEngine.API.Controllers
                 return NotFound();
             }
 
-            if (news.Pub == 1)
-            {
-                return BadRequest();
-            }
-
             await Mediator.Send(new PublishNewsCommand(news));
 
             return Ok();
@@ -125,12 +120,39 @@ namespace BioEngine.API.Controllers
                 return NotFound();
             }
 
-            if (news.Pub == 0)
+            await Mediator.Send(new UnPublishNewsCommand(news));
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/pin")]
+        [UserRightsAuthorize(UserRights.PubNews)]
+        public async Task<IActionResult> Pin(int id)
+        {
+            var news = await GetNewsById(id);
+
+            if (news == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            await Mediator.Send(new UnPublishNewsCommand(news));
+            await Mediator.Send(new PinNewsCommand(news));
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/unpin")]
+        [UserRightsAuthorize(UserRights.PubNews)]
+        public async Task<IActionResult> UnPin(int id)
+        {
+            var news = await GetNewsById(id);
+
+            if (news == null)
+            {
+                return NotFound();
+            }
+
+            await Mediator.Send(new UnPinNewsCommand(news));
 
             return Ok();
         }

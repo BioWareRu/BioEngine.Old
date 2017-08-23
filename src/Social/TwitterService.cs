@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using BioEngine.Common.Base;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 using Tweetinvi;
 using Tweetinvi.Models;
 
@@ -9,8 +10,11 @@ namespace BioEngine.Social
     [UsedImplicitly]
     public class TwitterService
     {
-        public TwitterService(TwitterServiceConfiguration configuration)
+        private readonly ILogger<TwitterService> _logger;
+
+        public TwitterService(TwitterServiceConfiguration configuration, ILogger<TwitterService> logger)
         {
+            _logger = logger;
             Auth.SetCredentials(new TwitterCredentials(configuration.ConsumerKey, configuration.ConsumerSecret,
                 configuration.AccessToken, configuration.AcessTokenSecret));
         }
@@ -34,6 +38,8 @@ namespace BioEngine.Social
             var exc = ExceptionHandler.GetLastException();
             if (exc != null)
             {
+                _logger.LogError(exc.TwitterDescription);
+                _logger.LogError(string.Concat(exc.TwitterExceptionInfos.SelectMany(x => x.Message)));
                 if (exc.TwitterExceptionInfos.Any(x => x.Message == "Status is over 140 characters."))
                 {
                     throw new TooLongTweetTextException();

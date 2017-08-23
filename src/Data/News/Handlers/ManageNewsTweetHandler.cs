@@ -32,7 +32,7 @@ namespace BioEngine.Data.News.Handlers
                     var text = $"{message.News.Title} {message.News.PublicUrl} #rpg";
                     if (!string.IsNullOrEmpty(message.News.Parent.TwitterTag))
                     {
-                        text += $" {message.News.Parent.TwitterTag}";
+                        text += $" #{message.News.Parent.TwitterTag}";
                     }
 
                     var newTweetId = await Mediator.Send(new PublishTweetCommand(text));

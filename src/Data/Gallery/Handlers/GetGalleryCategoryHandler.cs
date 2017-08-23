@@ -15,7 +15,7 @@ namespace BioEngine.Data.Gallery.Handlers
         {
         }
 
-        protected override async Task<GalleryCat> RunQuery(GetGalleryCategoryQuery message)
+        protected override async Task<GalleryCat> RunQueryAsync(GetGalleryCategoryQuery message)
         {
             var catQuery = DBContext.GalleryCats.AsQueryable();
 

@@ -15,7 +15,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<Article> RunQuery(GetArticleByIdQuery message)
+        protected override async Task<Article> RunQueryAsync(GetArticleByIdQuery message)
         {
             var article = await DBContext.Articles
                 .Where(x => x.Id == message.Id)

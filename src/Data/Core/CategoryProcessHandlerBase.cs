@@ -17,31 +17,31 @@ namespace BioEngine.Data.Core
             _parentEntityProvider = parentEntityProvider;
         }
 
-        protected override async Task<TCat> RunQuery(TRequest message)
+        protected override async Task<TCat> RunQueryAsync(TRequest message)
         {
-            await ProcessCat(message.Cat, message.CategoryQuery);
+            await ProcessCatAsync(message.Cat, message.CategoryQuery);
             return message.Cat;
         }
 
-        private async Task<bool> ProcessCat(TCat cat, ICategoryQuery<TCat> query)
+        private async Task<bool> ProcessCatAsync(TCat cat, ICategoryQuery<TCat> query)
         {
             await DBContext.Entry(cat).Collection(x => x.Children).LoadAsync();
-            cat.Parent = query.Parent ?? await _parentEntityProvider.GetModelParent(cat);
+            cat.Parent = query.Parent ?? await _parentEntityProvider.GetModelParentAsync(cat);
             if (query.LoadLastItems != null)
             {
-                cat.Items = await GetCatItems(cat, (int) query.LoadLastItems);
+                cat.Items = await GetCatItemsAsync(cat, (int) query.LoadLastItems);
             }
             if (query.LoadChildren)
             {
                 foreach (var child in cat.Children)
                 {
-                    await ProcessCat(child, query);
+                    await ProcessCatAsync(child, query);
                 }
             }
 
             return true;
         }
 
-        protected abstract Task<IEnumerable<TEntity>> GetCatItems(TCat cat, int count);
+        protected abstract Task<IEnumerable<TEntity>> GetCatItemsAsync(TCat cat, int count);
     }
 }

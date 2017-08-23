@@ -17,7 +17,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<IEnumerable<Article>> GetCatItems(ArticleCat cat, int count)
+        protected override async Task<IEnumerable<Article>> GetCatItemsAsync(ArticleCat cat, int count)
         {
             return (await Mediator.Send(new GetCategoryArticlesQuery {Cat = cat, PageSize = count})).models;
         }

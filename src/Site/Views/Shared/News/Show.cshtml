@@ -47,10 +47,10 @@
     </header>
 
     <div class="b-text">
-        @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.ShortText))
+        @Html.Raw(await ContentHelper.ReplacePlaceholdersAsync(Model.News.ShortText))
         @if (Model.ShowFull)
         {
-            @Html.Raw(await ContentHelper.ReplacePlaceholders(Model.News.AddText))
+            @Html.Raw(await ContentHelper.ReplacePlaceholdersAsync(Model.News.AddText))
         }
     </div>
 

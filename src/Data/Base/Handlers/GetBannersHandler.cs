@@ -18,7 +18,7 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<Advertisement>, int)> RunQuery(
+        protected override async Task<(IEnumerable<Advertisement>, int)> RunQueryAsync(
             GetBannersQuery message)
         {
             var currentTs = DateTimeOffset.Now.ToUnixTimeSeconds();

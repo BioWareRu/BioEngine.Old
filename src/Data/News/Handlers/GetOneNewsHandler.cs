@@ -14,7 +14,7 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<Common.Models.News> RunQuery(GetOneNewsQuery message)
+        protected override async Task<Common.Models.News> RunQueryAsync(GetOneNewsQuery message)
         {
             var query = DBContext.News.AsQueryable();
             if (!message.WithUnPublishedNews)

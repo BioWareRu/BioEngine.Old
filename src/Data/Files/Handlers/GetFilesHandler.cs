@@ -16,7 +16,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<File>, int)> RunQuery(GetFilesQuery message)
+        protected override async Task<(IEnumerable<File>, int)> RunQueryAsync(GetFilesQuery message)
         {
             var query = DBContext.Files.AsQueryable();
             if (message.Parent != null)
@@ -30,7 +30,7 @@ namespace BioEngine.Data.Files.Handlers
                 .Include(x => x.Developer)
                 .Include(x => x.Cat);
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
 
             foreach (var file in data.models)
             {

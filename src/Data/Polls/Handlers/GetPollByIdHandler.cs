@@ -14,7 +14,7 @@ namespace BioEngine.Data.Polls.Handlers
         {
         }
 
-        protected override async Task<Poll> RunQuery(GetPollByIdQuery message)
+        protected override async Task<Poll> RunQueryAsync(GetPollByIdQuery message)
         {
             return await DBContext.Polls.FirstOrDefaultAsync(x => x.Id == message.Id);
         }

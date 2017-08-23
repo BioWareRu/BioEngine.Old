@@ -14,7 +14,7 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<Developer> RunQuery(GetDeveloperByIdQuery message)
+        protected override async Task<Developer> RunQueryAsync(GetDeveloperByIdQuery message)
         {
             return await DBContext.Developers.FirstOrDefaultAsync(x => x.Id == message.Id);
         }

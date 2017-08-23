@@ -14,7 +14,7 @@ namespace BioEngine.Data.Polls.Handlers
         {
         }
 
-        protected override async Task ExecuteCommand(PollVoteCommand command)
+        protected override async Task ExecuteCommandAsync(PollVoteCommand command)
         {
             var pollVote = new PollWho
             {

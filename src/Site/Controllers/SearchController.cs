@@ -49,7 +49,7 @@ namespace BioEngine.Site.Controllers
                     var searchBlock = CreateSearchBlock("Игры", Url.Search().BlockUrl("games", query), gamesCount,
                         games, x => x.Title,
                         x => Url.Base().PublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Desc));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Desc));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -60,7 +60,7 @@ namespace BioEngine.Site.Controllers
                     var searchBlock = CreateSearchBlock("Новости", Url.Search().BlockUrl("news", query), newsCount,
                         news, x => x.Title,
                         x => Url.News().PublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.ShortText));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.ShortText));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -72,7 +72,7 @@ namespace BioEngine.Site.Controllers
                         articlesCount,
                         articles, x => x.Title,
                         x => Url.Articles().PublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Announce));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -85,7 +85,7 @@ namespace BioEngine.Site.Controllers
                         articlesCatsCount,
                         articlesCats, x => x.Title,
                         x => Url.Articles().CatPublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Descr));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -97,7 +97,7 @@ namespace BioEngine.Site.Controllers
                         filesCount,
                         files, x => x.Title,
                         x => Url.Files().PublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Announce));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Announce));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -110,7 +110,7 @@ namespace BioEngine.Site.Controllers
                         fileCatsCount,
                         fileCats, x => x.Title,
                         x => Url.Files().CatPublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Descr));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Descr));
                     viewModel.AddBlock(await searchBlock);
                 }
 
@@ -123,7 +123,7 @@ namespace BioEngine.Site.Controllers
                         galleryCatsCount,
                         galleryCats, x => x.Title,
                         x => Url.Gallery().CatPublicUrl(x),
-                        x => _contentHelper.ReplacePlaceholders(x.Desc));
+                        x => _contentHelper.ReplacePlaceholdersAsync(x.Desc));
                     viewModel.AddBlock(await searchBlock);
                 }
             }
@@ -181,7 +181,7 @@ namespace BioEngine.Site.Controllers
             }
             foreach (var searchProvider in searchProviders)
             {
-                await searchProvider.DeleteIndex();
+                await searchProvider.DeleteIndexAsync();
             }
             return Ok("done");
         }

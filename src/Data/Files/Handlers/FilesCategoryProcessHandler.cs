@@ -16,7 +16,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<IEnumerable<File>> GetCatItems(FileCat cat, int count)
+        protected override async Task<IEnumerable<File>> GetCatItemsAsync(FileCat cat, int count)
         {
             return (await Mediator.Send(new GetCategoryFilesQuery(cat) {PageSize = count})).models;
         }

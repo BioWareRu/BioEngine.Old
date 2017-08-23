@@ -53,7 +53,7 @@ namespace BioEngine.API.Auth
                     {
                         if (_options.DevMode)
                             return await HandleAuthenticateDevAsync(tokenString);
-                        var user = await GetUser(tokenString);
+                        var user = await GetUserAsync(tokenString);
                         if (user != null)
                         {
                             var userTicket = AuthenticationTicket(user);
@@ -93,12 +93,12 @@ namespace BioEngine.API.Auth
             return AuthenticateResult.Success(userTicket);
         }
 
-        private async Task<User> GetUser(string token)
+        private async Task<User> GetUserAsync(string token)
         {
             var exists = TokenUsers.TryGetValue(token, out var user);
             if (!exists)
             {
-                var userInfo = await GetUserInformation(token);
+                var userInfo = await GetUserInformationAsync(token);
                 if (userInfo.IsParsed)
                 {
                     var id = int.Parse(userInfo.Id);
@@ -111,7 +111,7 @@ namespace BioEngine.API.Auth
             return user;
         }
 
-        private async Task<IpbUserInfo> GetUserInformation(string token)
+        private async Task<IpbUserInfo> GetUserInformationAsync(string token)
         {
             var userInformationEndpoint = _options.UserInformationEndpointUrl;
 

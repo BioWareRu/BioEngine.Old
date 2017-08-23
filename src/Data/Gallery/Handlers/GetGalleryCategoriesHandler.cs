@@ -16,7 +16,7 @@ namespace BioEngine.Data.Gallery.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<GalleryCat>, int)> RunQuery(GetGalleryCategoriesQuery message)
+        protected override async Task<(IEnumerable<GalleryCat>, int)> RunQueryAsync(GetGalleryCategoriesQuery message)
         {
             var query = DBContext.GalleryCats.AsQueryable();
             if (message.Parent != null)
@@ -33,7 +33,7 @@ namespace BioEngine.Data.Gallery.Handlers
                 query = query.Where(x => x.Pid == null);
             }
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
             foreach (var cat in data.models)
             {
                 await Mediator.Send(new GalleryCategoryProcessQuery(cat, message));

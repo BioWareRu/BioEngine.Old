@@ -15,7 +15,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<Article> RunQuery(GetArticleByUrlQuery message)
+        protected override async Task<Article> RunQueryAsync(GetArticleByUrlQuery message)
         {
             var query = DBContext.Articles.Include(x => x.Cat).Include(x => x.Author).AsQueryable();
             query = query.Where(x => x.Pub == 1 && x.Url == message.Url);

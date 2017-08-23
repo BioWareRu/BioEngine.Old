@@ -15,9 +15,9 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<Topic>, int)> RunQuery(GetTopicsQuery message)
+        protected override async Task<(IEnumerable<Topic>, int)> RunQueryAsync(GetTopicsQuery message)
         {
-            return await GetData(DBContext.Topics.AsQueryable(), message);
+            return await GetDataAsync(DBContext.Topics.AsQueryable(), message);
         }
     }
 }

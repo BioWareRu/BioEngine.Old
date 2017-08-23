@@ -12,7 +12,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task ExecuteCommand(FileDownloadedCommand command)
+        protected override async Task ExecuteCommandAsync(FileDownloadedCommand command)
         {
             command.File.Count++;
             DBContext.Files.Update(command.File);

@@ -28,14 +28,14 @@ namespace BioEngine.Search.ElasticSearch
             _client = new ElasticClient(settings);
         }
 
-        public async Task<IEnumerable<TModel>> Search(string term, int limit = 100)
+        public async Task<IEnumerable<TModel>> SearchAsync(string term, int limit = 100)
         {
             var results = await _client.SearchAsync<TSearchModel>(x => GetSearchRequest(x, term, limit));
 
             return results.Documents;
         }
 
-        public async Task<long> Count(string term)
+        public async Task<long> CountAsync(string term)
         {
             var names = GetSearchText(term);
             var resultsCount = await _client.CountAsync<TSearchModel>(x =>
@@ -64,25 +64,23 @@ namespace BioEngine.Search.ElasticSearch
             return names;
         }
 
-        public async Task AddUpdateEntity(TModel entity)
+        public async Task AddOrUpdateEntityAsync(TModel entity)
         {
-            //await _client.CreateIndexAsync(Descriptor);
             await _client.IndexAsync(_mapper.Map<TModel, TSearchModel>(entity), idx => idx.Index(IndexName));
         }
 
-        public async Task AddUpdateEntities(IEnumerable<TModel> entities)
+        public async Task AddOrUpdateEntitiesAsync(IEnumerable<TModel> entities)
         {
-            //await _client.CreateIndexAsync(Descriptor);
             await _client.IndexManyAsync(entities.Select(entity => _mapper.Map<TModel, TSearchModel>(entity)),
                 IndexName);
         }
 
-        public async Task DeleteEntity(TModel entity)
+        public async Task DeleteEntityAsync(TModel entity)
         {
             await _client.DeleteAsync<TModel>(_mapper.Map<TModel, TSearchModel>(entity), idx => idx.Index(IndexName));
         }
 
-        public async Task DeleteIndex()
+        public async Task DeleteIndexAsync()
         {
             await _client.DeleteIndexAsync(Indices.All, x => x.Index(IndexName));
         }

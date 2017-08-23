@@ -15,7 +15,7 @@ namespace BioEngine.Data.Users.Handlers
         {
         }
 
-        protected override async Task<User> RunQuery(GetUserByIdQuery message)
+        protected override async Task<User> RunQueryAsync(GetUserByIdQuery message)
         {
             return await DBContext.Users.Where(x => x.Id == message.Id).Include(x => x.SiteTeamMember)
                 .FirstOrDefaultAsync();

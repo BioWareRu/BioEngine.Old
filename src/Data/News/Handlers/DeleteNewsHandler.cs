@@ -15,7 +15,7 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<bool> ExecuteCommand(DeleteNewsCommand command)
+        protected override async Task<bool> ExecuteCommandAsync(DeleteNewsCommand command)
         {
             //first - delete forum topic
             await Mediator.Publish(new DeleteNewsForumTopicCommand(command.Model));

@@ -23,7 +23,7 @@ namespace BioEngine.Content.Helpers
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.Value.ApiKey}");
         }
 
-        private async Task<string> GetReponseJson(string path)
+        private async Task<string> GetReponseJsonAsync(string path)
         {
             var url = _apiUrl + path;
             return await _httpClient.GetStringAsync(url);
@@ -42,17 +42,17 @@ namespace BioEngine.Content.Helpers
                 select obj).ToList();
         }
 
-        public async Task<PatreonGoal> GetCurrentGoal()
+        public async Task<PatreonGoal> GetCurrentGoalAsync()
         {
-            var goals = await GetGoals();
+            var goals = await GetGoalsAsync();
             var currentGoal = goals.Where(x => x.CompletedPercentage < 100)
                 .OrderByDescending(x => x.CompletedPercentage).First();
             return currentGoal;
         }
 
-        public async Task<List<PatreonGoal>> GetGoals()
+        public async Task<List<PatreonGoal>> GetGoalsAsync()
         {
-            var json = await GetReponseJson("/current_user/campaigns?include-goals");
+            var json = await GetReponseJsonAsync("/current_user/campaigns?include-goals");
 
             return GetIncluded<PatreonGoal>(json, "goal");
         }

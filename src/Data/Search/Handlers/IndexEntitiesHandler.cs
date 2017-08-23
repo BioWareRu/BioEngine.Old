@@ -18,9 +18,9 @@ namespace BioEngine.Data.Search.Handlers
             _searchProvider = searchProvider;
         }
 
-        protected override async Task ExecuteCommand(IndexEntitiesCommand<T> command)
+        protected override async Task ExecuteCommandAsync(IndexEntitiesCommand<T> command)
         {
-            await _searchProvider.AddUpdateEntities(command.Models);
+            await _searchProvider.AddOrUpdateEntitiesAsync(command.Models);
         }
     }
 }

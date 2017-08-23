@@ -15,7 +15,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<FileCat>, int)> RunQuery(GetFilesCategoriesQuery message)
+        protected override async Task<(IEnumerable<FileCat>, int)> RunQueryAsync(GetFilesCategoriesQuery message)
         {
             var query = DBContext.FileCats.AsQueryable();
             if (message.Parent != null)
@@ -32,7 +32,7 @@ namespace BioEngine.Data.Files.Handlers
                 query = query.Where(x => x.Pid == null);
             }
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
 
             foreach (var cat in data.models)
             {

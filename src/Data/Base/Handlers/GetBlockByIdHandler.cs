@@ -14,7 +14,7 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<Block> RunQuery(GetBlockByIdQuery message)
+        protected override async Task<Block> RunQueryAsync(GetBlockByIdQuery message)
         {
             return await DBContext.Blocks.FirstOrDefaultAsync(x => x.Id == message.Id);
         }

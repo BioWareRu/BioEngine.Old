@@ -18,9 +18,9 @@ namespace BioEngine.Data.Base.Handlers
             _provider = provider;
         }
 
-        protected override async Task<IParentModel> RunQuery(GetParentByUrlQuery message)
+        protected override async Task<IParentModel> RunQueryAsync(GetParentByUrlQuery message)
         {
-            return await _provider.GetParenyByUrl(message.Url);
+            return await _provider.GetParenyByUrlAsync(message.Url);
         }
     }
 }

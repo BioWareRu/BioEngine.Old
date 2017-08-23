@@ -14,7 +14,7 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<Game> RunQuery(GetGameByIdQuery message)
+        protected override async Task<Game> RunQueryAsync(GetGameByIdQuery message)
         {
             return await DBContext.Games.Include(x => x.Developer).FirstOrDefaultAsync(x => x.Id == message.Id);
         }

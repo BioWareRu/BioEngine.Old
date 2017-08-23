@@ -19,7 +19,7 @@ namespace BioEngine.Data.News.Handlers
             _urlManager = urlManager;
         }
 
-        protected override async Task<(IEnumerable<Common.Models.News>, int)> RunQuery(GetNewsQuery message)
+        protected override async Task<(IEnumerable<Common.Models.News>, int)> RunQueryAsync(GetNewsQuery message)
         {
             var query = DBContext.News.AsQueryable();
             if (!message.WithUnPublishedNews)
@@ -43,7 +43,7 @@ namespace BioEngine.Data.News.Handlers
                 .Include(x => x.Developer)
                 .Include(x => x.Topic);
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
             foreach (var newse in data.models)
             {
                 newse.PublicUrl = _urlManager.News.PublicUrl(newse, true);

@@ -15,7 +15,7 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<bool> RunQuery(ManageNewsTweetCommand message)
+        protected override async Task<bool> RunQueryAsync(ManageNewsTweetCommand message)
         {
             var result = false;
             switch (message.Operation)

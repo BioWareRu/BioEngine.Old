@@ -17,7 +17,7 @@ namespace BioEngine.Data.Social.Handlers
             _twitterService = twitterService;
         }
 
-        protected override async Task<long> RunQuery(PublishTweetCommand command)
+        protected override async Task<long> RunQueryAsync(PublishTweetCommand command)
         {
             var tweetId = await Task.FromResult(_twitterService.CreateTweet(command.Text));
 

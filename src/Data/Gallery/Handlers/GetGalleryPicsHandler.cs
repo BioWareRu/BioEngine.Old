@@ -16,7 +16,7 @@ namespace BioEngine.Data.Gallery.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<GalleryPic>, int)> RunQuery(GetGalleryPicsQuery message)
+        protected override async Task<(IEnumerable<GalleryPic>, int)> RunQueryAsync(GetGalleryPicsQuery message)
         {
             var query = DBContext.GalleryPics.AsQueryable();
             if (!message.WithUnPublishedPictures)
@@ -37,7 +37,7 @@ namespace BioEngine.Data.Gallery.Handlers
                     .Include(x => x.Developer)
                     .Include(x => x.Cat);
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
 
             foreach (var pic in data.models)
             {

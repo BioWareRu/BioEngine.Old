@@ -17,7 +17,7 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<bool> ExecuteCommand(UnPublishNewsCommand command)
+        protected override async Task<bool> ExecuteCommandAsync(UnPublishNewsCommand command)
         {
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
             command.Model.Pub = 0;

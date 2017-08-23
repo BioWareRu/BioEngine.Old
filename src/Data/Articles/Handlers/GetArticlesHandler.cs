@@ -16,7 +16,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<Common.Models.Article> articles, int count)> RunQuery(
+        protected override async Task<(IEnumerable<Common.Models.Article> articles, int count)> RunQueryAsync(
             GetArticlesQuery message)
         {
             var query = DBContext.Articles.AsQueryable();

@@ -6,15 +6,15 @@ namespace BioEngine.Search.Interfaces
 {
     public interface ISearchProvider
     {
-        Task DeleteIndex();
-        Task<long> Count(string term);
+        Task DeleteIndexAsync();
+        Task<long> CountAsync(string term);
     }
 
     public interface ISearchProvider<T> : ISearchProvider where T : IBaseModel
     {
-        Task<IEnumerable<T>> Search(string term, int limit);
-        Task AddUpdateEntity(T entitity);
-        Task AddUpdateEntities(IEnumerable<T> entities);
-        Task DeleteEntity(T entity);
+        Task<IEnumerable<T>> SearchAsync(string term, int limit);
+        Task AddOrUpdateEntityAsync(T entitity);
+        Task AddOrUpdateEntitiesAsync(IEnumerable<T> entities);
+        Task DeleteEntityAsync(T entity);
     }
 }

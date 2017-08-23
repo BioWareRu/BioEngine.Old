@@ -14,7 +14,7 @@ namespace BioEngine.Data.News.Handlers
         {
         }
 
-        protected override async Task<int> ExecuteCommand(CreateNewsCommand createCommand)
+        protected override async Task<int> ExecuteCommandAsync(CreateNewsCommand createCommand)
         {
             await Validate(createCommand);
 

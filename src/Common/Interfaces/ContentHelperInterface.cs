@@ -4,7 +4,7 @@ namespace BioEngine.Common.Interfaces
 {
     public interface IContentHelperInterface
     {
-        Task<string> ReplacePlaceholders(string text);
+        Task<string> ReplacePlaceholdersAsync(string text);
         string StripTags(string html);
     }
 }

@@ -15,11 +15,11 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<Article>, int)> RunQuery(GetCategoryArticlesQuery message)
+        protected override async Task<(IEnumerable<Article>, int)> RunQueryAsync(GetCategoryArticlesQuery message)
         {
             var articlesQuery = DBContext.Articles.Where(x => x.CatId == message.Cat.Id && x.Pub == 1);
 
-            return await GetData(articlesQuery, message);
+            return await GetDataAsync(articlesQuery, message);
         }
     }
 }

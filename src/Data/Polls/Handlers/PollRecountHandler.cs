@@ -14,7 +14,7 @@ namespace BioEngine.Data.Polls.Handlers
         {
         }
 
-        protected override async Task ExecuteCommand(PollRecountCommand command)
+        protected override async Task ExecuteCommandAsync(PollRecountCommand command)
         {
             var votes = new Dictionary<string, string>();
             foreach (var option in command.Poll.Options)

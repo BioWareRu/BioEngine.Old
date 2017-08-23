@@ -15,7 +15,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<File> RunQuery(GetFileByIdQuery message)
+        protected override async Task<File> RunQueryAsync(GetFileByIdQuery message)
         {
             var file = await DBContext.Files
                 .Where(x => x.Id == message.Id)

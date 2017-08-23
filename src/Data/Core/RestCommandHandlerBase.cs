@@ -21,7 +21,7 @@ namespace BioEngine.Data.Core
         public override async Task<TResponse> Handle(TCommand command)
         {
             Logger.LogInformation($"Run command {typeof(TCommand)}");
-            return await ExecuteCommand(command);
+            return await ExecuteCommandAsync(command);
         }
 
         protected async Task Validate(TCommand command)
@@ -38,11 +38,11 @@ namespace BioEngine.Data.Core
             }
         }
 
-        protected override Task<TResponse> RunQuery(TCommand command)
+        protected override Task<TResponse> RunQueryAsync(TCommand command)
         {
             throw new System.NotImplementedException();
         }
 
-        protected abstract Task<TResponse> ExecuteCommand(TCommand command);
+        protected abstract Task<TResponse> ExecuteCommandAsync(TCommand command);
     }
 }

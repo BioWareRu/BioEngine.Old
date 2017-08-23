@@ -35,7 +35,7 @@ namespace BioEngine.Common.Ipb
             _client.DefaultRequestHeaders.Add("Authorization", "Basic " + Base64Encode(_ipbApiConfig.ApiKey) + ":");
         }
 
-        private async Task<HttpResponseMessage> DoApiRequest(string method,
+        private async Task<HttpResponseMessage> DoApiRequestAsync(string method,
             IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _ipbApiConfig.ApiUrl + method;
@@ -45,7 +45,7 @@ namespace BioEngine.Common.Ipb
             return response;
         }
 
-        private async Task<HttpResponseMessage> DoDeleteApiRequest(string method)
+        private async Task<HttpResponseMessage> DoDeleteApiRequestAsync(string method)
         {
             var url = _ipbApiConfig.ApiUrl + method;
             var response = await _client.DeleteAsync(url);
@@ -58,7 +58,7 @@ namespace BioEngine.Common.Ipb
             return Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<(int topicId, int postId)> CreateOrUpdateNewsTopic(News news)
+        public async Task<(int topicId, int postId)> CreateOrUpdateNewsTopicAsync(News news)
         {
             (int topicId, int postId) result = (news.ForumTopicId, news.ForumPostId);
             if (_ipbApiConfig.DevMode)
@@ -68,7 +68,7 @@ namespace BioEngine.Common.Ipb
             }
             if (news.ForumTopicId == 0)
             {
-                var topicCreateResponse = await DoApiRequest("/forums/topics",
+                var topicCreateResponse = await DoApiRequestAsync("/forums/topics",
                     new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("forum", _ipbApiConfig.NewsForumId),
@@ -76,7 +76,7 @@ namespace BioEngine.Common.Ipb
                         new KeyValuePair<string, string>("title", news.Title),
                         new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
                         new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
-                        new KeyValuePair<string, string>("post", await GetPostContent(news))
+                        new KeyValuePair<string, string>("post", await GetPostContentAsync(news))
                     });
                 var response = await topicCreateResponse.Content.ReadAsStringAsync();
                 if (topicCreateResponse.IsSuccessStatusCode)
@@ -93,7 +93,7 @@ namespace BioEngine.Common.Ipb
             }
             else
             {
-                var topicTitleUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
+                var topicTitleUpdateResponse = await DoApiRequestAsync("/forums/topics/" + news.ForumTopicId,
                     new List<KeyValuePair<string, string>>()
                     {
                         new KeyValuePair<string, string>("title", news.Title),
@@ -104,7 +104,7 @@ namespace BioEngine.Common.Ipb
                         $"Can't update topic title: {await topicTitleUpdateResponse.Content.ReadAsStringAsync()}");
                 }
 
-                var topicStatusUpdateResponse = await DoApiRequest("/forums/topics/" + news.ForumTopicId,
+                var topicStatusUpdateResponse = await DoApiRequestAsync("/forums/topics/" + news.ForumTopicId,
                     new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
@@ -112,10 +112,10 @@ namespace BioEngine.Common.Ipb
                     });
                 if (topicStatusUpdateResponse.IsSuccessStatusCode)
                 {
-                    var postUpdateResponse = await DoApiRequest("/forums/posts/" + news.ForumPostId,
+                    var postUpdateResponse = await DoApiRequestAsync("/forums/posts/" + news.ForumPostId,
                         new List<KeyValuePair<string, string>>
                         {
-                            new KeyValuePair<string, string>("post", await GetPostContent(news))
+                            new KeyValuePair<string, string>("post", await GetPostContentAsync(news))
                         });
                     if (!postUpdateResponse.IsSuccessStatusCode)
                     {
@@ -127,9 +127,9 @@ namespace BioEngine.Common.Ipb
             return result;
         }
 
-        private async Task<string> GetPostContent(News news)
+        private async Task<string> GetPostContentAsync(News news)
         {
-            var postContent = await _contextHelper.ReplacePlaceholders(news.ShortText);
+            var postContent = await _contextHelper.ReplacePlaceholdersAsync(news.ShortText);
             if (!string.IsNullOrEmpty(news.AddText))
             {
                 var addText = "<div class=\"ipsSpoiler\" data-ipsspoiler=\"\">" +
@@ -137,7 +137,7 @@ namespace BioEngine.Common.Ipb
                               "<span>Скрытый текст</span>" +
                               "</div>" +
                               "<div class=\"ipsSpoiler_contents\">" +
-                              $"{await _contextHelper.ReplacePlaceholders(news.AddText)}" +
+                              $"{await _contextHelper.ReplacePlaceholdersAsync(news.AddText)}" +
                               "</div>" +
                               "</div>";
 
@@ -153,13 +153,13 @@ namespace BioEngine.Common.Ipb
             return postContent;
         }
 
-        public async Task<bool> DeleteNewsTopic(News news)
+        public async Task<bool> DeleteNewsTopicAsync(News news)
         {
             if (_ipbApiConfig.DevMode)
             {
                 return true;
             }
-            var topicDeleteResponse = await DoDeleteApiRequest("/forums/topics/" + news.ForumTopicId);
+            var topicDeleteResponse = await DoDeleteApiRequestAsync("/forums/topics/" + news.ForumTopicId);
             if (topicDeleteResponse.IsSuccessStatusCode)
             {
                 return true;

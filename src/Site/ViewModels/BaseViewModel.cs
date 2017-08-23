@@ -47,7 +47,7 @@ namespace BioEngine.Site.ViewModels
             var description = await GetDescription();
             if (!string.IsNullOrEmpty(description))
             {
-                description = await ContentHelper.ReplacePlaceholders(description);
+                description = await ContentHelper.ReplacePlaceholdersAsync(description);
             }
 
             return ContentHelper.StripTags(description);

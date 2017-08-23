@@ -13,7 +13,7 @@ namespace BioEngine.Data.Polls.Handlers
         {
         }
 
-        protected override async Task<bool> RunQuery(IsPollVotedByUserQuery message)
+        protected override async Task<bool> RunQueryAsync(IsPollVotedByUserQuery message)
         {
             if (message.UserId > 0)
             {

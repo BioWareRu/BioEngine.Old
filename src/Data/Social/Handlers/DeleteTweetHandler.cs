@@ -17,7 +17,7 @@ namespace BioEngine.Data.Social.Handlers
             _twitterService = twitterService;
         }
 
-        protected override async Task<bool> RunQuery(DeleteTweetCommand command)
+        protected override async Task<bool> RunQueryAsync(DeleteTweetCommand command)
         {
             var result = await Task.FromResult(_twitterService.DeleteTweet(command.TweetId));
 

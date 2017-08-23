@@ -19,7 +19,7 @@ namespace BioEngine.API.Controllers
             {
                 try
                 {
-                    currentGoal = await apiHelper.GetCurrentGoal();
+                    currentGoal = await apiHelper.GetCurrentGoalAsync();
                     cache.Set("patreonCurrentGoal", currentGoal, TimeSpan.FromHours(1));
                 }
                 catch (Exception ex)

@@ -28,7 +28,7 @@ namespace BioEngine.Site.ViewComponents
             {
                 try
                 {
-                    currentGoal = await _patreonApiHelper.GetCurrentGoal();
+                    currentGoal = await _patreonApiHelper.GetCurrentGoalAsync();
                     _cache.Set("patreonCurrentGoal", currentGoal, TimeSpan.FromHours(1));
                 }
                 catch (Exception ex)

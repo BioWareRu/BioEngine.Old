@@ -15,7 +15,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<ArticleCat>, int)> RunQuery(GetArticlesCategoriesQuery message)
+        protected override async Task<(IEnumerable<ArticleCat>, int)> RunQueryAsync(GetArticlesCategoriesQuery message)
         {
             var query = DBContext.ArticleCats.AsQueryable();
             if (message.Parent != null)
@@ -33,7 +33,7 @@ namespace BioEngine.Data.Articles.Handlers
             }
 
 
-            var data = await GetData(query, message);
+            var data = await GetDataAsync(query, message);
             foreach (var cat in data.models)
             {
                 await Mediator.Send(new ArticleCategoryProcessQuery(cat, message));

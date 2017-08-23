@@ -15,7 +15,7 @@ namespace BioEngine.Data.Base.Handlers
         {
         }
 
-        protected override async Task<Menu> RunQuery(GetMenuByKeyQuery message)
+        protected override async Task<Menu> RunQueryAsync(GetMenuByKeyQuery message)
         {
             return await DBContext.Menus.Where(x => x.Key == message.Key).FirstOrDefaultAsync();
         }

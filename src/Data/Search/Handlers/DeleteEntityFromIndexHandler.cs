@@ -17,9 +17,9 @@ namespace BioEngine.Data.Search.Handlers
             _searchProvider = searchProvider;
         }
 
-        protected override async Task ExecuteCommand(DeleteEntityFromIndexCommand<T> command)
+        protected override async Task ExecuteCommandAsync(DeleteEntityFromIndexCommand<T> command)
         {
-           await _searchProvider.DeleteEntity(command.Model);
+           await _searchProvider.DeleteEntityAsync(command.Model);
         }
     }
 }

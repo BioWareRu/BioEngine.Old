@@ -18,9 +18,9 @@ namespace BioEngine.Data.Search.Handlers
             _searchProvider = searchProvider;
         }
 
-        protected override async Task<long> RunQuery(CountEntitiesQuery<T> message)
+        protected override async Task<long> RunQueryAsync(CountEntitiesQuery<T> message)
         {
-            return await _searchProvider.Count(message.Query);
+            return await _searchProvider.CountAsync(message.Query);
         }
     }
 }

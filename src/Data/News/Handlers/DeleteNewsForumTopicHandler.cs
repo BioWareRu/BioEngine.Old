@@ -17,9 +17,9 @@ namespace BioEngine.Data.News.Handlers
             _ipbApiHelper = ipbApiHelper;
         }
 
-        protected override async Task ExecuteCommand(DeleteNewsForumTopicCommand command)
+        protected override async Task ExecuteCommandAsync(DeleteNewsForumTopicCommand command)
         {
-            var result = await _ipbApiHelper.DeleteNewsTopic(command.News);
+            var result = await _ipbApiHelper.DeleteNewsTopicAsync(command.News);
             if (result)
             {
                 command.News.ForumTopicId = 0;

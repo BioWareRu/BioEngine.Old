@@ -15,7 +15,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<FileCat> RunQuery(GetFilesCategoryQuery message)
+        protected override async Task<FileCat> RunQueryAsync(GetFilesCategoryQuery message)
         {
             var catQuery = DBContext.FileCats.AsQueryable();
 

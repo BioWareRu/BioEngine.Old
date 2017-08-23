@@ -12,7 +12,7 @@ namespace BioEngine.Data.Core
         IAsyncRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
-        protected abstract Task<TResponse> RunQuery(TRequest message);
+        protected abstract Task<TResponse> RunQueryAsync(TRequest message);
 
         protected QueryHandlerBase(HandlerContext context) : base(context)
         {
@@ -41,7 +41,7 @@ namespace BioEngine.Data.Core
         public virtual Task<TResponse> Handle(TRequest message)
         {
             Logger.LogInformation($"Run query {GetType().FullName} for message {message.GetType().FullName}");
-            var result = RunQuery(message);
+            var result = RunQueryAsync(message);
             Logger.LogInformation("Query completed");
             return result;
         }

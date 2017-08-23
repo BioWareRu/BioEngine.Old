@@ -15,11 +15,11 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<(IEnumerable<File>, int)> RunQuery(GetCategoryFilesQuery message)
+        protected override async Task<(IEnumerable<File>, int)> RunQueryAsync(GetCategoryFilesQuery message)
         {
             var filesQuery = DBContext.Files.Where(x => x.CatId == message.Cat.Id);
 
-            return await GetData(filesQuery, message);
+            return await GetDataAsync(filesQuery, message);
         }
     }
 }

@@ -30,23 +30,23 @@ namespace BioEngine.Content.Helpers
 
             _placeholders = new List<ContentPlaceholder>
             {
-                new ContentPlaceholder(new Regex("\\[game:([a-zA-Z0-9_]+)\\]"), false, ReplaceGame),
-                new ContentPlaceholder(new Regex("\\[gameUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceGame),
-                new ContentPlaceholder(new Regex("\\[developer:([a-zA-Z0-9_]+)\\]"), false, ReplaceDeveloper),
-                new ContentPlaceholder(new Regex("\\[developerUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceDeveloper),
-                new ContentPlaceholder(new Regex("\\[news:([0-9]+)\\]"), false, ReplaceNews),
-                new ContentPlaceholder(new Regex("\\[newsUrl:([0-9]+)\\]"), true, ReplaceNews),
-                new ContentPlaceholder(new Regex("\\[file:([0-9]+)\\]"), false, ReplaceFile),
-                new ContentPlaceholder(new Regex("\\[fileUrl:([0-9]+)\\]"), true, ReplaceFile),
-                new ContentPlaceholder(new Regex("\\[article:([0-9]+)\\]"), false, ReplaceArticle),
-                new ContentPlaceholder(new Regex("\\[articleUrl:([0-9]+)\\]"), true, ReplaceArticle),
-                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+)\\]"), false, ReplaceGallery),
-                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+):([0-9]+):([0-9]+)\\]"), false, ReplaceGallery),
-                new ContentPlaceholder(new Regex("\\[galleryUrl:([0-9]+)\\]"), true, ReplaceGallery),
-                new ContentPlaceholder(new Regex("src=\"http:"), true, ReplaceHttp),
+                new ContentPlaceholder(new Regex("\\[game:([a-zA-Z0-9_]+)\\]"), false, ReplaceGameAsync),
+                new ContentPlaceholder(new Regex("\\[gameUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceGameAsync),
+                new ContentPlaceholder(new Regex("\\[developer:([a-zA-Z0-9_]+)\\]"), false, ReplaceDeveloperAsync),
+                new ContentPlaceholder(new Regex("\\[developerUrl:([a-zA-Z0-9_]+)\\]"), true, ReplaceDeveloperAsync),
+                new ContentPlaceholder(new Regex("\\[news:([0-9]+)\\]"), false, ReplaceNewsAsync),
+                new ContentPlaceholder(new Regex("\\[newsUrl:([0-9]+)\\]"), true, ReplaceNewsAsync),
+                new ContentPlaceholder(new Regex("\\[file:([0-9]+)\\]"), false, ReplaceFileAsync),
+                new ContentPlaceholder(new Regex("\\[fileUrl:([0-9]+)\\]"), true, ReplaceFileAsync),
+                new ContentPlaceholder(new Regex("\\[article:([0-9]+)\\]"), false, ReplaceArticleAsync),
+                new ContentPlaceholder(new Regex("\\[articleUrl:([0-9]+)\\]"), true, ReplaceArticleAsync),
+                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+)\\]"), false, ReplaceGalleryAsync),
+                new ContentPlaceholder(new Regex("\\[gallery:([0-9]+):([0-9]+):([0-9]+)\\]"), false, ReplaceGalleryAsync),
+                new ContentPlaceholder(new Regex("\\[galleryUrl:([0-9]+)\\]"), true, ReplaceGalleryAsync),
+                new ContentPlaceholder(new Regex("src=\"http:"), true, ReplaceHttpAsync),
                 new ContentPlaceholder(new Regex("\\[video id\\=([0-9]+?) uri\\=(.*?)\\](.*?)\\[\\/video\\]"), true,
-                    ReplaceVideo),
-                new ContentPlaceholder(new Regex("\\[twitter:([0-9]+)\\]"), false, ReplaceTwitter),
+                    ReplaceVideoAsync),
+                new ContentPlaceholder(new Regex("\\[twitter:([0-9]+)\\]"), false, ReplaceTwitterAsync),
             };
         }
 
@@ -77,7 +77,7 @@ namespace BioEngine.Content.Helpers
         private readonly List<ContentPlaceholder> _placeholders;
 
 
-        public async Task<string> ReplacePlaceholders(string text)
+        public async Task<string> ReplacePlaceholdersAsync(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -99,7 +99,7 @@ namespace BioEngine.Content.Helpers
             return text;
         }
 
-        private async Task<string> ReplaceGame(Match match, bool urlOnly)
+        private async Task<string> ReplaceGameAsync(Match match, bool urlOnly)
         {
             var gameUrl = match.Groups[1].Value;
             var game = await _mediator.Send(new GetGameByUrlQuery(gameUrl));
@@ -108,7 +108,7 @@ namespace BioEngine.Content.Helpers
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{game.Title}\">{game.Title}</a>";
         }
 
-        private async Task<string> ReplaceDeveloper(Match match, bool urlOnly)
+        private async Task<string> ReplaceDeveloperAsync(Match match, bool urlOnly)
         {
             var developerUrl = match.Groups[1].Value;
             var developer = (Developer) await _mediator.Send(new GetParentByUrlQuery(developerUrl));
@@ -117,7 +117,7 @@ namespace BioEngine.Content.Helpers
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{developer.Name}\">{developer.Name}</a>";
         }
 
-        private async Task<string> ReplaceNews(Match match, bool urlOnly)
+        private async Task<string> ReplaceNewsAsync(Match match, bool urlOnly)
         {
             var newsId = int.Parse(match.Groups[1].Value);
             if (newsId <= 0) return null;
@@ -127,7 +127,7 @@ namespace BioEngine.Content.Helpers
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{news.Title}\">{news.Title}</a>";
         }
 
-        private async Task<string> ReplaceTwitter(Match match, bool urlOnly)
+        private async Task<string> ReplaceTwitterAsync(Match match, bool urlOnly)
         {
             var id = match.Groups[1].Value;
             var html = @"
@@ -142,7 +142,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             return await Task.FromResult(html);
         }
 
-        private async Task<string> ReplaceVideo(Match match, bool urlOnly)
+        private async Task<string> ReplaceVideoAsync(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
             var file = await _mediator.Send(new GetFileByIdQuery(fileId));
@@ -152,12 +152,12 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             return result;
         }
 
-        private async Task<string> ReplaceHttp(Match match, bool urlOnly)
+        private async Task<string> ReplaceHttpAsync(Match match, bool urlOnly)
         {
             return await Task.FromResult("src=\"");
         }
 
-        private async Task<string> ReplaceGallery(Match match, bool urlOnly)
+        private async Task<string> ReplaceGalleryAsync(Match match, bool urlOnly)
         {
             var width = 300;
             var height = 300;
@@ -181,7 +181,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             return $"<a href='{picUrl}' title='{pic.Desc}'><img src='{thumbUrl}' alt='{pic.Desc}' /></a>";
         }
 
-        private async Task<string> ReplaceArticle(Match match, bool urlOnly)
+        private async Task<string> ReplaceArticleAsync(Match match, bool urlOnly)
         {
             var articleId = int.Parse(match.Groups[1].Value);
             if (articleId <= 0) return null;
@@ -191,7 +191,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             return urlOnly ? url.ToString() : $"<a href=\"{url}\" title=\"{article.Title}\">{article.Title}</a>";
         }
 
-        private async Task<string> ReplaceFile(Match match, bool urlOnly)
+        private async Task<string> ReplaceFileAsync(Match match, bool urlOnly)
         {
             var fileId = int.Parse(match.Groups[1].Value);
             if (fileId <= 0) return null;

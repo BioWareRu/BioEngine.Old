@@ -19,7 +19,7 @@ namespace BioEngine.Data.News.Handlers
             _urlManager = urlManager;
         }
 
-        protected override async Task<Common.Models.News> RunQuery(GetNewsByIdQuery message)
+        protected override async Task<Common.Models.News> RunQueryAsync(GetNewsByIdQuery message)
         {
             var news =
                 await DBContext.News

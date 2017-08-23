@@ -15,7 +15,7 @@ namespace BioEngine.Data.Files.Handlers
         {
         }
 
-        protected override async Task<File> RunQuery(GetFileByUrlQuery message)
+        protected override async Task<File> RunQueryAsync(GetFileByUrlQuery message)
         {
             var query = DBContext.Files.Include(x => x.Cat).Include(x => x.Author).Include(x => x.Game)
                 .Include(x => x.Developer).AsQueryable().Where(x => x.Url == message.Url);

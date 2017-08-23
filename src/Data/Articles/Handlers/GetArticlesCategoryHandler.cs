@@ -15,7 +15,7 @@ namespace BioEngine.Data.Articles.Handlers
         {
         }
 
-        protected override async Task<ArticleCat> RunQuery(GetArticlesCategoryQuery message)
+        protected override async Task<ArticleCat> RunQueryAsync(GetArticlesCategoryQuery message)
         {
             var catQuery = DBContext.ArticleCats.AsQueryable();
 

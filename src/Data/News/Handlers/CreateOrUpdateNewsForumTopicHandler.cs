@@ -17,9 +17,9 @@ namespace BioEngine.Data.News.Handlers
             _ipbApiHelper = ipbApiHelper;
         }
 
-        protected override async Task ExecuteCommand(CreateOrUpdateNewsForumTopicCommand command)
+        protected override async Task ExecuteCommandAsync(CreateOrUpdateNewsForumTopicCommand command)
         {
-            var result = await _ipbApiHelper.CreateOrUpdateNewsTopic(command.News);
+            var result = await _ipbApiHelper.CreateOrUpdateNewsTopicAsync(command.News);
             if (result.topicId > 0 && result.postId > 0)
             {
                 command.News.ForumTopicId = result.topicId;

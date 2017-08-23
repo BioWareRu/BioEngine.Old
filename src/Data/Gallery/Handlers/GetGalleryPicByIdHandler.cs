@@ -15,7 +15,7 @@ namespace BioEngine.Data.Gallery.Handlers
         {
         }
 
-        protected override async Task<GalleryPic> RunQuery(GetGalleryPicByIdQuery message)
+        protected override async Task<GalleryPic> RunQueryAsync(GetGalleryPicByIdQuery message)
         {
             var pic =
                 await DBContext.GalleryPics.Where(x => x.Id == message.Id)
@@ -29,13 +29,13 @@ namespace BioEngine.Data.Gallery.Handlers
                     await Mediator.Send(new GalleryCategoryProcessQuery(pic.Cat,
                         new GetGalleryCategoryQuery()));
 
-                pic.Position = await GetPicPosition(pic);
+                pic.Position = await GetPicPositionAsync(pic);
             }
 
             return pic;
         }
 
-        private async Task<int> GetPicPosition(GalleryPic picture)
+        private async Task<int> GetPicPositionAsync(GalleryPic picture)
         {
             return
                 await DBContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)

@@ -20,24 +20,24 @@ namespace BioEngine.Common.Base
             _dbContext = dbContext;
         }
 
-        private async Task<List<Game>> GetGames()
+        private async Task<List<Game>> GetGamesAsync()
         {
-            return await GetParentModels<Game>();
+            return await GetParentModelsAsync<Game>();
         }
 
-        private async Task<List<Developer>> GetDevelopers()
+        private async Task<List<Developer>> GetDevelopersAsync()
         {
-            return await GetParentModels<Developer>();
+            return await GetParentModelsAsync<Developer>();
         }
 
-        private async Task<List<Topic>> GetTopics()
+        private async Task<List<Topic>> GetTopicsAsync()
         {
-            return await GetParentModels<Topic>();
+            return await GetParentModelsAsync<Topic>();
         }
 
         private readonly Dictionary<Type, List<IParentModel>> _parentModels = new Dictionary<Type, List<IParentModel>>();
 
-        private async Task<List<T>> GetParentModels<T>() where T : class, IParentModel
+        private async Task<List<T>> GetParentModelsAsync<T>() where T : class, IParentModel
         {
             if (!_parentModels.ContainsKey(typeof(T)))
             {
@@ -46,30 +46,30 @@ namespace BioEngine.Common.Base
             return _parentModels[typeof(T)].Cast<T>().ToList();
         }
 
-        public async Task<IParentModel> GetParenyByUrl(string url)
+        public async Task<IParentModel> GetParenyByUrlAsync(string url)
         {
-            var game = (await GetGames()).FirstOrDefault(x => x.Url == url);
+            var game = (await GetGamesAsync()).FirstOrDefault(x => x.Url == url);
             if (game != null) return game;
-            var developer = (await GetDevelopers()).FirstOrDefault(x => x.Url == url);
+            var developer = (await GetDevelopersAsync()).FirstOrDefault(x => x.Url == url);
             if (developer != null) return developer;
-            var topic = (await GetTopics()).FirstOrDefault(x => x.Url == url);
+            var topic = (await GetTopicsAsync()).FirstOrDefault(x => x.Url == url);
             return topic;
         }
 
-        public async Task<IParentModel> GetModelParent(IChildModel model)
+        public async Task<IParentModel> GetModelParentAsync(IChildModel model)
         {
             IParentModel parent = null;
             if (model.GameId > 0)
             {
-                parent = (await GetGames()).FirstOrDefault(x => x.Id == model.GameId);
+                parent = (await GetGamesAsync()).FirstOrDefault(x => x.Id == model.GameId);
             }
             if (model.DeveloperId > 0)
             {
-                parent = (await GetDevelopers()).FirstOrDefault(x => x.Id == model.DeveloperId);
+                parent = (await GetDevelopersAsync()).FirstOrDefault(x => x.Id == model.DeveloperId);
             }
             if (model.TopicId > 0)
             {
-                parent = (await GetTopics()).FirstOrDefault(x => x.Id == model.TopicId);
+                parent = (await GetTopicsAsync()).FirstOrDefault(x => x.Id == model.TopicId);
             }
             if (parent == null)
             {

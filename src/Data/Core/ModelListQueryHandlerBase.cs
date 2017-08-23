@@ -11,7 +11,7 @@ namespace BioEngine.Data.Core
         where TResponse : IBaseModel
         where TRequest : ModelsListQueryBase<TResponse>
     {
-        protected async Task<(IEnumerable<TResponse> models, int totalCount)> GetData(IQueryable<TResponse> query,
+        protected async Task<(IEnumerable<TResponse> models, int totalCount)> GetDataAsync(IQueryable<TResponse> query,
             TRequest message)
         {
             int? totalCount = null;

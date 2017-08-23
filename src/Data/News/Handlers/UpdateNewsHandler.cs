@@ -19,10 +19,6 @@ namespace BioEngine.Data.News.Handlers
 
         protected override async Task<bool> ExecuteCommandAsync(UpdateNewsCommand command)
         {
-            command.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
-
-            await Validate(command);
-
             var needTweetUpd = command.Model.Pub == 1 &&
                                (command.Title != command.Model.Title || command.Url != command.Model.Url);
 
@@ -38,6 +34,8 @@ namespace BioEngine.Data.News.Handlers
             {
                 await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
             }
+            
+            command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();

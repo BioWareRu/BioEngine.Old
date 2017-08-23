@@ -16,8 +16,6 @@ namespace BioEngine.Data.News.Handlers
 
         protected override async Task<int> ExecuteCommandAsync(CreateNewsCommand createCommand)
         {
-            await Validate(createCommand);
-
             var news = Mapper.Map<CreateNewsCommand, Common.Models.News>(createCommand);
             DBContext.News.Add(news);
             await DBContext.SaveChangesAsync();

@@ -20,7 +20,9 @@ namespace BioEngine.Data.Core
 
         public override async Task<TResponse> Handle(TCommand command)
         {
-            Logger.LogInformation($"Run command {typeof(TCommand)}");
+            Logger.LogInformation($"Validate command {typeof(TCommand)}");
+            await Validate(command);
+            Logger.LogInformation("Command is valid. Run it!");
             return await ExecuteCommandAsync(command);
         }
 

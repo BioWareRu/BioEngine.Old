@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BioEngine.API.Components.REST.Errors;
 
 namespace BioEngine.API.Components.REST.Models
 {
@@ -16,20 +17,5 @@ namespace BioEngine.API.Components.REST.Models
         public int Code { get; }
 
         public IEnumerable<IErrorInterface> Errors { get; protected set; }
-    }
-
-    public interface IErrorInterface
-    {
-        string Message { get; }
-    }
-
-    public class RestError : IErrorInterface
-    {
-        public RestError(string message)
-        {
-            Message = message;
-        }
-
-        public string Message { get; }
     }
 }

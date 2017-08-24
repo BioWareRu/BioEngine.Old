@@ -52,6 +52,11 @@ namespace BioEngine.API.Components.REST
 
         public abstract Task<IActionResult> Delete(TPkType id);
 
+        protected new IActionResult NotFound()
+        {
+            return Errors(StatusCodes.Status404NotFound, new[] {new RestError("Not Found")});
+        }
+
         protected IActionResult Created(T model)
         {
             return SaveResponse(StatusCodes.Status201Created, model);
@@ -86,7 +91,7 @@ namespace BioEngine.API.Components.REST
         {
             if (model == null)
             {
-                return NotFound(new NotFoundError());
+                return NotFound();
             }
             return Ok(model);
         }

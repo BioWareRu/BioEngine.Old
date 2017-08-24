@@ -18,7 +18,7 @@ namespace BioEngine.API.Components.REST.Errors
             {
                 context.Result =
                     new ObjectResult(new RestResult(StatusCodes.Status500InternalServerError,
-                        new List<IErrorInterface> {new Models.RestError(userException.Message)}))
+                        new List<IErrorInterface> {new RestError(userException.Message)}))
                     {
                         StatusCode = StatusCodes.Status500InternalServerError
                     };

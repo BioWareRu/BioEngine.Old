@@ -20,7 +20,7 @@ namespace BioEngine.API.Components.REST.Errors
             logger.LogError(500, exception, $"API Exception: {exception.Message}");
             context.Result =
                 new ObjectResult(new RestResult(StatusCodes.Status500InternalServerError,
-                    new List<IErrorInterface> {new Models.RestError("Внутренняя ошибка сервера")}))
+                    new List<IErrorInterface> {new RestError("Внутренняя ошибка сервера")}))
                 {
                     StatusCode = StatusCodes.Status500InternalServerError
                 };

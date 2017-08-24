@@ -1,14 +1,12 @@
-﻿using System.Net;
-
-namespace BioEngine.API.Components.REST.Errors
+﻿namespace BioEngine.API.Components.REST.Errors
 {
-    public abstract class RestError
+    public class RestError : IErrorInterface
     {
-        public HttpStatusCode Code { get; }
-
-        protected RestError(HttpStatusCode code)
+        public RestError(string message)
         {
-            Code = code;
+            Message = message;
         }
+
+        public string Message { get; }
     }
 }

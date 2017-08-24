@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BioEngine.API.Components.REST.Errors;
 using BioEngine.API.Extensions;
 using FluentValidation.Results;
 using JetBrains.Annotations;

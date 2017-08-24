@@ -8,9 +8,10 @@ using BioEngine.Common.DB;
 namespace BioEngine.Common.Migrations
 {
     [DbContext(typeof(BWContext))]
-    partial class BWContextModelSnapshot : ModelSnapshot
+    [Migration("20170824050733_forum_and_post_id_in_news_are_nullable")]
+    partial class forum_and_post_id_in_news_are_nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2");

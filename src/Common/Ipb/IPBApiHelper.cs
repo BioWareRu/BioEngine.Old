@@ -60,13 +60,13 @@ namespace BioEngine.Common.Ipb
 
         public async Task<(int topicId, int postId)> CreateOrUpdateNewsTopicAsync(News news)
         {
-            (int topicId, int postId) result = (news.ForumTopicId, news.ForumPostId);
+            (int topicId, int postId) result = (news.ForumTopicId ?? 0, news.ForumPostId ?? 0);
             if (_ipbApiConfig.DevMode)
             {
                 var rnd = new Random();
                 return (rnd.Next(1, 1000), rnd.Next(1000, 10000));
             }
-            if (news.ForumTopicId == 0)
+            if (news.ForumTopicId == null)
             {
                 var topicCreateResponse = await DoApiRequestAsync("/forums/topics",
                     new List<KeyValuePair<string, string>>
@@ -108,7 +108,7 @@ namespace BioEngine.Common.Ipb
                     new List<KeyValuePair<string, string>>
                     {
                         new KeyValuePair<string, string>("hidden", news.Pub == 1 ? "0" : "1"),
-                        new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0"),
+                        new KeyValuePair<string, string>("pinned", news.Sticky == 1 ? "1" : "0")
                     });
                 if (topicStatusUpdateResponse.IsSuccessStatusCode)
                 {
@@ -155,7 +155,7 @@ namespace BioEngine.Common.Ipb
 
         public async Task<bool> DeleteNewsTopicAsync(News news)
         {
-            if (_ipbApiConfig.DevMode)
+            if (_ipbApiConfig.DevMode || news.ForumTopicId == null)
             {
                 return true;
             }

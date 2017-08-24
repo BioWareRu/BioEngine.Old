@@ -31,11 +31,10 @@ namespace BioEngine.Common.Models
         public int AuthorId { get; set; }
 
         [Column("tid")]
-        public int ForumTopicId { get; set; }
+        public int? ForumTopicId { get; set; }
 
-        [Required]
         [Column("pid")]
-        public int ForumPostId { get; set; }
+        public int? ForumPostId { get; set; }
 
         [Required]
         [JsonProperty]

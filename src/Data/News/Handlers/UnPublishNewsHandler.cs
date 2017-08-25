@@ -22,6 +22,7 @@ namespace BioEngine.Data.News.Handlers
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
             command.Model.Pub = 0;
 
+            await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
             await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.Delete));
 
             DBContext.Update(command.Model);

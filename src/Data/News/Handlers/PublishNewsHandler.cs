@@ -22,6 +22,8 @@ namespace BioEngine.Data.News.Handlers
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
             command.Model.Pub = 1;
 
+            await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
+            
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 

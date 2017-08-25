@@ -28,10 +28,9 @@ namespace BioEngine.Data.News.Handlers
                 await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
             }
 
-            await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
-
             if (command.Model.Pub == 1)
             {
+                await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
                 await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
             }
             

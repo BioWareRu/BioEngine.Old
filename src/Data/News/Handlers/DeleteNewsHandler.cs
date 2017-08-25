@@ -2,6 +2,7 @@
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.Search.Commands;
+using BioEngine.Data.Social.Commands;
 using FluentValidation;
 using JetBrains.Annotations;
 
@@ -20,7 +21,10 @@ namespace BioEngine.Data.News.Handlers
             //first - delete forum topic
             await Mediator.Publish(new DeleteNewsForumTopicCommand(command.Model));
 
-            //TODO: delete twitter
+            if (command.Model.TwitterId > 0)
+            {
+                await Mediator.Send(new DeleteTweetCommand(command.Model.TwitterId));
+            }
 
             //delete news
             DBContext.Remove(command.Model);

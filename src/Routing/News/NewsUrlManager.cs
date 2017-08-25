@@ -71,7 +71,7 @@ namespace BioEngine.Routing.News
             return ParentNewsUrl(news.Parent, page, absolute);
         }
 
-        public Uri ParentNewsUrl(IParentModel parent, int? page = null, bool absolute= false)
+        public Uri ParentNewsUrl(IParentModel parent, int? page = null, bool absolute = false)
         {
             return GetUrl(page > 0 ? NewsRoutesEnum.NewsByParentWithPage : NewsRoutesEnum.NewsByParent,
                 new {parentUrl = parent.ParentUrl, page}, absolute);
@@ -79,7 +79,9 @@ namespace BioEngine.Routing.News
 
         public Uri CommentsUrl(Common.Models.News news)
         {
-            return new Uri($"{Settings.IPBDomain}/topic/{news.ForumTopicId}/?do=getNewComment");
+            return news.ForumTopicId != null
+                ? new Uri($"{Settings.IPBDomain}/topic/{news.ForumTopicId}/?do=getNewComment")
+                : null;
         }
     }
 }

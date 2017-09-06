@@ -50,7 +50,8 @@ namespace BioEngine.Content.Helpers
                       + $"&refresh_token={_config.RefreshToken}"
                       + $"&client_id={_config.ClientId}"
                       + $"&client_secret={_config.ClientSecret}";
-            var response = await _httpClient.PostAsync(url, null);
+            var httpClient = new HttpClient();
+            var response = await httpClient.PostAsync(url, null);
             if (response.IsSuccessStatusCode)
             {
                 var tokenObj =

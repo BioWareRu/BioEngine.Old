@@ -34,6 +34,7 @@ namespace BioEngine.Site.ViewComponents
                 catch (Exception ex)
                 {
                     _logger.LogError($"Error while loading patreon goals: {ex.Message}");
+                    currentGoal = null;
                 }
             }
             return View(currentGoal);

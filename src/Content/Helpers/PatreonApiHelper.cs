@@ -25,57 +25,67 @@ namespace BioEngine.Content.Helpers
         {
             _logger = logger;
             _apiUrl = config.Value.ApiUrl;
-            _httpClient = new HttpClient();
             _config = config.Value;
-            CreateHttpClient();
         }
 
         private async Task<string> GetReponseJsonAsync(string path)
         {
             var url = _apiUrl + path;
-            var response = await _httpClient.GetAsync(url);
+            var response = await (await GetHttpClient()).GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();
             }
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                CreateHttpClient();
+                await RefreshAccessToken();
                 return await GetReponseJsonAsync(path);
             }
             throw new Exception($"Error accessing patreon: {response.StatusCode}");
         }
 
-        private string GetAccessToken()
+        private async Task<string> GetAccessToken()
         {
             var url = _apiUrl + "/token?grant_type=refresh_token"
                       + $"&refresh_token={_config.RefreshToken}"
                       + $"&client_id={_config.ClientId}"
                       + $"&client_secret={_config.ClientSecret}";
-            var response = _httpClient.PostAsync(url, null).GetAwaiter().GetResult();
+            var response = await _httpClient.PostAsync(url, null);
             if (response.IsSuccessStatusCode)
             {
                 var tokenObj =
                     JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                        response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+                        await response.Content.ReadAsStringAsync());
                 return tokenObj["access_token"];
             }
             _logger.LogError(
-                $"Can't referesh patreon token. Status code: {response.StatusCode}. Response: {response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}");
+                $"Can't referesh patreon token. Status code: {response.StatusCode}. Response: {await response.Content.ReadAsStringAsync()}");
             throw new Exception("Patreon refresh token error");
         }
 
-        private HttpClient GetHttpClient()
+        private async Task<HttpClient> GetHttpClient()
         {
+            if (_httpClient == null)
+            {
+                _httpClient = await CreateHttpClient();
+            }
+            return _httpClient;
+        }
+
+        private async Task<HttpClient> CreateHttpClient(bool forceRefreshToken = false)
+        {
+            if (string.IsNullOrEmpty(_accessToken) || forceRefreshToken)
+            {
+                _accessToken = await GetAccessToken();
+            }
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
             return httpClient;
         }
 
-        private void CreateHttpClient()
+        private async Task RefreshAccessToken()
         {
-            _accessToken = GetAccessToken();
-            _httpClient = GetHttpClient();
+            await CreateHttpClient(true);
         }
 
         private static List<T> GetIncluded<T>(string json, string type)

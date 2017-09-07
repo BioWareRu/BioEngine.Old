@@ -104,10 +104,7 @@ namespace BioEngine.Site
             });
             services.Configure<PatreonConfig>(o =>
             {
-                o.ClientId = Configuration["BE_PATREON_API_CLIENT_ID"];
-                o.ClientSecret = Configuration["BE_PATREON_API_CLIENT_SECRET"];
-                o.RefreshToken = Configuration["BE_PATREON_API_REFRESH_TOKEN"];
-                o.ApiUrl = new Uri(Configuration["BE_PATREON_API_URL"]);
+                o.ServiceUrl = new Uri(Configuration["BE_PATREON_SERVICE_URL"]);
             });
             services.Configure<AdminAccessConfig>(o => o.AdminAccessToken = Configuration["BE_ADMIN_ACCESS_TOKEN"]);
 

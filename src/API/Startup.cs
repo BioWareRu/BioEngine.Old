@@ -81,15 +81,6 @@ namespace BioEngine.API
             services.AddScoped<IContentHelperInterface, ContentHelper>();
             services.AddScoped<IPBApiHelper>();
 
-            services.Configure<PatreonConfig>(o =>
-            {
-                o.ClientId = Configuration["BE_PATREON_API_CLIENT_ID"];
-                o.ClientSecret = Configuration["BE_PATREON_API_CLIENT_SECRET"];
-                o.RefreshToken = Configuration["BE_PATREON_API_REFRESH_TOKEN"];
-                o.ApiUrl = new Uri(Configuration["BE_PATREON_API_URL"]);
-            });
-            services.AddSingleton<PatreonApiHelper>();
-
             services.Configure<IPBApiConfig>(o =>
             {
                 o.ApiKey = Configuration["BE_IPB_API_KEY"];

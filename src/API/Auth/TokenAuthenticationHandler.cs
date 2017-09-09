@@ -88,6 +88,7 @@ namespace BioEngine.API.Auth
         private async Task<AuthenticateResult> HandleAuthenticateDevAsync(string token)
         {
             var user = await GetMediator().Send(new GetUserByIdQuery(1));
+            user.AvatarUrl = "/assets/img/avatar.png";
             var userTicket = AuthenticationTicket(user);
             Context.Features.Set<ICurrentUserFeature>(new CurrentUserFeature(user, token));
             return AuthenticateResult.Success(userTicket);
@@ -105,7 +106,10 @@ namespace BioEngine.API.Auth
                     user =
                         await GetMediator().Send(new GetUserByIdQuery(id));
                     if (user != null)
+                    {
+                        user.AvatarUrl = userInfo.AvatarUrl;
                         TokenUsers.TryAdd(token, user);
+                    }
                 }
             }
             return user;

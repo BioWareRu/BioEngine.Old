@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
+using Newtonsoft.Json;
 
 namespace BioEngine.Common.Models
 {
@@ -13,7 +14,12 @@ namespace BioEngine.Common.Models
         [Column("member_id")]
         public override int Id { get; set; }
 
+        [JsonProperty]
         public virtual string Name { get; set; }
+        
+        [NotMapped]
+        [JsonProperty]
+        public virtual string AvatarUrl { get; set; }
 
         [Column("member_group_id")]
         public int GroupId { get; set; }

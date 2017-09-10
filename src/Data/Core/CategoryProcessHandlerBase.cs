@@ -25,7 +25,6 @@ namespace BioEngine.Data.Core
 
         private async Task<bool> ProcessCatAsync(TCat cat, ICategoryQuery<TCat> query)
         {
-            await DBContext.Entry(cat).Collection(x => x.Children).LoadAsync();
             cat.Parent = query.Parent ?? await _parentEntityProvider.GetModelParentAsync(cat);
             if (query.LoadLastItems != null)
             {
@@ -33,6 +32,7 @@ namespace BioEngine.Data.Core
             }
             if (query.LoadChildren)
             {
+                await DBContext.Entry(cat).Collection(x => x.Children).LoadAsync();
                 foreach (var child in cat.Children)
                 {
                     await ProcessCatAsync(child, query);

@@ -46,5 +46,28 @@ namespace BioEngine.Common.Models
 
         [ForeignKey(nameof(CatId))]
         public virtual ArticleCat Cat { get; set; }
+        
+        [JsonProperty]
+        public string AuthorName => Author?.Name;
+        
+        [JsonProperty]
+        public string CatName => Cat?.Title;
+
+        [JsonProperty]
+        public string ParentName
+        {
+            get
+            {
+                if (Game != null)
+                {
+                    return Game.Title;
+                }
+                if (Developer != null)
+                {
+                    return Developer.Name;
+                }
+                return Topic?.Title;
+            }
+        }
     }
 }

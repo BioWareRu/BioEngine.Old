@@ -3,21 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;
+using BioEngine.Routing;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Data.Articles.Handlers
 {
     [UsedImplicitly]
-    internal class GetArticlesHandler : QueryHandlerBase<GetArticlesQuery, (IEnumerable<Common.Models.Article>
-        articles, int count)>
+    internal class GetArticlesHandler : ModelListQueryHandlerBase<GetArticlesQuery, Common.Models.Article>
     {
-        public GetArticlesHandler(HandlerContext<GetArticlesHandler> context) : base(context)
+        private readonly BioUrlManager _urlManager;
+
+        public GetArticlesHandler(HandlerContext<GetArticlesHandler> context, BioUrlManager urlManager) : base(context)
         {
+            _urlManager = urlManager;
         }
 
-        protected override async Task<(IEnumerable<Common.Models.Article> articles, int count)> RunQueryAsync(
-            GetArticlesQuery message)
+        protected override async Task<(IEnumerable<Common.Models.Article>, int)> RunQueryAsync(GetArticlesQuery message)
         {
             var query = DBContext.Articles.AsQueryable();
             if (!message.WithUnPublishedArticles)
@@ -26,31 +28,24 @@ namespace BioEngine.Data.Articles.Handlers
             {
                 query = ApplyParentCondition(query, message.Parent);
             }
-            var totalArticles = await query.CountAsync();
-            if (message.Page != null && message.Page > 0)
-            {
-                query = query.Skip(((int) message.Page - 1) * message.PageSize)
-                    .Take(message.PageSize);
-            }
+            
+            query = query
+                .Include(x => x.Author)
+                .Include(x => x.Game)
+                .Include(x => x.Developer)
+                .Include(x => x.Topic)
+                .Include(x => x.Cat);
 
-            var articles =
-                await query
-                    .OrderByDescending(x => x.Date)
-                    .Include(x => x.Author)
-                    .Include(x => x.Game)
-                    .Include(x => x.Developer)
-                    .Include(x => x.Topic)
-                    .Include(x => x.Cat)
-                    .ToListAsync();
-
-            foreach (var article in articles)
+            var data = await GetDataAsync(query, message);
+            foreach (var article in data.models)
             {
                 article.Cat =
                     await Mediator.Send(new ArticleCategoryProcessQuery(article.Cat,
                         new GetArticlesCategoryQuery {Parent = message.Parent}));
+                article.PublicUrl = _urlManager.Articles.PublicUrl(article, true);
             }
 
-            return (articles, totalArticles);
+            return data;
         }
     }
 }

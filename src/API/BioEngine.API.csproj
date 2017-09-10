@@ -47,6 +47,9 @@
     <ProjectReference Include="..\Data\BioEngine.Data.csproj" />
     <ProjectReference Include="..\Routing\BioEngine.Routing.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Фкешсдуы" />
+  </ItemGroup>
   <PropertyGroup>
     <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>

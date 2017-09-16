@@ -4,7 +4,7 @@
     <ProjectGuid>16a96f2d-df68-424a-8e8f-510f256205be</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
     <DockerServiceUrl>http://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>resizr</DockerServiceName>
+    <DockerServiceName>docker</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.ci.build.yml" />

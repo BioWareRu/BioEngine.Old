@@ -1,12 +1,6 @@
 version: '2'
 
 services:
-  resizr:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "80"
-
   site:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

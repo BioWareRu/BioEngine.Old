@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
+using BioEngine.API.Components.REST.Errors;
 using BioEngine.API.Models.Files;
 using BioEngine.Common.Models;
 using BioEngine.Data.Files.Commands;
 using BioEngine.Data.Files.Queries;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
@@ -40,9 +43,25 @@ namespace BioEngine.API.Controllers
             return await Mediator.Send(new GetFileCategoryByIdQuery(id));
         }
 
-        public override Task<IActionResult> Delete(int id)
+        [HttpDelete("{id}")]
+        [UserRightsAuthorize(UserRights.FullFiles)]
+        public override async Task<IActionResult> Delete(int id)
         {
-            throw new System.NotImplementedException();
+            var fileCat = await GetFileCatById(id);
+
+            if (fileCat == null)
+            {
+                return NotFound();
+            }
+
+            var result = await Mediator.Send(new DeleteFileCatCommand(fileCat));
+
+            if (result)
+            {
+                return Deleted();
+            }
+            return Errors(StatusCodes.Status500InternalServerError,
+                new List<IErrorInterface> {new RestError("Can't delete file category")});
         }
 
         [HttpPost]

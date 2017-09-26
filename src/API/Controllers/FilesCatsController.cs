@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
+using BioEngine.API.Models.Files;
 using BioEngine.Common.Models;
+using BioEngine.Data.Files.Commands;
 using BioEngine.Data.Files.Queries;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +43,16 @@ namespace BioEngine.API.Controllers
         public override Task<IActionResult> Delete(int id)
         {
             throw new System.NotImplementedException();
+        }
+
+        [HttpPost]
+        [UserRightsAuthorize(UserRights.AddFiles)]
+        public async Task<IActionResult> Post([FromBody] FileCatFormModel model, [FromServices] IMapper mapper)
+        {
+            var command = new CreateFileCatCommand();
+            mapper.Map(model, command);
+            var fileCatId = await Mediator.Send(command);
+            return Created(await GetFileCatById(fileCatId));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BioEngine.Common.Models
     public class FileCat : ChildModel<int>, ICat<FileCat, File>
     {
         [JsonProperty]
-        public int? Pid { get; set; }
+        public int Pid { get; set; }
 
         
         public string GameOld { get; set; }

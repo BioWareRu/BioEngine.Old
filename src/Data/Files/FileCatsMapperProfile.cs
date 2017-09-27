@@ -10,7 +10,6 @@ namespace BioEngine.Data.Files
         public FileCatsMapperProfile()
         {
             CreateMap<CreateFileCatCommand, Common.Models.FileCat>();
-            CreateMap<CreateFileCatCommand, Common.Models.FileCat>();
         }
     }
 }

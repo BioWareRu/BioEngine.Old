@@ -20,7 +20,7 @@ namespace BioEngine.API.Controllers
         public override async Task<IActionResult> Get(QueryParams queryParams)
         {
             var result =
-                await Mediator.Send(new GetFilesQuery { }.SetQueryParams(queryParams));
+                await Mediator.Send(new GetFilesQuery().SetQueryParams(queryParams));
             return List(result);
         }
 

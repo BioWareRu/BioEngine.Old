@@ -8,7 +8,6 @@ namespace BioEngine.API.Models.Files
     {
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
         public int? Pid { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }

@@ -15,6 +15,14 @@ namespace BioEngine.Common.Migrations
                 oldClrType: typeof(int));
 
             migrationBuilder.Sql("UPDATE `be_files_cats` SET `pid`=null WHERE `pid` = 0");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_be_files_cats_be_files_cats_pid",
+                table: "be_files_cats",
+                column: "pid",
+                principalTable: "be_files_cats",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

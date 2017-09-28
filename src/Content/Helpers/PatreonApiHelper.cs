@@ -55,6 +55,9 @@ namespace BioEngine.Content.Helpers
         [JsonProperty("description")]
         public string Description { get; set; }
 
+        [JsonProperty("current_amount")]
+        public int CurrentAmount { get; set; }
+
         [JsonProperty("amount")]
         public int Amount { get; set; }
 
@@ -69,16 +72,6 @@ namespace BioEngine.Content.Helpers
 
         [JsonProperty("created_at")]
         public DateTime? CreatedAt { get; set; }
-
-        public int GetAmount()
-        {
-            return Amount / 100;
-        }
-
-        public int GetCompletedAmount()
-        {
-            return (int) Math.Ceiling((double) GetAmount() * CompletedPercentage / 100);
-        }
     }
 
     public class PatreonConfig

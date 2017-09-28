@@ -27,6 +27,10 @@ namespace BioEngine.Common.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_be_files_cats_be_files_cats_pid",
+                table: "be_files_cats");
+
             migrationBuilder.AlterColumn<int>(
                 name: "pid",
                 table: "be_files_cats",

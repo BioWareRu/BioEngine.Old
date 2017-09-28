@@ -1,11 +1,6 @@
 version: '2'
 
 services:
-  resizr:
-    image: resizr
-    build:
-      context: ./src/Resizr
-      dockerfile: Dockerfile
   mysql:
     image: mariadb:latest
     volumes:

@@ -6,7 +6,6 @@
 
 <div class="search-page">
     <h2 class="search-page__title">Поиск</h2>
-    <!--{% include 'b-search.twig' with {'query': searchResults.query, 'mix': 'search-page__form'} %}-->
     <form action="@Url.Action("Index", "Search")" class="search search-page__form">
         <input class="search__input" type="search" placeholder="Поиск" name="query" value="@Model.Query"/>
         <button class="search__magnifier"></button>

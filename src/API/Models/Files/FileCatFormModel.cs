@@ -20,6 +20,7 @@ namespace BioEngine.API.Models.Files
         public ArticleFormModelMapperProfile()
         {
             CreateMap<FileCatFormModel, CreateFileCatCommand>();
+            CreateMap<FileCatFormModel, UpdateFileCatCommand>();
         }
     }
 }

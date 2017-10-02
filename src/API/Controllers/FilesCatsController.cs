@@ -73,5 +73,21 @@ namespace BioEngine.API.Controllers
             var fileCatId = await Mediator.Send(command);
             return Created(await GetFileCatById(fileCatId));
         }
+        
+        [HttpPut("{id}")]
+        [UserRightsAuthorize(UserRights.EditFiles)]
+        public async Task<IActionResult> Put(int id, [FromBody] FileCatFormModel model, [FromServices] IMapper mapper)
+        {
+            var fileCat = await GetFileCatById(id);
+            if (fileCat == null)
+            {
+                return NotFound();
+            }
+
+            var updateCommand = new UpdateFileCatCommand(fileCat);
+            mapper.Map(model, updateCommand);
+            await Mediator.Send(updateCommand);
+            return Updated(await GetFileCatById(id));
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace BioEngine.API.Controllers
 {
     public class FilesController : RestController<File, int>
     {
-        public FilesController(RestContext<ArticlesController> context) : base(context)
+        public FilesController(RestContext<FilesController> context) : base(context)
         {
         }
 

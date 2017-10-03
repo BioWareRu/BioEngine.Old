@@ -19,11 +19,12 @@ namespace BioEngine.Data.Files.Handlers
         protected override async Task<bool> ExecuteCommandAsync(UpdateFileCatCommand command)
         {
             Mapper.Map(command, command.Model);
-            
-            await Mediator.Publish(new IndexEntityCommand<Common.Models.FileCat>(command.Model));
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
+            
+            await Mediator.Publish(new IndexEntityCommand<Common.Models.FileCat>(command.Model));
+            
             return true;
         }
     }

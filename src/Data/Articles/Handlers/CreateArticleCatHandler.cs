@@ -26,6 +26,9 @@ namespace BioEngine.Data.Articles.Handlers
             DBContext.Entry(articleCat)
                 .Reference(fc => fc.Developer)
                 .Load();
+            DBContext.Entry(articleCat)
+                .Reference(fc => fc.Topic)
+                .Load();
             
             await Mediator.Publish(new IndexEntityCommand<Common.Models.ArticleCat>(articleCat));
 

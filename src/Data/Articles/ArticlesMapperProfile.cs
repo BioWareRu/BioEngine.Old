@@ -11,6 +11,8 @@ namespace BioEngine.Data.Articles
         {
             CreateMap<CreateArticleCommand, Common.Models.Article>();
             CreateMap<UpdateArticleCommand, Common.Models.Article>();
+            CreateMap<CreateArticleCatCommand, Common.Models.ArticleCat>();
+            CreateMap<UpdateArticleCatCommand, Common.Models.ArticleCat>();
         }
     }
 }

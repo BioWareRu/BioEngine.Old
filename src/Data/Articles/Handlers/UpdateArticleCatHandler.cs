@@ -19,11 +19,12 @@ namespace BioEngine.Data.Articles.Handlers
         protected override async Task<bool> ExecuteCommandAsync(UpdateArticleCatCommand command)
         {
             Mapper.Map(command, command.Model);
-            
-            await Mediator.Publish(new IndexEntityCommand<Common.Models.ArticleCat>(command.Model));
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
+            
+            await Mediator.Publish(new IndexEntityCommand<Common.Models.ArticleCat>(command.Model));
+            
             return true;
         }
     }

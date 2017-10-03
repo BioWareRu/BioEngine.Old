@@ -13,7 +13,6 @@ namespace BioEngine.API.Models.Articles
         public string Title { get; set; }
         public string Url { get; set; }
         public string Descr { get; set; }
-        [CanBeNull]
         public string Content { get; set; }
         public int? Articles { get; set; }
     }

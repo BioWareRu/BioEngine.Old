@@ -13,7 +13,6 @@ namespace BioEngine.Data.Articles.Commands
         public string Title { get; set; }
         public string Url { get; set; }
         public string Descr { get; set; }
-        [CanBeNull]
         public string Content { get; set; }
         public int? Articles { get; set; }
     }
@@ -25,12 +24,10 @@ namespace BioEngine.Data.Articles.Commands
         {
             RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Url).NotEmpty().MaximumLength(255);
-            RuleFor(x => x.Content).Null();
-            RuleFor(x => x.Articles).Null();
-            RuleFor(x => x.Descr).Null();
             RuleFor(x => x.Pid).NotNull();
-            RuleFor(x => x.GameId).SetValidator(new ChildValidator(false));
-            RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(false));
+            RuleFor(x => x.GameId).SetValidator(new ChildValidator(true));
+            RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(true));
+            RuleFor(x => x.TopicId).SetValidator(new ChildValidator(true));
         }
     }
 }

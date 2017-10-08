@@ -41,7 +41,7 @@ namespace BioEngine.Content.Helpers
             try
             {
                 var goal = await GetAsync<PatreonGoal>("/v1/goals/current");
-                return goal;
+                return goal ?? new PatreonGoal();
             }
             catch (Exception)
             {

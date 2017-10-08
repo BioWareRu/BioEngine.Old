@@ -20,7 +20,7 @@ namespace BioEngine.Site.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            PatreonGoal currentGoal = null;
+            var currentGoal = new PatreonGoal();
             try
             {
                 currentGoal = await _patreonApiHelper.GetCurrentGoalAsync();

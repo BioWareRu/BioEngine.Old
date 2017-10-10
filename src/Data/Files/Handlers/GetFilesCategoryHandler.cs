@@ -31,7 +31,7 @@ namespace BioEngine.Data.Files.Handlers
 
             if (message.ParentCat != null)
             {
-                catQuery = catQuery.Where(x => x.Pid == message.ParentCat.Id);
+                catQuery = catQuery.Where(x => x.CatId == message.ParentCat.Id);
             }
             else
             {

@@ -24,7 +24,6 @@ namespace BioEngine.Data.Articles.Commands
         {
             RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Url).NotEmpty().MaximumLength(255);
-            RuleFor(x => x.CatId).NotNull();
             RuleFor(x => x.GameId).SetValidator(new ChildValidator(true));
             RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(true));
             RuleFor(x => x.TopicId).SetValidator(new ChildValidator(true));

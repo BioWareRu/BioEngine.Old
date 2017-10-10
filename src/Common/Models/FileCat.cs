@@ -10,7 +10,8 @@ namespace BioEngine.Common.Models
     public class FileCat : ChildModel<int>, ICat<FileCat, File>
     {
         [JsonProperty]
-        public int? Pid { get; set; }
+        [Column("pid")]
+        public int? CatId { get; set; }
 
         
         public string GameOld { get; set; }
@@ -24,7 +25,7 @@ namespace BioEngine.Common.Models
         [JsonProperty]
         public string Url { get; set; }
 
-        [ForeignKey(nameof(Pid))]
+        [ForeignKey(nameof(CatId))]
         public virtual FileCat ParentCat { get; set; }
 
         [InverseProperty(nameof(ParentCat))]

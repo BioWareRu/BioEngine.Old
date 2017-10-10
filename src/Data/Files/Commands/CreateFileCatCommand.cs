@@ -12,7 +12,7 @@ namespace BioEngine.Data.Files.Commands
         
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }
-        public int? Pid { get; set; }
+        public int? CatId { get; set; }
         public int? TopicId { get; set; }
     }
     

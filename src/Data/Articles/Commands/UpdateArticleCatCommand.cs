@@ -9,7 +9,7 @@ namespace BioEngine.Data.Articles.Commands
     {
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }
-        public int? Pid { get; set; }
+        public int? CatId { get; set; }
         public int? TopicId { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
@@ -30,7 +30,6 @@ namespace BioEngine.Data.Articles.Commands
         {
             RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Url).NotEmpty().MaximumLength(255);
-            RuleFor(x => x.Pid).NotNull();
             RuleFor(x => x.GameId).SetValidator(new ChildValidator(true));
             RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(true));
             RuleFor(x => x.TopicId).SetValidator(new ChildValidator(true));

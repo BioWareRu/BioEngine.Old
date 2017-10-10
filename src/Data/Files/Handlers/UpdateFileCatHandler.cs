@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.Files.Commands;
+using BioEngine.Data.Search.Commands;
 using FluentValidation;
 using JetBrains.Annotations;
 
@@ -21,6 +22,9 @@ namespace BioEngine.Data.Files.Handlers
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
+            
+            await Mediator.Publish(new IndexEntityCommand<Common.Models.FileCat>(command.Model));
+            
             return true;
         }
     }

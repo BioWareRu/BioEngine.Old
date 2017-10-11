@@ -26,7 +26,7 @@ namespace BioEngine.Site.ViewModels.Articles
             {
                 return Task.FromResult(GetDescriptionFromHtml(ArticleCat.Content));
             }
-            return Task.FromResult($"Статьи категории \"{ArticleCat.Title}\" в разделе \"{ArticleCat.Parent?.DisplayTitle}\"");
+            return Task.FromResult($"Статьи категории «{ArticleCat.Title}» в разделе «{ArticleCat.Parent?.DisplayTitle}»");
         }
 
         public ArticleCat ArticleCat { get; }

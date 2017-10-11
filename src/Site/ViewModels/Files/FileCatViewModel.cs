@@ -31,7 +31,7 @@ namespace BioEngine.Site.ViewModels.Files
         protected override Task<string> GetDescription()
         {
             return Task.FromResult(
-                $"Статьи категории \"{FileCat.Title}\" в разделе \"{FileCat.Parent?.DisplayTitle}\"");
+                $"Статьи категории «{FileCat.Title}» в разделе «{FileCat.Parent?.DisplayTitle}»");
         }
 
         public int CurrentPage { get; }

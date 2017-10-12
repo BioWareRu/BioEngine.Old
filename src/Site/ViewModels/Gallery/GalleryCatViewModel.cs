@@ -25,7 +25,7 @@ namespace BioEngine.Site.ViewModels.Gallery
         protected override Task<string> GetDescription()
         {
             return Task.FromResult(
-                $"Картинки категории \"{GalleryCat.Title}\" в разделе \"{GalleryCat.Parent?.DisplayTitle}\"");
+                $"Картинки категории «{GalleryCat.Title}» в разделе «{GalleryCat.Parent?.DisplayTitle}»");
         }
 
         public GalleryCat GalleryCat { get; }

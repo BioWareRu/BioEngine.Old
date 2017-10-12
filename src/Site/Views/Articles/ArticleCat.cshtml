@@ -16,6 +16,10 @@
         <header class="article__header">
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.ArticleCat.Title</h2>
+                @if (!string.IsNullOrEmpty(Model.ArticleCat.Descr)) 
+                {
+                    <div>@Html.Raw(Model.ArticleCat.Descr)</div>
+                }
             </div>
             @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Articles().ParentArticlesUrl(Model.ArticleCat), x => Url.Base().ParentIconUrl(x)))
         </header>
@@ -30,6 +34,10 @@
                                 <h2 class="files__title">
                                     <a class="files__link" href="@Url.Articles().CatPublicUrl(child)">@child.Title</a>
                                 </h2>
+                                @if (!string.IsNullOrEmpty(child.Descr))
+                                {
+                                    <div>@Html.Raw(child.Descr)</div>
+                                }
                                 <ul class="files__list">
                                     @foreach (var article in child.Items)
                                     {

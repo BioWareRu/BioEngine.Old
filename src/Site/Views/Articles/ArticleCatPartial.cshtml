@@ -7,6 +7,10 @@
             <h2 class="files__title">
                 <a class="files__link" href="@Url.Articles().CatPublicUrl(Model)">@Html.Raw(Model.Title)</a>
             </h2>
+            @if (!string.IsNullOrEmpty(Model.Descr))
+            {
+                <div>@Html.Raw(Model.Descr)</div>
+            }
             <ul class="files__list">
                 @foreach (var article in Model.Items)
                 {

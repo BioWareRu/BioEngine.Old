@@ -24,7 +24,7 @@ namespace BioEngine.Site.ViewModels.Articles
 
         protected override async Task<string> GetDescription()
         {
-            return await Task.FromResult($"Статьи в разделе \"{Parent.DisplayTitle}\"");
+            return await Task.FromResult($"Статьи в разделе «{Parent.DisplayTitle}»");
         }
     }
 }

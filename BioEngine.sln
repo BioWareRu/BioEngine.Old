@@ -18,8 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.Common", "src\Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.API", "src\API\BioEngine.API.csproj", "{308888F3-2B5D-43F6-86B6-659FC5BA732F}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{16A96F2D-DF68-424A-8E8F-510F256205BE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.Routing", "src\Routing\BioEngine.Routing.csproj", "{392EF2B7-E5AE-4EFD-A1A1-740491447EE3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BioEngine.Content", "src\Content\BioEngine.Content.csproj", "{D80FF181-26B5-402A-93C9-D3CD444FCC06}"
@@ -50,10 +48,6 @@ Global
 		{308888F3-2B5D-43F6-86B6-659FC5BA732F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{308888F3-2B5D-43F6-86B6-659FC5BA732F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{308888F3-2B5D-43F6-86B6-659FC5BA732F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16A96F2D-DF68-424A-8E8F-510F256205BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16A96F2D-DF68-424A-8E8F-510F256205BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16A96F2D-DF68-424A-8E8F-510F256205BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16A96F2D-DF68-424A-8E8F-510F256205BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{392EF2B7-E5AE-4EFD-A1A1-740491447EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{392EF2B7-E5AE-4EFD-A1A1-740491447EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{392EF2B7-E5AE-4EFD-A1A1-740491447EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU

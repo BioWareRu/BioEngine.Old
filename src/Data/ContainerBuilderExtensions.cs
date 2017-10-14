@@ -22,7 +22,7 @@ namespace BioEngine.Data
             IConfigurationRoot configuration)
         {
             var dbConfig = new MySqlDBConfiguration(configuration);
-            services.AddDbContext<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));
+            services.AddDbContextPool<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));
 
             services.AddBioEngineSearch(configuration);
 

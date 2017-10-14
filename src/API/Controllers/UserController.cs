@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.API.Controllers
 {
-    [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
+    [Authorize]
     [ValidationExceptionsFilter]
     [UserExceptionFilter]
     [ExceptionFilter]

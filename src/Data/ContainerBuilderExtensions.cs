@@ -19,7 +19,7 @@ namespace BioEngine.Data
     public static class ContainerBuilderExtensions
     {
         public static ContainerBuilder AddBioEngineData(this IServiceCollection services,
-            IConfigurationRoot configuration)
+            IConfiguration configuration)
         {
             var dbConfig = new MySqlDBConfiguration(configuration);
             services.AddDbContextPool<BWContext>(connectionBuilder => dbConfig.Configure(connectionBuilder));

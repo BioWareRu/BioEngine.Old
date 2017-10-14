@@ -21,7 +21,7 @@ namespace BioEngine.API.Controllers
         {
             var apiSettings = HttpContext.RequestServices.GetService<IOptions<APISettings>>().Value;
             apiSettings.UserToken = HttpContext.Features.Get<ICurrentUserFeature>().Token;
-            return Ok(apiSettings);
+            return await Task.FromResult(Ok(apiSettings));
         }
 
         [HttpGet("{id}")]

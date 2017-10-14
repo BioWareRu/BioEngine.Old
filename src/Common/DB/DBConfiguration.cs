@@ -5,7 +5,7 @@ namespace BioEngine.Common.DB
 {
     public abstract class DBConfiguration
     {
-        protected DBConfiguration(IConfigurationRoot configuration)
+        protected DBConfiguration(IConfiguration configuration)
         {
             UserName = configuration["BE_DB_USERNAME"];
             DBName = configuration["BE_DB_NAME"];

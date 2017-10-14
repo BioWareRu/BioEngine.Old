@@ -11,7 +11,7 @@ namespace BioEngine.Search
     public static class ContainerBuilderExtensions
     {
         public static void AddBioEngineSearch(this IServiceCollection services,
-            IConfigurationRoot configuration)
+            IConfiguration configuration)
         {
             services.Configure<ElasticSearchProviderConfig>(o => { o.Url = configuration["BE_ES_URL"]; });
         }

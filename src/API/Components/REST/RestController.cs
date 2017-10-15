@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace BioEngine.API.Components.REST
 {
-    [Authorize(ActiveAuthenticationSchemes = "tokenAuth")]
+    [Authorize]
     [ValidationExceptionsFilter]
     [UserExceptionFilter]
     [ExceptionFilter]

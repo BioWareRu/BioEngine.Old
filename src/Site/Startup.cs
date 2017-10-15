@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using Autofac;
@@ -10,13 +9,10 @@ using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Routing;
 using BioEngine.Site.Components;
-using BioEngine.Site.Helpers;
 using cloudscribe.Syndication.Models.Rss;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -24,17 +20,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
-using Serilog.Core;
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.Graylog;
 using BioEngine.Site.Middlewares;
-using BioEngine.Site.Filters;
-using BioEngine.Prometheus.Core;
 using Microsoft.AspNetCore.DataProtection;
 using StackExchange.Redis;
 using BioEngine.Content.Helpers;
 using BioEngine.Data;
+using BioEngine.Site.Filters;
+using BioEngine.Site.Helpers;
 
 namespace BioEngine.Site
 {
@@ -43,24 +35,14 @@ namespace BioEngine.Site
     {
         private readonly IHostingEnvironment _env;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
             _env = env;
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
-                .AddEnvironmentVariables();
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        private IConfigurationRoot Configuration { get; }
-        public IContainer ApplicationContainer { get; private set; }
+        private IConfiguration Configuration { get; }
+        private IContainer ApplicationContainer { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         [UsedImplicitly]
@@ -68,20 +50,19 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(options => { options.Filters.Add(typeof(CounterFilter)); })
+            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
 
             services.AddDistributedMemoryCache();
             services.AddResponseCaching();
-            services.AddAuthentication(options => options.SignInScheme =
-                CookieAuthenticationDefaults.AuthenticationScheme);
+            services.AddIpbOauthAuthentication(Configuration);
 
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromDays(3);
-                options.CookieName = ".BioWareRu.Session";
-                options.CookieHttpOnly = true;
+                options.Cookie.Name = ".BioWareRu.Session";
+                options.Cookie.HttpOnly = true;
             });
 
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
@@ -125,7 +106,7 @@ namespace BioEngine.Site
 
                 var redis = ConnectionMultiplexer.Connect(redisConfiguration);
                 services.AddDataProtection().PersistKeysToRedis(redis, "DataProtection-Keys");
-                services.AddAntiforgery(opts => opts.CookieName = "beAntiforgeryCookie");
+                services.AddAntiforgery(opts => opts.Cookie.Name = "beAntiforgeryCookie");
             }
 
             var builder = services.AddBioEngineData(Configuration);
@@ -141,15 +122,11 @@ namespace BioEngine.Site
             return ip;
         }
 
-        private static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         [UsedImplicitly]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
             IApplicationLifetime lifetime)
         {
-            ConfigureLogging(env, loggerFactory);
-
             var supportedCultures = new[]
             {
                 new CultureInfo("ru-RU"),
@@ -169,11 +146,9 @@ namespace BioEngine.Site
 
             app.UseMiddleware<LoggingMiddleware>();
 
-            app.UseMiddleware<CounterMiddleware>();
-
             if (env.IsProduction())
             {
-                ConfigureProduction(app, lifetime);
+                ConfigureProduction(app);
             }
             else
             {
@@ -184,17 +159,7 @@ namespace BioEngine.Site
 
             app.UseSession();
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                LoginPath = new PathString("/login"),
-                ExpireTimeSpan = TimeSpan.FromDays(30)
-            });
-
-            var ipbLogger = loggerFactory.CreateLogger("IpbAuthLogger");
-
-            app.UseIpbOAuthAuthentication(Configuration, ipbLogger);
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
@@ -207,7 +172,7 @@ namespace BioEngine.Site
             lifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }
 
-        private void ConfigureProduction(IApplicationBuilder app, IApplicationLifetime lifetime)
+        private static void ConfigureProduction(IApplicationBuilder app)
         {
             var options = new ForwardedHeadersOptions
             {
@@ -219,50 +184,6 @@ namespace BioEngine.Site
             app.UseForwardedHeaders(options);
 
             app.UseExceptionHandler("/error/500");
-
-
-            lifetime.ApplicationStarted.Register(RunPrometheus);
-            lifetime.ApplicationStopped.Register(StopPrometheus);
-            lifetime.ApplicationStopped.Register(Log.CloseAndFlush);
-        }
-
-        private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            var loggerConfiguration =
-                new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
-
-            if (env.IsDevelopment())
-            {
-                loggerFactory.AddDebug();
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.LiterateConsole();
-                LogLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
-            }
-            else
-            {
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.Graylog(new GraylogSinkOptions
-                    {
-                        HostnameOrAdress = Configuration["BE_GELF_HOST"],
-                        Port = int.Parse(Configuration["BE_GELF_PORT"]),
-                        Facility = Configuration["BE_GELF_FACILITY"]
-                    });
-            }
-            Log.Logger = loggerConfiguration.CreateLogger();
-            loggerFactory.AddSerilog();
-        }
-
-        private MetricServer _metricServer;
-
-        private void RunPrometheus()
-        {
-            _metricServer = new MetricServer("*", int.Parse(Configuration["BE_PROMETHEUS_PORT"]));
-            _metricServer.Start();
-        }
-
-        private void StopPrometheus()
-        {
-            _metricServer.Stop();
         }
     }
 }

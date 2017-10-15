@@ -1,0 +1,21 @@
+FROM microsoft/aspnetcore-build:2 AS builder
+WORKDIR /source
+
+COPY src/Common/BioEngine.Common.csproj src/Common/BioEngine.Common.csproj
+COPY src/Social/BioEngine.Social.csproj src/Social/BioEngine.Social.csproj
+COPY src/Routing/BioEngine.Routing.csproj src/Routing/BioEngine.Routing.csproj
+COPY src/Search/BioEngine.Search.csproj src/Search/BioEngine.Search.csproj
+COPY src/Data/BioEngine.Data.csproj src/Data/BioEngine.Data.csproj
+COPY src/Content/BioEngine.Content.csproj src/Content/BioEngine.Content.csproj
+COPY src/API/BioEngine.API.csproj src/API/BioEngine.API.csproj
+RUN dotnet restore src/API/BioEngine.API.csproj
+
+COPY . .
+RUN dotnet publish --output /app/ --configuration Release src/API/BioEngine.API.csproj
+
+FROM microsoft/aspnetcore:2
+
+WORKDIR /app
+COPY --from=builder /app .
+
+CMD ["dotnet", "BioEngine.API.dll"]

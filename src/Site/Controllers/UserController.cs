@@ -3,10 +3,9 @@ using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
 using BioEngine.Site.Base;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BioEngine.Site.Controllers
@@ -20,16 +19,16 @@ namespace BioEngine.Site.Controllers
         }
 
         [HttpGet("/login")]
-        public async Task Login([FromServices] ILogger<UserController> logger)
+        public async Task Login()
         {
-            await HttpContext.Authentication.ChallengeAsync("IPB",
-                new AuthenticationProperties() {RedirectUri = "/", IsPersistent = true});
+            await HttpContext.ChallengeAsync("IPB",
+                new AuthenticationProperties {RedirectUri = "/", IsPersistent = true});
         }
 
         [HttpGet("/logout")]
         public async Task Logout()
         {
-            await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Response.Redirect("/");
         }
     }

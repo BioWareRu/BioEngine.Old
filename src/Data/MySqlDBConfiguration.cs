@@ -23,7 +23,7 @@ namespace BioEngine.Data
             optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString, b => b.MigrationsAssembly("BioEngine.Common"));
         }
 
-        public MySqlDBConfiguration(IConfigurationRoot configuration) : base(configuration)
+        public MySqlDBConfiguration(IConfiguration configuration) : base(configuration)
         {
         }
     }

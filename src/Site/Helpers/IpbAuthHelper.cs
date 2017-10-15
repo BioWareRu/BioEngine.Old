@@ -5,9 +5,9 @@ using System.Security.Claims;
 using BioEngine.Common.Ipb;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Site.Helpers
@@ -23,43 +23,49 @@ namespace BioEngine.Site.Helpers
             return true;
         }
 
-        public static void UseIpbOAuthAuthentication(this IApplicationBuilder app, IConfigurationRoot configuration,
-            ILogger ipbLogger)
+        public static void AddIpbOauthAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            app.UseOAuthAuthentication(new OAuthOptions
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(o =>
             {
-                SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,
-                AuthenticationScheme = "IPB",
-                DisplayName = "IPB",
-                ClientId = configuration["IPB_OAUTH_CLIENT_ID"],
-                ClientSecret = configuration["IPB_OAUTH_CLIENT_SECRET"],
-                CallbackPath = new PathString(configuration["Data:OAuth:CallbackPath"]),
-                AuthorizationEndpoint = configuration["Data:OAuth:AuthorizationEndpoint"],
-                TokenEndpoint = configuration["Data:OAuth:TokenEndpoint"],
-                UserInformationEndpoint = configuration["Data:OAuth:UserInformationEndpoint"],
-                SaveTokens = true,
-                Events = new OAuthEvents
+                o.LoginPath = new PathString("/login");
+                o.ExpireTimeSpan = TimeSpan.FromDays(30);
+            }).AddOAuth("IPB",
+                options =>
                 {
-                    OnCreatingTicket = async context =>
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.ClientId = configuration["IPB_OAUTH_CLIENT_ID"];
+                    options.ClientSecret = configuration["IPB_OAUTH_CLIENT_SECRET"];
+                    options.CallbackPath = new PathString(configuration["Data:OAuth:CallbackPath"]);
+                    options.AuthorizationEndpoint = configuration["Data:OAuth:AuthorizationEndpoint"];
+                    options.TokenEndpoint = configuration["Data:OAuth:TokenEndpoint"];
+                    options.UserInformationEndpoint = configuration["Data:OAuth:UserInformationEndpoint"];
+                    options.SaveTokens = true;
+                    options.Events = new OAuthEvents
                     {
-                        // Get the IPB user
-                        var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        OnCreatingTicket = async context =>
+                        {
+                            // Get the IPB user
+                            var request = new HttpRequestMessage(HttpMethod.Get,
+                                context.Options.UserInformationEndpoint);
+                            request.Headers.Authorization =
+                                new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
-                        response.EnsureSuccessStatusCode();
+                            var response =
+                                await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+                            response.EnsureSuccessStatusCode();
 
-                        var success = GetClaims(await response.Content.ReadAsStringAsync(), context.Identity,
-                            context.Options.ClaimsIssuer, ipbLogger);
-                        if (!success)
-                            throw new Exception("Can't parse ipb response");
-                    }
-                }
-            });
+                            var success = GetClaims(await response.Content.ReadAsStringAsync(), context.Identity,
+                                context.Options.ClaimsIssuer,
+                                context.HttpContext.RequestServices.GetService<ILogger<IPBApiHelper>>());
+                            if (!success)
+                                throw new Exception("Can't parse ipb response");
+                        }
+                    };
+                });
         }
 
-        public static void InsertClaims(IpbUserInfo userInfo, ClaimsIdentity identity, string claimsIssuer)
+        private static void InsertClaims(IpbUserInfo userInfo, ClaimsIdentity identity, string claimsIssuer)
         {
             if (!string.IsNullOrEmpty(userInfo.Id))
                 identity.AddClaim(

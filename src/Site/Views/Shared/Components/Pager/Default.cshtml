@@ -41,32 +41,32 @@
                 if (Model.CurrentPage > Model.PageCount - 5)
                 {
                     <span class="pagination__item">...</span>
-                    for (var page = Model.PageCount - 5; page < Model.PageCount; page++)
+                    for (var pageNumber = Model.PageCount - 5; pageNumber < Model.PageCount; pageNumber++)
                     {
-                        if (page == Model.CurrentPage)
+                        if (pageNumber == Model.CurrentPage)
                         {
-                            <span class="pagination__item pagination__item_active">@page</span>
+                            <span class="pagination__item pagination__item_active">@pageNumber</span>
                         }
                         else
                         {
                             <a class="pagination__item pagination__item_link"
-                               href="@Model.PageLink(page)">@page</a>
+                               href="@Model.PageLink(pageNumber)">@pageNumber</a>
 
                         }
                     }
                 }
                 else
                 {
-                    for (var page = 2; page <= 6; page++)
+                    for (var pageNumber = 2; pageNumber <= 6; pageNumber++)
                     {
-                        if (page == Model.CurrentPage)
+                        if (pageNumber == Model.CurrentPage)
                         {
-                            <span class="pagination__item pagination__item_active">@page</span>
+                            <span class="pagination__item pagination__item_active">@pageNumber</span>
                         }
                         else
                         {
                             <a class="pagination__item pagination__item_link"
-                               href="@Model.PageLink(page)">@page</a>
+                               href="@Model.PageLink(pageNumber)">@pageNumber</a>
 
                         }
                     }
@@ -76,19 +76,19 @@
         }
         else
         {
-            for (var page = 2; page <= Model.PageCount; page++)
+            for (var pageNumber = 2; pageNumber <= Model.PageCount; pageNumber++)
             {
-                if (page < Model.PageCount)
+                if (pageNumber < Model.PageCount)
                 {
-                    if (page == Model.CurrentPage)
+                    if (pageNumber == Model.CurrentPage)
                     {
-                        <span class="pagination__item pagination__item_active">@page</span>
+                        <span class="pagination__item pagination__item_active">@pageNumber</span>
 
                     }
                     else
                     {
                         <a class="pagination__item pagination__item_link"
-                           href="@Model.PageLink(page)">@page</a>
+                           href="@Model.PageLink(pageNumber)">@pageNumber</a>
 
                     }
 

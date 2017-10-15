@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -26,10 +25,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
-using Serilog.Sinks.Graylog;
 using StackExchange.Redis;
 
 namespace BioEngine.API
@@ -37,42 +32,37 @@ namespace BioEngine.API
     [UsedImplicitly]
     public class Startup
     {
-        private static readonly LoggingLevelSwitch LogLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
         private readonly IHostingEnvironment _env;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
             _env = env;
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + "appsettings.json")
-                .AddJsonFile("Configs" + Path.DirectorySeparatorChar + $"appsettings.{env.EnvironmentName}.json", true)
-                .AddEnvironmentVariables();
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        private IConfigurationRoot Configuration { get; }
-        public IContainer ApplicationContainer { get; private set; }
+        private IConfiguration Configuration { get; }
+        private IContainer ApplicationContainer { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container
         [UsedImplicitly]
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            bool.TryParse(Configuration["IPB_OAUTH_DEV_MODE"] ?? "", out bool devMode);
-            services.Configure<TokenAuthOptions>(o =>
-            {
-                o.AutomaticChallenge = true;
-                o.AuthenticationScheme = "tokenAuth";
-                o.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
-                o.UserInformationEndpointUrl = Configuration["Data:OAuth:UserInformationEndpoint"];
-                o.DevMode = devMode;
-            });
+            bool.TryParse(Configuration["IPB_OAUTH_DEV_MODE"] ?? "", out var devMode);
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = "token";
+                    options.DefaultChallengeScheme = "token";
+                })
+                .AddScheme<TokenAuthOptions, TokenAuthenticationHandler>("token",
+                    options =>
+                    {
+                        options.ClientId = Configuration["IPB_OAUTH_CLIENT_ID"];
+                        options.UserInformationEndpointUrl = Configuration["Data:OAuth:UserInformationEndpoint"];
+                        options.DevMode = devMode;
+                    });
+
 
             services.AddDistributedMemoryCache();
             services.Configure<AppSettings>(Configuration.GetSection("Application"));
@@ -108,7 +98,7 @@ namespace BioEngine.API
 
                 var redis = ConnectionMultiplexer.Connect(redisConfiguration);
                 services.AddDataProtection().PersistKeysToRedis(redis, "DataProtection-Keys");
-                services.AddAntiforgery(opts => opts.CookieName = "beAntiforgeryCookie");
+                services.AddAntiforgery(opts => opts.Cookie.Name = "beAntiforgeryCookie");
             }
 
             services.AddCors(options =>
@@ -146,14 +136,12 @@ namespace BioEngine.API
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
             IApplicationLifetime applicationLifetime, BWContext context)
         {
-            ConfigureLogging(env, loggerFactory);
-
             if (context.Database.GetPendingMigrations().Any())
             {
                 context.Database.Migrate();
             }
 
-            app.UseMiddleware<TokenAuthMiddleware>();
+            app.UseAuthentication();
             app.UseCors("allorigins");
             app.UseMvc(routes =>
             {
@@ -163,32 +151,6 @@ namespace BioEngine.API
                 routes.UseBioEngineRouting();
             });
             applicationLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
-        }
-
-        private void ConfigureLogging(IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            var loggerConfiguration =
-                new LoggerConfiguration().MinimumLevel.ControlledBy(LogLevelSwitch).Enrich.FromLogContext();
-
-            if (env.IsDevelopment())
-            {
-                loggerFactory.AddDebug();
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.LiterateConsole();
-                LogLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
-            }
-            else
-            {
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.Graylog(new GraylogSinkOptions
-                    {
-                        HostnameOrAdress = Configuration["BE_GELF_HOST"],
-                        Port = int.Parse(Configuration["BE_GELF_PORT"]),
-                        Facility = Configuration["BE_GELF_FACILITY"]
-                    });
-            }
-            Log.Logger = loggerConfiguration.CreateLogger();
-            loggerFactory.AddSerilog();
         }
     }
 }

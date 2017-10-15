@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using BioEngine.Common.Ipb;
 using BioEngine.Common.Models;
@@ -21,15 +22,9 @@ namespace BioEngine.API.Auth
         private static readonly ConcurrentDictionary<string, User> TokenUsers = new ConcurrentDictionary<string, User>()
             ;
 
-        private readonly ILogger<TokenAuthenticationHandler> _logger;
-
-        private readonly TokenAuthOptions _options;
-
-        public TokenAuthenticationHandler(ILogger<TokenAuthenticationHandler> logger,
-            IOptions<TokenAuthOptions> options)
+        public TokenAuthenticationHandler(IOptionsMonitor<TokenAuthOptions> options, ILoggerFactory logger,
+            UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {
-            _logger = logger;
-            _options = options.Value;
         }
 
         private IMediator GetMediator()
@@ -51,7 +46,7 @@ namespace BioEngine.API.Auth
 
                     if (!string.IsNullOrEmpty(tokenString))
                     {
-                        if (_options.DevMode)
+                        if (Options.DevMode)
                             return await HandleAuthenticateDevAsync(tokenString);
                         var user = await GetUserAsync(tokenString);
                         if (user != null)
@@ -68,20 +63,20 @@ namespace BioEngine.API.Auth
                 }
             }
             stopwatch.Stop();
-            _logger.LogWarning($"Auth process: {stopwatch.ElapsedMilliseconds}");
+            Logger.LogWarning($"Auth process: {stopwatch.ElapsedMilliseconds}");
             return result;
         }
 
         private static AuthenticationTicket AuthenticationTicket(User user)
         {
-            var identity = new ClaimsIdentity("tokenAuth");
+            var identity = new ClaimsIdentity("token");
             identity.AddClaim(new Claim("Id", user.Id.ToString()));
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Name));
             foreach (UserRights userRight in Enum.GetValues(typeof(UserRights)))
                 if (user.HasRight(userRight, user.SiteTeamMember))
                     identity.AddClaim(new Claim(ClaimTypes.Role, userRight.ToString()));
             var userTicket =
-                new AuthenticationTicket(new ClaimsPrincipal(identity), null, "tokenAuth");
+                new AuthenticationTicket(new ClaimsPrincipal(identity), null, "token");
             return userTicket;
         }
 
@@ -117,7 +112,7 @@ namespace BioEngine.API.Auth
 
         private async Task<IpbUserInfo> GetUserInformationAsync(string token)
         {
-            var userInformationEndpoint = _options.UserInformationEndpointUrl;
+            var userInformationEndpoint = Options.UserInformationEndpointUrl;
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
@@ -134,7 +129,7 @@ namespace BioEngine.API.Auth
                 Logger.LogError($"Error while request user information: {e.Message}");
             }
 
-            var userInformation = new IpbUserInfo(msg, _logger);
+            var userInformation = new IpbUserInfo(msg, Logger);
 
             return userInformation;
         }

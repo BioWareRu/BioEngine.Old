@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Search.Models
 {
-    public class NewsSearchModel : Common.Models.News
+    public class NewsSearchModel : News
     {
         [JsonProperty]
         public override Game Game { get; set; }

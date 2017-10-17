@@ -5,7 +5,6 @@ using BioEngine.API.Auth;
 using BioEngine.API.Components;
 using BioEngine.API.Components.REST;
 using BioEngine.API.Components.REST.Errors;
-using BioEngine.API.Components.REST.Models;
 using BioEngine.API.Models.News;
 using BioEngine.Common.Models;
 using BioEngine.Data.News.Commands;

@@ -8,13 +8,13 @@
 {
     <div class="auth auth_sign-in">
         <a href="#">
-            <span class="auth__userpic" style="background-image: url('@(User.Claims.FirstOrDefault(x => x.Type == "avatarUrl").Value)"></span>
+            <span class="auth__userpic" style="background-image: url('@(User.Claims.FirstOrDefault(x => x.Type == "avatarUrl")?.Value)"></span>
         </a>
         <a class="auth__username @if (User.HasClaim(x => x.Type == "renegade"))
                                  {
                                      <text>auth__username-renegate</text>
                                  } "
-           href="@(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Webpage).Value)">
+           href="@(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Webpage)?.Value)">
             @User.Identity.Name</a>
         <a class="auth__exit" href="@Url.Action("Logout", "User")">Выход</a>
     </div>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -19,15 +18,14 @@ namespace BioEngine.Site.Base
     public abstract class BaseController : Controller
     {
         protected readonly IMediator Mediator;
-        private readonly IEnumerable<Settings> _settings;
         protected readonly BaseViewModelConfig ViewModelConfig;
 
         protected BaseController(IMediator mediator, IOptions<AppSettings> appSettingsOptions,
             IContentHelperInterface contentHelper)
         {
             Mediator = mediator;
-            _settings = mediator.Send(new GetSettingsQuery()).GetAwaiter().GetResult().models;
-            ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, _settings, contentHelper);
+            var settings = mediator.Send(new GetSettingsQuery()).GetAwaiter().GetResult().models;
+            ViewModelConfig = new BaseViewModelConfig(appSettingsOptions.Value, settings, contentHelper);
         }
 
         private static readonly Regex CatchAllRegex = new Regex("(.*)/([a-zA-Z0-9_-]+).html");
@@ -133,7 +131,7 @@ namespace BioEngine.Site.Base
             {
                 return null;
             }
-            var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
             _user = await Mediator.Send(new GetUserByIdQuery(userId));
             return _user;
         }

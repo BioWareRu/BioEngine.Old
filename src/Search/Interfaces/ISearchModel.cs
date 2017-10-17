@@ -1,5 +1,4 @@
-﻿using BioEngine.Common.Base;
-using BioEngine.Common.Models;
+﻿using BioEngine.Common.Models;
 
 namespace BioEngine.Search.Interfaces
 {

@@ -27,7 +27,7 @@ namespace BioEngine.Site.ViewComponents
             {
                 userId =
                     int.Parse(Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)
-                        .Value);
+                        ?.Value);
             }
 
             voted = await _mediator.Send(new IsPollVotedByUserQuery(poll.Id, userId,

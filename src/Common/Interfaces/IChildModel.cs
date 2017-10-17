@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using BioEngine.Common.Base;
 using BioEngine.Common.Models;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BioEngine.Common.Interfaces
 {

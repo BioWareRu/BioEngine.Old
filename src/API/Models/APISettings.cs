@@ -1,5 +1,4 @@
 ﻿using BioEngine.Common.Base;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace BioEngine.API.Models

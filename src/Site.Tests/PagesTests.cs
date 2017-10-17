@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BioEngine.Site.Tests
@@ -7,7 +8,7 @@ namespace BioEngine.Site.Tests
     public class PagesTests
     {
         [Fact]
-        public void TestPages()
+        public async Task TestPages()
         {
             var pages = new List<string>
             {
@@ -31,7 +32,7 @@ namespace BioEngine.Site.Tests
             var client = new HttpClient();
             foreach (var page in pages)
             {
-                var response = client.GetAsync(page).Result;
+                var response = await client.GetAsync(page);
                 Assert.True(response.IsSuccessStatusCode);
             }
         }

@@ -1,6 +1,6 @@
 FROM microsoft/aspnetcore:2
 
 WORKDIR /app
-COPY . .
+COPY ./publish .
 
 CMD ["dotnet", "BioEngine.API.dll"]

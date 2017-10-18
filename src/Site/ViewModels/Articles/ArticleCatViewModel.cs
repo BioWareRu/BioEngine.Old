@@ -22,6 +22,10 @@ namespace BioEngine.Site.ViewModels.Articles
 
         protected override Task<string> GetDescription()
         {
+            if (!string.IsNullOrEmpty(ArticleCat.Descr))
+            {
+                return Task.FromResult(GetDescriptionFromHtml(ArticleCat.Descr));
+            }
             if (!string.IsNullOrEmpty(ArticleCat.Content))
             {
                 return Task.FromResult(GetDescriptionFromHtml(ArticleCat.Content));

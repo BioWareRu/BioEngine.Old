@@ -12,6 +12,7 @@ namespace BioEngine.Common.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "descr",
                 table: "be_articles_cats",
+                nullable: true,
                 maxLength: 1000);
         }
         
@@ -20,7 +21,8 @@ namespace BioEngine.Common.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "descr",
                 table: "be_articles_cats",
-                maxLength: 1000);
+                nullable: true,
+                maxLength: 100);
         }
     }
 }

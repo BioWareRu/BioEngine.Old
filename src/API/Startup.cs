@@ -133,10 +133,10 @@ namespace BioEngine.API
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         [UsedImplicitly]
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory,
             IApplicationLifetime applicationLifetime, BWContext context)
         {
-            if (context.Database.GetPendingMigrations().Any())
+            if (_env.IsProduction() && context.Database.GetPendingMigrations().Any())
             {
                 context.Database.Migrate();
             }

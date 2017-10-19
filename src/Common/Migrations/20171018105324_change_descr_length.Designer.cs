@@ -11,9 +11,10 @@ using System;
 namespace BioEngine.Common.Migrations
 {
     [DbContext(typeof(BWContext))]
-    partial class BWContextModelSnapshot : ModelSnapshot
+    [Migration("20171018105324_change_descr_length")]
+    partial class change_descr_length
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

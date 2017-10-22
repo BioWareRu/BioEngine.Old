@@ -27,6 +27,7 @@ using BioEngine.Content.Helpers;
 using BioEngine.Data;
 using BioEngine.Site.Filters;
 using BioEngine.Site.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site
 {
@@ -50,7 +51,11 @@ namespace BioEngine.Site
         {
             // Add framework services.
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc(options => { options.Filters.Add(typeof(ExceptionFilter)); })
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(ExceptionFilter));
+                    options.AddMetricsResourceFilter();
+                })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
 

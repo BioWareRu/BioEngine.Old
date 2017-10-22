@@ -20,6 +20,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -109,7 +110,7 @@ namespace BioEngine.API
                         corsBuilder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod().AllowCredentials();
                     });
             });
-            services.AddMvc();
+            services.AddMvc(options => { options.AddMetricsResourceFilter(); });
 
 
             var builder = services.AddBioEngineData(Configuration);

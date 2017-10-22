@@ -18,6 +18,7 @@ namespace BioEngine.API
                 .CreateDefaultBuilder(args)
                 .AddSerilog()
                 .AddAppMetrics()
+                .UseStartup<Startup>()
                 .Build();
     }    
 }

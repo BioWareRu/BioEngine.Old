@@ -10,11 +10,6 @@
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.Redis" Version="0.3.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Serilog.Exceptions" Version="2.5.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
-    <PackageReference Include="Serilog.sinks.graylog" Version="1.4.0" />
-    <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
@@ -25,12 +20,9 @@
     <ProjectReference Include="..\Content\BioEngine.Content.csproj" />
     <ProjectReference Include="..\Data\BioEngine.Data.csproj" />
     <ProjectReference Include="..\Routing\BioEngine.Routing.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".docker\Dockerfile" />
+    <ProjectReference Include="..\Web\BioEngine.Web.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
-    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 </Project>

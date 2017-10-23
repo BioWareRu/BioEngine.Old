@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="App.Metrics.AspNetCore" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.AspNetCore.Health" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.Reporting.Console" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="2.0.0-alpha" />
+    <PackageReference Include="Serilog.AspNetCore" Version="2.0.0" />
+    <PackageReference Include="Serilog.Exceptions" Version="2.5.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Serilog.Sinks.Graylog" Version="1.5.1" />
+    <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.0.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
+  </ItemGroup>
+</Project>

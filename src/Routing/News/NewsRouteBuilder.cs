@@ -7,22 +7,22 @@ namespace BioEngine.Routing.News
         public static void Register(IRouteBuilder routeBuilder)
         {
             routeBuilder.MapRoute(NewsRoutesEnum.Index, "index.html", new {controller = "News", action = "Index"});
-            routeBuilder.MapRoute(NewsRoutesEnum.IndexWithPage, "page/{page:int}.html",
+            routeBuilder.MapRoute(NewsRoutesEnum.IndexWithPage, "page/{p:int}.html",
                 new {controller = "News", action = "Index"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByYear, "{year:int}.html",
                 new {controller = "News", action = "NewsByYear"});
-            routeBuilder.MapRoute(NewsRoutesEnum.NewsByYearWithPage, "{year:int}/page/{page:int}.html",
+            routeBuilder.MapRoute(NewsRoutesEnum.NewsByYearWithPage, "{year:int}/page/{p:int}.html",
                 new {controller = "News", action = "NewsByYear"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByMonth, "{year:int}/{month:regex(\\d{{2}})}.html",
                 new {controller = "News", action = "NewsByYearAndMonth"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByMonthWithPage,
-                "{year:int}/{month:regex(\\d{{2}})}/page/{page:int}.html",
+                "{year:int}/{month:regex(\\d{{2}})}/page/{p:int}.html",
                 new {controller = "News", action = "NewsByYearAndMonth"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByDay,
                 "{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}.html",
                 new {controller = "News", action = "NewsByYearAndMonthAndDay"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByDayWithPage,
-                "{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{page:int}.html",
+                "{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{p:int}.html",
                 new {controller = "News", action = "NewsByYearAndMonthAndDay"});
             routeBuilder.MapRoute(NewsRoutesEnum.NewsByParent, "{parentUrl}/news.html",
                 new {controller = "News", action = "ParentNews"});

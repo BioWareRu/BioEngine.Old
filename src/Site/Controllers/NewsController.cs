@@ -40,9 +40,9 @@ namespace BioEngine.Site.Controllers
             return await NewsList(mediatr);
         }
 
-        public async Task<IActionResult> Index([FromServices] IMediator mediatr, int page)
+        public async Task<IActionResult> Index([FromServices] IMediator mediatr, int p)
         {
-            return await NewsList(mediatr, page);
+            return await NewsList(mediatr, p);
         }
 
         private async Task<IActionResult> NewsList(IMediator mediatr, int page = 1)
@@ -54,7 +54,7 @@ namespace BioEngine.Site.Controllers
             var response =
                 await mediatr.Send(new GetNewsQuery {WithUnPublishedNews = canUserSeeUnpublishedNews, Page = page});
 
-            return View(new NewsListViewModel(ViewModelConfig, response.models, response.totalCount, page));
+            return View("Index", new NewsListViewModel(ViewModelConfig, response.models, response.totalCount, page));
         }
 
         [Route("/{year:int}.html", Order = 1)]
@@ -63,10 +63,10 @@ namespace BioEngine.Site.Controllers
             return await NewsByDate(year, null, null);
         }
 
-        [Route("/{year:int}/page/{page:int}.html")]
-        public async Task<IActionResult> NewsByYear(int year, int page)
+        [Route("/{year:int}/page/{p:int}.html")]
+        public async Task<IActionResult> NewsByYear(int year, int p)
         {
-            return await NewsByDate(year, null, null, page);
+            return await NewsByDate(year, null, null, p);
         }
 
         [Route("/{year:int}/{month:regex(\\d{{2}})}.html")]
@@ -75,10 +75,10 @@ namespace BioEngine.Site.Controllers
             return await NewsByDate(year, month, null);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}/page/{page:int}.html")]
-        public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int page)
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/page/{p:int}.html")]
+        public async Task<IActionResult> NewsByYearAndMonth(int year, int month, int p)
         {
-            return await NewsByDate(year, month, null, page);
+            return await NewsByDate(year, month, null, p);
         }
 
         [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}.html")]
@@ -87,10 +87,10 @@ namespace BioEngine.Site.Controllers
             return await NewsByDate(year, month, day);
         }
 
-        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{page:int}.html")]
-        public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int page)
+        [Route("/{year:int}/{month:regex(\\d{{2}})}/{day:regex(\\d{{2}})}/page/{p:int}.html")]
+        public async Task<IActionResult> NewsByYearAndMonthAndDay(int year, int month, int day, int p)
         {
-            return await NewsByDate(year, month, day, page);
+            return await NewsByDate(year, month, day, p);
         }
 
         private async Task<IActionResult> NewsByDate(int year, int? month, int? day, int page = 1)
@@ -136,11 +136,11 @@ namespace BioEngine.Site.Controllers
             return parent != null ? await ParentNewsList(parent) : StatusCode(404);
         }
 
-        [HttpGet("/{parentUrl}/news/page/{page}.html")]
-        public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int page)
+        [HttpGet("/{parentUrl}/news/page/{p:int}.html")]
+        public async Task<IActionResult> ParentNewsWithPage(string parentUrl, int p)
         {
             var parent = await Mediator.Send(new GetParentByUrlQuery(parentUrl));
-            return parent != null ? await ParentNewsList(parent, page) : StatusCode(404);
+            return parent != null ? await ParentNewsList(parent, p) : StatusCode(404);
         }
 
         private async Task<IActionResult> ParentNewsList(IParentModel parent, int page = 1)

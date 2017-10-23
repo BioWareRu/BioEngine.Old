@@ -33,7 +33,7 @@ namespace BioEngine.Routing.News
 
         public Uri IndexUrl(int page)
         {
-            return GetUrl(NewsRoutesEnum.IndexWithPage, new {page});
+            return GetUrl(NewsRoutesEnum.IndexWithPage, new {p = page});
         }
 
         public Uri NewsByYear(int year)
@@ -43,7 +43,7 @@ namespace BioEngine.Routing.News
 
         public Uri NewsByYear(int year, int page)
         {
-            return GetUrl(NewsRoutesEnum.NewsByYearWithPage, new {year, page});
+            return GetUrl(NewsRoutesEnum.NewsByYearWithPage, new {year, p = page});
         }
 
         public Uri NewsByMonth(int year, int? month)
@@ -53,7 +53,7 @@ namespace BioEngine.Routing.News
 
         public Uri NewsByMonth(int year, int? month, int page)
         {
-            return GetUrl(NewsRoutesEnum.NewsByMonthWithPage, new {year, month, page});
+            return GetUrl(NewsRoutesEnum.NewsByMonthWithPage, new {year, month, p = page});
         }
 
         public Uri NewsByDay(int year, int? month, int? day)
@@ -63,7 +63,7 @@ namespace BioEngine.Routing.News
 
         public Uri NewsByDay(int year, int? month, int? day, int page)
         {
-            return GetUrl(NewsRoutesEnum.NewsByDayWithPage, new {year, month, day, page});
+            return GetUrl(NewsRoutesEnum.NewsByDayWithPage, new {year, month, day, p = page});
         }
 
         public Uri ParentNewsUrl(IChildModel news, int? page = null, bool absolute = false)

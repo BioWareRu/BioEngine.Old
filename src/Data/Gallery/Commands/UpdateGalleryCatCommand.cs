@@ -9,7 +9,7 @@ namespace BioEngine.Data.Gallery.Commands
     {
         public string Title { get; set; }
         public string Url { get; set; }
-        public string Descr { get; set; }
+        public string Desc { get; set; }
         
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }
@@ -20,17 +20,17 @@ namespace BioEngine.Data.Gallery.Commands
         {
             Model = galleryCat;
         }
-        
-        [UsedImplicitly]
-        internal class UpdateGalleryCatCommandValidator : AbstractValidator<UpdateGalleryCatCommand>
+    }
+    
+    [UsedImplicitly]
+    internal class UpdateGalleryCatCommandValidator : AbstractValidator<UpdateGalleryCatCommand>
+    {
+        public UpdateGalleryCatCommandValidator()
         {
-            public UpdateGalleryCatCommandValidator()
-            {
-                RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
-                RuleFor(x => x.Url).NotEmpty().MaximumLength(255);
-                RuleFor(x => x.GameId).SetValidator(new ChildValidator(false));
-                RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(false));
-            }
+            RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
+            RuleFor(x => x.Url).NotEmpty().MaximumLength(255);
+            RuleFor(x => x.GameId).SetValidator(new ChildValidator(false));
+            RuleFor(x => x.DeveloperId).SetValidator(new ChildValidator(false));
         }
     }
 }

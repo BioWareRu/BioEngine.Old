@@ -11,7 +11,7 @@ namespace BioEngine.API.Models.Gallery
         public int? CatId { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
-        public string Descr { get; set; }
+        public string Desc { get; set; }
     }
     
     [UsedImplicitly]

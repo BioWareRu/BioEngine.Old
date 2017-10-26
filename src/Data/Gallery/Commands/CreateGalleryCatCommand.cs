@@ -8,7 +8,7 @@ namespace BioEngine.Data.Gallery.Commands
     {
         public string Title { get; set; }
         public string Url { get; set; }
-        public string Descr { get; set; }
+        public string Desc { get; set; }
         
         public int? GameId { get; set; }
         public int? DeveloperId { get; set; }

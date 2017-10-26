@@ -26,11 +26,11 @@ namespace BioEngine.Data.Gallery.Handlers
 
             if (message.ParentCat != null)
             {
-                query = query.Where(x => x.Pid == message.ParentCat.Id);
+                query = query.Where(x => x.CatId == message.ParentCat.Id);
             }
             else if (message.OnlyRoot)
             {
-                query = query.Where(x => x.Pid == null);
+                query = query.Where(x => x.CatId == null);
             }
 
             var data = await GetDataAsync(query, message);

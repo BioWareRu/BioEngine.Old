@@ -39,7 +39,7 @@ namespace BioEngine.API.Controllers
         }
         
         [HttpPost]
-        [UserRightsAuthorize(UserRights.AddGallery)]
+        [UserRightsAuthorize(UserRights.FullGallery)]
         public async Task<IActionResult> Post([FromBody] GalleryCatFormModel model, [FromServices] IMapper mapper)
         {
             var command = new CreateGalleryCatCommand();
@@ -49,7 +49,7 @@ namespace BioEngine.API.Controllers
         }
         
         [HttpPut("{id}")]
-        [UserRightsAuthorize(UserRights.EditGallery)]
+        [UserRightsAuthorize(UserRights.FullGallery)]
         public async Task<IActionResult> Put(int id, [FromBody] GalleryCatFormModel model, [FromServices] IMapper mapper)
         {
             var galleryCat = await GetGalleryCatById(id);

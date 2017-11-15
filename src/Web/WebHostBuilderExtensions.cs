@@ -88,7 +88,7 @@ namespace BioEngine.Web
                         loggerConfiguration = loggerConfiguration
                             .WriteTo.Graylog(new GraylogSinkOptions
                             {
-                                HostnameOrAdress = hostingContext.Configuration["BE_GELF_HOST"],
+                                HostnameOrAddress = hostingContext.Configuration["BE_GELF_HOST"],
                                 Port = int.Parse(hostingContext.Configuration["BE_GELF_PORT"]),
                                 Facility = hostingContext.Configuration["BE_GELF_FACILITY"]
                             }).MinimumLevel.Error();

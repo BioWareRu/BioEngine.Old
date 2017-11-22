@@ -24,6 +24,19 @@ namespace BioEngine.Site.Controllers
         {
         }
 
+        [HttpGet("{parentUrl}/gallery/pic/{picId}.html")]
+        public async Task<IActionResult> PicUrl(string parentUrl, int picId, [FromServices] BioUrlManager bioUrlManager)
+        {
+            var pic = await Mediator.Send(new GetGalleryPicByIdQuery(picId));
+            if (pic == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new RedirectResult(bioUrlManager.Gallery.DisplayUrl(pic, true) +
+                                      $"#nanogallery/nanoGallery/0/{pic.Id}");
+        }
+
 
         [HttpGet("/{parentUrl}/gallery/{*url}")]
         public async Task<IActionResult> Cat(string parentUrl, string url)
@@ -52,7 +65,12 @@ namespace BioEngine.Site.Controllers
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Gallery().ParentGalleryUrl(parent), "Галерея"));
                 breadcrumbs.Add(new BreadCrumbsItem(Url.Base().ParentUrl(parent), parent.DisplayTitle));
 
-                var catPics = await Mediator.Send(new GetGalleryPicsQuery {Cat = category, Page = page});
+                var catPics = await Mediator.Send(new GetGalleryPicsQuery
+                {
+                    Cat = category,
+                    Page = page,
+                    PageSize = GalleryCat.PicsOnPage
+                });
                 category.Items = catPics.models;
 
                 var viewModel = new GalleryCatViewModel(ViewModelConfig, category, catPics.totalCount, page);

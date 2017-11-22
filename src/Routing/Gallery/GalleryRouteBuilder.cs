@@ -10,6 +10,8 @@ namespace BioEngine.Routing.Gallery
                 new {controller = "Gallery", action = "Cat"});
             routeBuilder.MapRoute(GalleryRoutesEnum.ParentPage, "{parentUrl}/gallery.html",
                 new {controller = "Gallery", action = "ParentGallery"});
+            routeBuilder.MapRoute(GalleryRoutesEnum.PicURL, "{parentUrl}/gallery/pic/{picId}.html",
+                new {controller = "Gallery", action = "PicUrl"});
         }
     }
 }

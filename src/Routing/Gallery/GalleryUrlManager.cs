@@ -19,6 +19,12 @@ namespace BioEngine.Routing.Gallery
 
         public Uri PublicUrl(GalleryPic picture, bool absolute = false)
         {
+            return GetUrl(GalleryRoutesEnum.PicURL, new {parentUrl = picture.Cat.Parent.ParentUrl, picId = picture.Id},
+                absolute);
+        }
+
+        public Uri DisplayUrl(GalleryPic picture, bool absolute = false)
+        {
             var page = (int) Math.Ceiling((double) picture.Position / GalleryCat.PicsOnPage);
             return CatPublicUrl(picture.Cat, page, absolute);
         }

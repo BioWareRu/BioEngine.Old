@@ -38,8 +38,7 @@ namespace BioEngine.Data.Gallery.Handlers
         private async Task<int> GetPicPositionAsync(GalleryPic picture)
         {
             return
-                await DBContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id > picture.Id)
-                    .OrderByDescending(x => x.Id)
+                await DBContext.GalleryPics.Where(x => x.CatId == picture.CatId && x.Pub == 1 && x.Id >= picture.Id)
                     .CountAsync();
         }
     }

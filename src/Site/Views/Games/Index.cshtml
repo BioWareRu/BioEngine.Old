@@ -146,7 +146,7 @@
                             <div>
                                 @foreach (var picture in Model.LastPics)
                                 {
-                                    <a href="@Url.Gallery().PublicUrl(picture)#nanogallery/nanoGallery/0/@picture.Id">
+                                    <a href="@Url.Gallery().PublicUrl(picture)">
                                         <img src="@Url.Gallery().ThumbUrl(picture, 115, 115)"
                                              alt=""/>
                                     </a>

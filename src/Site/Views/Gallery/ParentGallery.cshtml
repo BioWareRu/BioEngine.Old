@@ -29,7 +29,7 @@
                             <div>
                                 @foreach (var pic in cat.Items)
                                 {
-                                    <a href="@Url.Gallery().PublicUrl(pic)#nanogallery/nanoGallery/0/@pic.Id">
+                                    <a href="@Url.Gallery().PublicUrl(pic)">
                                         <img src="@Url.Gallery().ThumbUrl(pic, 115, 115)"
                                              alt=""/>
                                     </a>

@@ -1,4 +1,6 @@
-﻿using BioEngine.Common.Interfaces;
+﻿using System;
+using System.Linq;
+using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using BioEngine.Data.Core;
 
@@ -11,5 +13,8 @@ namespace BioEngine.Data.Gallery.Queries
         public GalleryCat Cat { get; set; }
 
         public bool LoadPicPositions { get; set; }
+
+        public override Func<IQueryable<GalleryPic>, IQueryable<GalleryPic>> OrderByFunc { get; protected set; } =
+            pics => pics.OrderByDescending(x => x.Id);
     }
 }

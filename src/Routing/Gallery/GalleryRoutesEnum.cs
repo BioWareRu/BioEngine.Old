@@ -3,6 +3,7 @@
     public enum GalleryRoutesEnum
     {
         CatPage,
-        ParentPage
+        ParentPage,
+        PicURL
     }
 }

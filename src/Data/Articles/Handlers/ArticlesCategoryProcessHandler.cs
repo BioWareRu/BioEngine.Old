@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
+using BioEngine.Data.Base;
 using BioEngine.Common.Models;
 using BioEngine.Data.Articles.Queries;
 using BioEngine.Data.Core;

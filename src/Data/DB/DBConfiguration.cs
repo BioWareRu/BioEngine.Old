@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BioEngine.Common.DB
+namespace BioEngine.Data.DB
 {
     public abstract class DBConfiguration
     {

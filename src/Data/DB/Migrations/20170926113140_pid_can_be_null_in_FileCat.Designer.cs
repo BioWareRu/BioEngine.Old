@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using BioEngine.Common.DB;
+using BioEngine.Data.DB;
 
-namespace BioEngine.Common.Migrations
+namespace BioEngine.Data.DB.Migrations
 {
     [DbContext(typeof(BWContext))]
-    [Migration("20170809060102_child_properties_can_be_null")]
-    partial class child_properties_can_be_null
+    [Migration("20170926113140_pid_can_be_null_in_FileCat")]
+    partial class pid_can_be_null_in_FileCat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -575,10 +575,10 @@ namespace BioEngine.Common.Migrations
                     b.Property<int?>("DeveloperId")
                         .HasColumnName("developer_id");
 
-                    b.Property<int>("ForumPostId")
+                    b.Property<int?>("ForumPostId")
                         .HasColumnName("pid");
 
-                    b.Property<int>("ForumTopicId")
+                    b.Property<int?>("ForumTopicId")
                         .HasColumnName("tid");
 
                     b.Property<int?>("GameId")

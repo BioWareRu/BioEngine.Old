@@ -3,7 +3,7 @@ using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Common.DB
+namespace BioEngine.Data.DB
 {
     [UsedImplicitly]
     public class BWContext : DbContext
@@ -12,7 +12,7 @@ namespace BioEngine.Common.DB
         {
         }
 
-        public DbSet<News> News { get; set; }
+        public DbSet<Common.Models.News> News { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Developer> Developers { get; set; }

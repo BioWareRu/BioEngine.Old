@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BioEngine.Common.DB;
+using BioEngine.Data.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BioEngine.Common.Base
+namespace BioEngine.Data.Base
 {
     [UsedImplicitly]
     public class ParentEntityProvider

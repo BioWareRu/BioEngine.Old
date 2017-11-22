@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
+using BioEngine.Data.Base;
 using MediatR;
 
 namespace BioEngine.Data.Core

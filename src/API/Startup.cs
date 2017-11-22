@@ -9,7 +9,7 @@ using BioEngine.API.Auth;
 using BioEngine.API.Components.REST;
 using BioEngine.API.Models;
 using BioEngine.Common.Base;
-using BioEngine.Common.DB;
+using BioEngine.Data.DB;
 using BioEngine.Common.Interfaces;
 using BioEngine.Common.Ipb;
 using BioEngine.Content.Helpers;

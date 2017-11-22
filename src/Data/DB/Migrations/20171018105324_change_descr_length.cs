@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BioEngine.Common.Migrations
+namespace BioEngine.Data.DB.Migrations
 {
     public partial class change_descr_length : Migration
     {

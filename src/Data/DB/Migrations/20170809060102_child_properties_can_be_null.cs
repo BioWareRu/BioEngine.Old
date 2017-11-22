@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BioEngine.Common.Migrations
+namespace BioEngine.Data.DB.Migrations
 {
     public partial class child_properties_can_be_null : Migration
     {

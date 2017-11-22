@@ -20,5 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
+    <ProjectReference Include="..\Data\BioEngine.Data.csproj" />
   </ItemGroup>
 </Project>

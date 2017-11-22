@@ -1,1 +1,1 @@
-dotnet ef %* --project ../Common/
+dotnet ef %* --project ../Data/

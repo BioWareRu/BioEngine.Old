@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using BioEngine.Common.DB;
+using BioEngine.Data.DB;
 
-namespace BioEngine.Common.Migrations
+namespace BioEngine.Data.DB.Migrations
 {
     [DbContext(typeof(BWContext))]
-    [Migration("20170824050733_forum_and_post_id_in_news_are_nullable")]
-    partial class forum_and_post_id_in_news_are_nullable
+    [Migration("20171010092343_pid_can_be_null_in_ArticleCat")]
+    partial class pid_can_be_null_in_ArticleCat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -172,6 +172,9 @@ namespace BioEngine.Common.Migrations
                     b.Property<int>("Articles")
                         .HasColumnName("articles");
 
+                    b.Property<int?>("CatId")
+                        .HasColumnName("pid");
+
                     b.Property<string>("Content")
                         .HasColumnName("content");
 
@@ -187,9 +190,6 @@ namespace BioEngine.Common.Migrations
                     b.Property<string>("GameOld")
                         .HasColumnName("game_old");
 
-                    b.Property<int?>("Pid")
-                        .HasColumnName("pid");
-
                     b.Property<string>("Title")
                         .HasColumnName("title");
 
@@ -201,11 +201,11 @@ namespace BioEngine.Common.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CatId");
+
                     b.HasIndex("DeveloperId");
 
                     b.HasIndex("GameId");
-
-                    b.HasIndex("Pid");
 
                     b.HasIndex("TopicId");
 
@@ -341,6 +341,9 @@ namespace BioEngine.Common.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id");
 
+                    b.Property<int?>("CatId")
+                        .HasColumnName("pid");
+
                     b.Property<string>("Descr")
                         .HasColumnName("descr");
 
@@ -353,9 +356,6 @@ namespace BioEngine.Common.Migrations
                     b.Property<string>("GameOld")
                         .HasColumnName("game_old");
 
-                    b.Property<int?>("Pid")
-                        .HasColumnName("pid");
-
                     b.Property<string>("Title")
                         .HasColumnName("title");
 
@@ -364,11 +364,11 @@ namespace BioEngine.Common.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CatId");
+
                     b.HasIndex("DeveloperId");
 
                     b.HasIndex("GameId");
-
-                    b.HasIndex("Pid");
 
                     b.ToTable("be_files_cats");
                 });
@@ -844,6 +844,10 @@ namespace BioEngine.Common.Migrations
 
             modelBuilder.Entity("BioEngine.Common.Models.ArticleCat", b =>
                 {
+                    b.HasOne("BioEngine.Common.Models.ArticleCat", "ParentCat")
+                        .WithMany("Children")
+                        .HasForeignKey("CatId");
+
                     b.HasOne("BioEngine.Common.Models.Developer", "Developer")
                         .WithMany()
                         .HasForeignKey("DeveloperId");
@@ -851,10 +855,6 @@ namespace BioEngine.Common.Migrations
                     b.HasOne("BioEngine.Common.Models.Game", "Game")
                         .WithMany()
                         .HasForeignKey("GameId");
-
-                    b.HasOne("BioEngine.Common.Models.ArticleCat", "ParentCat")
-                        .WithMany("Children")
-                        .HasForeignKey("Pid");
 
                     b.HasOne("BioEngine.Common.Models.Topic", "Topic")
                         .WithMany()
@@ -884,6 +884,10 @@ namespace BioEngine.Common.Migrations
 
             modelBuilder.Entity("BioEngine.Common.Models.FileCat", b =>
                 {
+                    b.HasOne("BioEngine.Common.Models.FileCat", "ParentCat")
+                        .WithMany("Children")
+                        .HasForeignKey("CatId");
+
                     b.HasOne("BioEngine.Common.Models.Developer", "Developer")
                         .WithMany()
                         .HasForeignKey("DeveloperId");
@@ -891,10 +895,6 @@ namespace BioEngine.Common.Migrations
                     b.HasOne("BioEngine.Common.Models.Game", "Game")
                         .WithMany()
                         .HasForeignKey("GameId");
-
-                    b.HasOne("BioEngine.Common.Models.FileCat", "ParentCat")
-                        .WithMany("Children")
-                        .HasForeignKey("Pid");
                 });
 
             modelBuilder.Entity("BioEngine.Common.Models.GalleryCat", b =>

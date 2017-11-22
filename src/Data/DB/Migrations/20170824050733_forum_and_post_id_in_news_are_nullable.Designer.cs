@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using BioEngine.Common.DB;
+using BioEngine.Data.DB;
 
-namespace BioEngine.Common.Migrations
+namespace BioEngine.Data.DB.Migrations
 {
     [DbContext(typeof(BWContext))]
-    [Migration("20170926113140_pid_can_be_null_in_FileCat")]
-    partial class pid_can_be_null_in_FileCat
+    [Migration("20170824050733_forum_and_post_id_in_news_are_nullable")]
+    partial class forum_and_post_id_in_news_are_nullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

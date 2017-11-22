@@ -1,4 +1,4 @@
-﻿using BioEngine.Common.DB;
+﻿using BioEngine.Data.DB;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +20,7 @@ namespace BioEngine.Data
                 Database = DBName,
                 MaximumPoolSize = 300
             };
-            optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString, b => b.MigrationsAssembly("BioEngine.Common"));
+            optionsBuilder.UseMySql(mysqlConnBuilder.ConnectionString, b => b.MigrationsAssembly("BioEngine.Data"));
         }
 
         public MySqlDBConfiguration(IConfiguration configuration) : base(configuration)

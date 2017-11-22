@@ -18,15 +18,7 @@ namespace BioEngine.Data.Gallery.Handlers
         protected override async Task<int> ExecuteCommandAsync(CreateGalleryCatCommand command)
         {
             var galleryCat = Mapper.Map<CreateGalleryCatCommand, Common.Models.GalleryCat>(command);
-            DBContext.GalleryCats.Add(galleryCat);
-            await DBContext.SaveChangesAsync();
-
-            DBContext.Entry(galleryCat)
-                .Reference(fc => fc.Game)
-                .Load();
-            DBContext.Entry(galleryCat)
-                .Reference(fc => fc.Developer)
-                .Load();
+            galleryCat = await Repository.Gallery.CreateCat(galleryCat);
 
             await Mediator.Publish(new IndexEntityCommand<Common.Models.GalleryCat>(galleryCat));
 

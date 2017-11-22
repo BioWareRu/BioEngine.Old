@@ -38,6 +38,12 @@ namespace BioEngine.Data
             containerBuilder.RegisterType<ParentEntityProvider>().InstancePerLifetimeScope();
 
             containerBuilder
+                .RegisterAssemblyTypes(typeof(BioRepository).GetTypeInfo().Assembly)
+                .AsClosedTypesOf(typeof(BaseBioRepository<,>))
+                .InstancePerLifetimeScope();
+            containerBuilder.RegisterType<BioRepository>().InstancePerLifetimeScope();
+
+            containerBuilder
                 .RegisterSource(new ContravariantRegistrationSource());
 
             containerBuilder

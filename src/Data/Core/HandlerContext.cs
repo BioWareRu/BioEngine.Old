@@ -10,15 +10,18 @@ namespace BioEngine.Data.Core
     {
         public IMediator Mediator { get; }
         public BWContext DBContext { get; }
+        public BioRepository Repository { get; }
         public IMapper Mapper { get; }
         public ILogger Logger { get; }
 
-        protected HandlerContext(IMediator mediator, BWContext dbContext, IMapper mapper, ILogger logger)
+        protected HandlerContext(IMediator mediator, BioRepository bioRepository, BWContext dbContext, IMapper mapper,
+            ILogger logger)
         {
             Mediator = mediator;
             DBContext = dbContext;
             Logger = logger;
             Mapper = mapper;
+            Repository = bioRepository;
         }
     }
 
@@ -26,8 +29,9 @@ namespace BioEngine.Data.Core
     public class HandlerContext<T> : HandlerContext
     {
         // ReSharper disable once SuggestBaseTypeForParameter
-        public HandlerContext(IMediator mediator, BWContext dbContext, IMapper mapper, ILogger<T> logger) : base(
-            mediator, dbContext, mapper, logger)
+        public HandlerContext(IMediator mediator, BioRepository bioRepository, BWContext dbContext, IMapper mapper,
+            ILogger<T> logger) : base(
+            mediator, bioRepository, dbContext, mapper, logger)
         {
         }
     }

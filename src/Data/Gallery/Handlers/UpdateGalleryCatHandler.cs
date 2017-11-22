@@ -20,10 +20,9 @@ namespace BioEngine.Data.Gallery.Handlers
         {
             Mapper.Map(command, command.Model);
 
-            DBContext.Update(command.Model);
-            await DBContext.SaveChangesAsync();
+            var cat = await Repository.Gallery.UpdateCat(command.Model);
 
-            await Mediator.Publish(new IndexEntityCommand<Common.Models.GalleryCat>(command.Model));
+            await Mediator.Publish(new IndexEntityCommand<Common.Models.GalleryCat>(cat));
 
             return true;
         }

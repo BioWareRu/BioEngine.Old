@@ -172,10 +172,10 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             if (pic == null) return null;
 
 
-            var picUrl = _urlHelper.Gallery().PublicUrl(pic, true) + "#nanogallery/nanoGallery/0/" + pic.Id;
+            var picUrl = _urlHelper.Gallery().PublicUrl(pic, true);
             if (urlOnly)
             {
-                return picUrl;
+                return picUrl.ToString();
             }
             var thumbUrl = _urlHelper.Gallery().ThumbUrl(pic, width, height);
             return $"<a href='{picUrl}' title='{pic.Desc}'><img src='{thumbUrl}' alt='{pic.Desc}' /></a>";

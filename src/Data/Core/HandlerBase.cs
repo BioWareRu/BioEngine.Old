@@ -11,6 +11,7 @@ namespace BioEngine.Data.Core
         protected readonly ILogger Logger;
         protected readonly IMediator Mediator;
         protected readonly IMapper Mapper;
+        protected readonly BioRepository Repository;
 
         protected HandlerBase(HandlerContext context)
         {
@@ -18,6 +19,7 @@ namespace BioEngine.Data.Core
             Logger = context.Logger;
             Mediator = context.Mediator;
             Mapper = context.Mapper;
+            Repository = context.Repository;
         }
     }
 }

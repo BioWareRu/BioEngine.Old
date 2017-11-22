@@ -8,8 +8,9 @@ namespace BioEngine.Data.Gallery.Queries
     {
         public bool OnlyRoot { get; set; }
         public IParentModel Parent { get; set; }
-        public bool LoadChildren { get; set; }
+        
         public GalleryCat ParentCat { get; set; }
+        public bool LoadChildren { get; set; }
         public int? LoadLastItems { get; set; }
         public string Url { get; set; }
     }

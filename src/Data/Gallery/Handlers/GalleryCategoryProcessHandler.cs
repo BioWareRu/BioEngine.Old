@@ -19,7 +19,8 @@ namespace BioEngine.Data.Gallery.Handlers
 
         protected override async Task<IEnumerable<GalleryPic>> GetCatItemsAsync(GalleryCat cat, int count)
         {
-            return (await Mediator.Send(new GetGalleryPicsQuery {Cat = cat, Page = 1, PageSize = count})).models;
+            return (await Repository.Gallery.GetPics(
+                new GalleryPicsListQueryOptions {Cat = cat, Page = 1, PageSize = count})).models;
         }
     }
 }

@@ -10,15 +10,14 @@ namespace BioEngine.Data.Gallery.Handlers
     [UsedImplicitly]
     internal class DeleteArticleCatHandler : RestCommandHandlerBase<DeleteGalleryCatCommand, bool>
     {
-        public DeleteArticleCatHandler(HandlerContext<DeleteArticleCatHandler> context, 
+        public DeleteArticleCatHandler(HandlerContext<DeleteArticleCatHandler> context,
             IValidator<DeleteGalleryCatCommand>[] validators) : base(context, validators)
         {
         }
 
         protected override async Task<bool> ExecuteCommandAsync(DeleteGalleryCatCommand command)
         {
-            DBContext.Remove(command.Model);
-            await DBContext.SaveChangesAsync();
+            await Repository.Gallery.DeleteCat(command.Model);
 
             await Mediator.Publish(new DeleteEntityFromIndexCommand<Common.Models.GalleryCat>(command.Model));
 

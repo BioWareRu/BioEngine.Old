@@ -15,6 +15,14 @@ namespace BioEngine.Social
             ));
 
             services.AddSingleton<TwitterService>();
+
+            services.AddSingleton(new FacebookServiceConfiguration(
+                configuration["BE_FACEBOOK_API_URL"],
+                configuration["BE_FACEBOOK_PAGE_ID"],
+                configuration["BE_FACEBOOK_ACCESS_TOKEN"]
+            ));
+
+            services.AddSingleton<FacebookService>();
         }
     }
 }

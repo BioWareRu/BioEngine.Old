@@ -11,9 +11,10 @@ using System;
 namespace BioEngine.Data.DB.Migrations
 {
     [DbContext(typeof(BWContext))]
-    partial class BWContextModelSnapshot : ModelSnapshot
+    [Migration("20171124063427_add_facebook_id_to_news")]
+    partial class add_facebook_id_to_news
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

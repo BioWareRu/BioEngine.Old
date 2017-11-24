@@ -24,6 +24,7 @@ namespace BioEngine.Data.News.Handlers
 
             await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
             await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.Delete));
+            await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.Delete));
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();

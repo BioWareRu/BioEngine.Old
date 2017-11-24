@@ -19,13 +19,19 @@ namespace BioEngine.Data.News.Handlers
 
         protected override async Task<bool> ExecuteCommandAsync(UpdateNewsCommand command)
         {
-            var needTweetUpd = command.Model.Pub == 1 &&
-                               (command.Title != command.Model.Title || command.Url != command.Model.Url);
+            var needSocialUpd = command.Model.Pub == 1 &&
+                                (command.Title != command.Model.Title || command.Url != command.Model.Url);
 
             Mapper.Map(command, command.Model);
-            if (needTweetUpd)
+
+            if (command.Model.TwitterId == 0 || needSocialUpd)
             {
                 await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
+            }
+
+            if (string.IsNullOrEmpty(command.Model.FacebookId) || needSocialUpd)
+            {
+                await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.CreateOrUpdate));
             }
 
             if (command.Model.Pub == 1)
@@ -33,7 +39,7 @@ namespace BioEngine.Data.News.Handlers
                 await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
                 await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
             }
-            
+
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             DBContext.Update(command.Model);

@@ -26,6 +26,11 @@ namespace BioEngine.Data.News.Handlers
                 await Mediator.Send(new DeleteTweetCommand(command.Model.TwitterId));
             }
 
+            if (!string.IsNullOrEmpty(command.Model.FacebookId))
+            {
+                await Mediator.Send(new DeleteFacebookPostCommand(command.Model.FacebookId));
+            }
+
             //delete news
             DBContext.Remove(command.Model);
             await DBContext.SaveChangesAsync();

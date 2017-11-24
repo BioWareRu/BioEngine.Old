@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Social.Facebook
 {
-    public class FacebookSocialService : FacebookService, SocialServiceInterface
+    public class FacebookSocialService : FacebookService, ISocialService
     {
         public FacebookSocialService(FacebookServiceConfiguration configuration, ILogger<FacebookService> logger) :
             base(configuration, logger)

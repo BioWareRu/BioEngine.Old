@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Social.Twitter
 {
-    public class TwitterSocialService : TwitterService, SocialServiceInterface
+    public class TwitterSocialService : TwitterService, ISocialService
     {
         public TwitterSocialService(TwitterServiceConfiguration configuration, ILogger<TwitterService> logger) : base(
             configuration, logger)

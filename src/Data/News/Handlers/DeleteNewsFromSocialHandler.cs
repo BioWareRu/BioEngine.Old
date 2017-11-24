@@ -12,10 +12,10 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class DeleteNewsFromSocialHandler : QueryHandlerBase<DeleteNewsFromSocialCommand, bool>
     {
-        private readonly List<SocialServiceInterface> _socialServices;
+        private readonly List<ISocialService> _socialServices;
 
         public DeleteNewsFromSocialHandler(HandlerContext<DeleteNewsFromSocialHandler> context,
-            List<SocialServiceInterface> socialServices) : base(context)
+            List<ISocialService> socialServices) : base(context)
         {
             _socialServices = socialServices;
         }

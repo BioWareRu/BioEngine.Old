@@ -11,10 +11,10 @@ namespace BioEngine.Data.News.Handlers
     [UsedImplicitly]
     internal class PublishNewsToSocialHandler : QueryHandlerBase<PublishNewsToSocialCommand, bool>
     {
-        private readonly SocialServiceInterface[] _socialServices;
+        private readonly ISocialService[] _socialServices;
 
         public PublishNewsToSocialHandler(HandlerContext<PublishNewsToSocialHandler> context,
-            SocialServiceInterface[] socialServices) : base(context)
+            ISocialService[] socialServices) : base(context)
         {
             _socialServices = socialServices;
         }

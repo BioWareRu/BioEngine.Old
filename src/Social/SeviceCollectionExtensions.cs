@@ -23,8 +23,8 @@ namespace BioEngine.Social
             ));
 
 
-            services.AddSingleton<SocialServiceInterface, TwitterSocialService>();
-            services.AddSingleton<SocialServiceInterface, FacebookSocialService>();
+            services.AddSingleton<ISocialService, TwitterSocialService>();
+            services.AddSingleton<ISocialService, FacebookSocialService>();
         }
     }
 }

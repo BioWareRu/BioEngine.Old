@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.Search.Commands;
-using BioEngine.Social;
+using BioEngine.Social.Facebook;
+using BioEngine.Social.Twitter;
 using FluentValidation;
 using JetBrains.Annotations;
 
@@ -23,13 +24,12 @@ namespace BioEngine.Data.News.Handlers
             command.Model.Pub = 0;
 
             await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
-            await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.Delete));
-            await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.Delete));
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
             await Mediator.Publish(new DeleteEntityFromIndexCommand<Common.Models.News>(command.Model));
+            await Mediator.Send(new DeleteNewsFromSocialCommand(command.Model));
 
             return true;
         }

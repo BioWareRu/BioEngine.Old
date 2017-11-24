@@ -1,11 +1,10 @@
 ﻿using System.Linq;
-using BioEngine.Common.Base;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Tweetinvi;
 using Tweetinvi.Models;
 
-namespace BioEngine.Social
+namespace BioEngine.Social.Twitter
 {
     [UsedImplicitly]
     public class TwitterService
@@ -46,43 +45,6 @@ namespace BioEngine.Social
                 }
                 throw new TwitterException(!string.IsNullOrEmpty(message) ? message : exc.TwitterDescription);
             }
-        }
-    }
-
-    public class TwitterServiceConfiguration
-    {
-        public TwitterServiceConfiguration(string consumerKey, string consumerSecret, string accessToken,
-            string acessTokenSecret)
-        {
-            ConsumerKey = consumerKey;
-            ConsumerSecret = consumerSecret;
-            AccessToken = accessToken;
-            AcessTokenSecret = acessTokenSecret;
-        }
-
-        public string ConsumerKey { get; }
-        public string ConsumerSecret { get; }
-        public string AccessToken { get; }
-        public string AcessTokenSecret { get; }
-    }
-
-    public enum TwitterOperationEnum
-    {
-        CreateOrUpdate,
-        Delete
-    }
-
-    public class TwitterException : UserException
-    {
-        public TwitterException(string message) : base(message)
-        {
-        }
-    }
-
-    public class TooLongTweetTextException : TwitterException
-    {
-        public TooLongTweetTextException() : base("Текст твита больше 140 символов")
-        {
         }
     }
 }

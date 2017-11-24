@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BioEngine.Social.Facebook;
+using BioEngine.Social.Twitter;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BioEngine.Social
@@ -14,15 +16,15 @@ namespace BioEngine.Social
                 configuration["BE_TWITTER_ACCESS_TOKEN_SECRET"]
             ));
 
-            services.AddSingleton<TwitterService>();
-
             services.AddSingleton(new FacebookServiceConfiguration(
                 configuration["BE_FACEBOOK_API_URL"],
                 configuration["BE_FACEBOOK_PAGE_ID"],
                 configuration["BE_FACEBOOK_ACCESS_TOKEN"]
             ));
 
-            services.AddSingleton<FacebookService>();
+
+            services.AddSingleton<SocialServiceInterface, TwitterSocialService>();
+            services.AddSingleton<SocialServiceInterface, FacebookSocialService>();
         }
     }
 }

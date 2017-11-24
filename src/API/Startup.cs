@@ -16,6 +16,7 @@ using BioEngine.Content.Helpers;
 using BioEngine.Routing;
 using BioEngine.Data;
 using BioEngine.Social;
+using BioEngine.Social.Twitter;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;

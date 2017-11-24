@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.Search.Commands;
-using BioEngine.Social;
+using BioEngine.Social.Facebook;
+using BioEngine.Social.Twitter;
 using FluentValidation;
 using JetBrains.Annotations;
 
@@ -27,8 +28,7 @@ namespace BioEngine.Data.News.Handlers
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
-            await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
-            await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.CreateOrUpdate));
+            await Mediator.Send(new PublishNewsToSocialCommand(command.Model));
 
             await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
 

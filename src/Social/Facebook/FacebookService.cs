@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Tweetinvi.Core.Extensions;
 
-namespace BioEngine.Social
+namespace BioEngine.Social.Facebook
 {
     [UsedImplicitly]
     public class FacebookService
@@ -59,37 +59,17 @@ namespace BioEngine.Social
             _logger.LogDebug($"Post deleted from facebook: {(postReponse.Success ? "Yes" : "No")}");
             return postReponse.Success;
         }
-    }
-
-    public class FacebookNewPostResponse
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-    }
-
-    public class FacebookDeleteResponse
-    {
-        [JsonProperty("success")]
-        public bool Success { get; set; }
-    }
-
-    public class FacebookServiceConfiguration
-    {
-        public FacebookServiceConfiguration(string apiUrl, string pageId, string accessToken)
+        
+        public class FacebookNewPostResponse
         {
-            ApiURL = new Uri(apiUrl);
-            PageId = pageId;
-            AccessToken = accessToken;
+            [JsonProperty("id")]
+            public string Id { get; set; }
         }
-
-        public Uri ApiURL { get; }
-        public string PageId { get; }
-        public string AccessToken { get; }
-    }
-    
-    public enum FacebookOperationEnum
-    {
-        CreateOrUpdate,
-        Delete
+        
+        public class FacebookDeleteResponse
+        {
+            [JsonProperty("success")]
+            public bool Success { get; set; }
+        }
     }
 }

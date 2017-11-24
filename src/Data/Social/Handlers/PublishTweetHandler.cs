@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.Social.Commands;
-using BioEngine.Social;
+using BioEngine.Social.Twitter;
 using JetBrains.Annotations;
 
 namespace BioEngine.Data.Social.Handlers

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.Search.Commands;
-using BioEngine.Social;
 using FluentValidation;
 using JetBrains.Annotations;
 
@@ -24,16 +23,6 @@ namespace BioEngine.Data.News.Handlers
 
             Mapper.Map(command, command.Model);
 
-            if (command.Model.TwitterId == 0 || needSocialUpd)
-            {
-                await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
-            }
-
-            if (string.IsNullOrEmpty(command.Model.FacebookId) || needSocialUpd)
-            {
-                await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.CreateOrUpdate));
-            }
-
             if (command.Model.Pub == 1)
             {
                 await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
@@ -44,6 +33,9 @@ namespace BioEngine.Data.News.Handlers
 
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
+
+            await Mediator.Send(new PublishNewsToSocialCommand(command.Model, needSocialUpd));
+
             return true;
         }
     }

@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using BioEngine.Social.Facebook;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace BioEngine.Social.Test
+namespace BioEngine.Social.Twitter.Twitter.Test
 {
     public class FacebookTest
     {

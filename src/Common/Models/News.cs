@@ -67,6 +67,9 @@ namespace BioEngine.Common.Models
 
         [Required]
         public long TwitterId { get; set; }
+        
+        [Required]
+        public string FacebookId { get; set; }
 
         [ForeignKey(nameof(AuthorId))]
         public virtual User Author { get; set; }

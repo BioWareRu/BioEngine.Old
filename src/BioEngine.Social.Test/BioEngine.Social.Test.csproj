@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.0.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02"/>
+        <PackageReference Include="xunit" Version="2.2.0"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Social\BioEngine.Social.csproj"/>
+    </ItemGroup>
+    <PropertyGroup>
+        <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
+    </PropertyGroup>
+</Project>

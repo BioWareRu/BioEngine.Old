@@ -23,11 +23,12 @@ namespace BioEngine.Data.News.Handlers
             command.Model.Pub = 1;
 
             await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
-            
+
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
             await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
+            await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.CreateOrUpdate));
 
             await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
 

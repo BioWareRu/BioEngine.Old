@@ -23,9 +23,14 @@ namespace BioEngine.Data.News.Handlers
                                 (command.Title != command.Model.Title || command.Url != command.Model.Url);
 
             Mapper.Map(command, command.Model);
-            if (needSocialUpd)
+
+            if (command.Model.TwitterId == 0 || needSocialUpd)
             {
                 await Mediator.Send(new ManageNewsTweetCommand(command.Model, TwitterOperationEnum.CreateOrUpdate));
+            }
+
+            if (string.IsNullOrEmpty(command.Model.FacebookId) || needSocialUpd)
+            {
                 await Mediator.Send(new ManageNewsFacebookCommand(command.Model, FacebookOperationEnum.CreateOrUpdate));
             }
 

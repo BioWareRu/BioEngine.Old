@@ -26,7 +26,6 @@ namespace BioEngine.Data.News.Handlers
             if (command.Model.Pub == 1)
             {
                 await Mediator.Publish(new CreateOrUpdateNewsForumTopicCommand(command.Model));
-                await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
             }
 
             command.Model.LastChangeDate = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -34,7 +33,11 @@ namespace BioEngine.Data.News.Handlers
             DBContext.Update(command.Model);
             await DBContext.SaveChangesAsync();
 
-            await Mediator.Send(new PublishNewsToSocialCommand(command.Model, needSocialUpd));
+            if (command.Model.Pub == 1)
+            {
+                await Mediator.Send(new PublishNewsToSocialCommand(command.Model, needSocialUpd));
+                await Mediator.Publish(new IndexEntityCommand<Common.Models.News>(command.Model));
+            }
 
             return true;
         }

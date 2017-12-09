@@ -39,7 +39,6 @@ namespace BioEngine.Common.Ipb
             IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _ipbApiConfig.ApiUrl + method;
-            _logger.LogWarning($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
             try
             {
                 var response = await _client.PostAsync(url, new FormUrlEncodedContent(data));
@@ -47,6 +46,7 @@ namespace BioEngine.Common.Ipb
             }
             catch (TaskCanceledException ex)
             {
+                _logger.LogCritical($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
                 _logger.LogCritical($"Http client exception ({ex.GetType()}): {ex.Message}");
                 _logger.LogCritical(862, ex, ex.Message);
                 if (ex.InnerException != null)
@@ -59,6 +59,7 @@ namespace BioEngine.Common.Ipb
             }
             catch (Exception ex)
             {
+                _logger.LogCritical($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
                 _logger.LogCritical($"IPB Error ({ex.GetType()}): {ex.Message}");
                 _logger.LogCritical(862, ex, ex.Message);
                 throw;

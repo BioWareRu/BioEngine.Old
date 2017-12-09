@@ -39,17 +39,35 @@ namespace BioEngine.Common.Ipb
             IEnumerable<KeyValuePair<string, string>> data)
         {
             var url = _ipbApiConfig.ApiUrl + method;
-            var response = await _client.PostAsync(url,
-                new FormUrlEncodedContent(data));
             _logger.LogWarning($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
-            return response;
+            try
+            {
+                var response = await _client.PostAsync(url,
+                    new FormUrlEncodedContent(data));
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"IPB Error ({ex.GetType()}): {ex.Message}");
+                _logger.LogCritical(862, ex, ex.Message);
+                throw;
+            }
         }
 
         private async Task<HttpResponseMessage> DoDeleteApiRequestAsync(string method)
         {
             var url = _ipbApiConfig.ApiUrl + method;
-            var response = await _client.DeleteAsync(url);
-            return response;
+            try
+            {
+                var response = await _client.DeleteAsync(url);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"IPB Delete Error ({ex.GetType()}): {ex.Message}");
+                _logger.LogCritical(862, ex, ex.Message);
+                throw;
+            }
         }
 
         private static string Base64Encode(string plainText)

@@ -18,7 +18,7 @@ namespace BioEngine.Data.Core
             _validators = validators;
         }
 
-        public override async Task<TResponse> Handle(TCommand command)
+        protected override async Task<TResponse> HandleCore(TCommand command)
         {
             Logger.LogInformation($"Validate command {typeof(TCommand)}");
             await Validate(command);
@@ -26,7 +26,7 @@ namespace BioEngine.Data.Core
             return await ExecuteCommandAsync(command);
         }
 
-        protected async Task Validate(TCommand command)
+        private async Task Validate(TCommand command)
         {
             var validattionResuls = new List<ValidationResult>();
             foreach (var validator in _validators)

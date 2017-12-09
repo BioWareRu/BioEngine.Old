@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using BioEngine.Common.Base;
 using BioEngine.Common.Interfaces;
+using BioEngine.Data.DB;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
-    internal abstract class QueryHandlerBase<TRequest, TResponse> : HandlerBase,
-        IAsyncRequestHandler<TRequest, TResponse>
+    internal abstract class QueryHandlerBase<TRequest, TResponse> : AsyncRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         protected abstract Task<TResponse> RunQueryAsync(TRequest message);
 
-        protected QueryHandlerBase(HandlerContext context) : base(context)
+        protected readonly BWContext DBContext;
+        protected readonly ILogger Logger;
+        protected readonly IMediator Mediator;
+        protected readonly IMapper Mapper;
+        protected readonly BioRepository Repository;
+
+        protected QueryHandlerBase(HandlerContext context)
         {
+            DBContext = context.DBContext;
+            Logger = context.Logger;
+            Mediator = context.Mediator;
+            Mapper = context.Mapper;
+            Repository = context.Repository;
         }
 
         protected IQueryable<T> ApplyParentCondition<T>(IQueryable<T> query, IParentModel parent) where T : IChildModel
@@ -38,7 +50,7 @@ namespace BioEngine.Data.Core
             return query;
         }
 
-        public virtual Task<TResponse> Handle(TRequest message)
+        protected override Task<TResponse> HandleCore(TRequest message)
         {
             Logger.LogInformation($"Run query {GetType().FullName} for message {message.GetType().FullName}");
             var result = RunQueryAsync(message);

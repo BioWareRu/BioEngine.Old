@@ -53,12 +53,10 @@ namespace BioEngine.Data
 
             var mediatrOpenTypes = new[]
             {
-                typeof(IRequestHandler<,>),
-                typeof(IAsyncRequestHandler<,>),
-                typeof(ICancellableAsyncRequestHandler<,>),
-                typeof(INotificationHandler<>),
-                typeof(IAsyncNotificationHandler<>),
-                typeof(ICancellableAsyncNotificationHandler<>)
+                typeof(RequestHandler<>),
+                typeof(AsyncRequestHandler<,>),
+                typeof(NotificationHandler<>),
+                typeof(AsyncNotificationHandler<>)
             };
 
             foreach (var mediatrOpenType in mediatrOpenTypes)

@@ -12,10 +12,10 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
-    <PackageReference Include="AutoMapper" Version="6.2.0" />
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="FluentValidation" Version="7.2.1" />
-    <PackageReference Include="MediatR" Version="3.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="3.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0.1" />
+    <PackageReference Include="MediatR" Version="4.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="4.0.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
   </ItemGroup>
 </Project>

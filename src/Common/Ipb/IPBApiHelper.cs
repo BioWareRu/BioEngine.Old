@@ -42,9 +42,20 @@ namespace BioEngine.Common.Ipb
             _logger.LogWarning($"New IPB Request to url {url}. Data: {JsonConvert.SerializeObject(data)}");
             try
             {
-                var response = await _client.PostAsync(url,
-                    new FormUrlEncodedContent(data));
+                var response = await _client.PostAsync(url, new FormUrlEncodedContent(data));
                 return response;
+            }
+            catch (TaskCanceledException ex)
+            {
+                _logger.LogCritical($"Http client exception ({ex.GetType()}): {ex.Message}");
+                _logger.LogCritical(862, ex, ex.Message);
+                if (ex.InnerException != null)
+                {
+                    _logger.LogCritical(
+                        $"Http client exception ({ex.InnerException.GetType()}): {ex.InnerException.Message}");
+                    _logger.LogCritical(862, ex.InnerException, ex.InnerException.Message);
+                }
+                throw;
             }
             catch (Exception ex)
             {

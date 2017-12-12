@@ -56,7 +56,14 @@ namespace BioEngine.Web
                             };
                             options.InfluxDb.Database = whBuilder.Configuration["BE_INFLUXDB_DB"];
                             options.InfluxDb.BaseUri = new Uri(whBuilder.Configuration["BE_INFLUXDB_HOST"]);
-                            options.FlushInterval = TimeSpan.FromSeconds(1);
+                            var intervalConfig = whBuilder.Configuration["BE_INFLUXDB_INTERVAL"];
+                            var interval = 30;
+                            if (!string.IsNullOrEmpty(intervalConfig))
+                            {
+                                interval = int.Parse(intervalConfig);
+                            }
+
+                            options.FlushInterval = TimeSpan.FromSeconds(interval);
                         });
                     }
                 })

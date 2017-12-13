@@ -3,15 +3,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="2.0.0-beta-0062" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.Redis" Version="0.3.1" />
-    <PackageReference Include="App.Metrics.AspNetCore" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.AspNetCore.Health" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.Reporting.Console" Version="2.0.0-alpha" />
-    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="2.0.0-alpha" />
+    <PackageReference Include="App.Metrics.AspNetCore" Version="2.0.0-beta-0060" />
+    <PackageReference Include="App.Metrics.AspNetCore.Health" Version="2.0.0-beta-0037" />
+    <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="2.0.0-beta-0060" />
+    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="2.0.0-beta-0060" />
+    <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="2.0.0-beta-0060" />
+    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="2.0.0-beta-0032" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.0" />
     <PackageReference Include="Serilog.Exceptions" Version="3.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />

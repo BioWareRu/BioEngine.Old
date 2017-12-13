@@ -188,7 +188,7 @@ namespace BioEngine.Site
             options.RequireHeaderSymmetry = false;
             app.UseForwardedHeaders(options);
 
-            app.UseExceptionHandler("/error/500");
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
         }
     }
 }

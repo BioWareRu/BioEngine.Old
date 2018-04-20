@@ -147,7 +147,7 @@ twttr.widgets.createTweet('" + id + @"',document.getElementById('twitter" + id +
             var fileId = int.Parse(match.Groups[1].Value);
             var file = await _mediator.Send(new GetFileByIdQuery(fileId));
             var result = !string.IsNullOrEmpty(file?.YtId)
-                ? $"<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/{file?.YtId}\" frameborder=\"0\" allowfullscreen></iframe>"
+                ? $"<iframe width=\"560\" height=\"315\" src=\"//www.youtube.com/embed/{file.YtId}\" frameborder=\"0\" allowfullscreen></iframe>"
                 : null;
             return result;
         }

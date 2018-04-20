@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using BioEngine.Data.Core;
 using BioEngine.Data.News.Commands;
 using BioEngine.Data.Search.Commands;
-using BioEngine.Social.Facebook;
-using BioEngine.Social.Twitter;
 using FluentValidation;
 using JetBrains.Annotations;
 

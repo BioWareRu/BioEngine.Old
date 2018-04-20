@@ -39,7 +39,7 @@ namespace BioEngine.Search.ElasticSearch
         {
             var names = GetSearchText(term);
             var resultsCount = await _client.CountAsync<TSearchModel>(x =>
-                x.Query(q => q.QueryString(qs => qs.AllFields().Query(names))).Index(IndexName));
+                x.Query(q => q.QueryString(qs => qs.Query(names))).Index(IndexName));
             return resultsCount.Count;
         }
 
@@ -49,7 +49,7 @@ namespace BioEngine.Search.ElasticSearch
         {
             var names = GetSearchText(term);
 
-            return descriptor.Query(q => q.QueryString(x => x.AllFields().Query(names)))
+            return descriptor.Query(q => q.QueryString(qs => qs.Query(names)))
                 .Sort(s => s.Descending("_score").Descending("id")).Size(limit > 0 ? limit : 20).Index(IndexName);
         }
 

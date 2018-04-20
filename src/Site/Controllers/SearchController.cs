@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using BioEngine.Routing;
 using BioEngine.Search.Interfaces;
-using BioEngine.Site.Components;
+using BioEngine.Web;
 using MediatR;
 
 namespace BioEngine.Site.Controllers

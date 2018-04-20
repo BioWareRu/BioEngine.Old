@@ -27,7 +27,6 @@ using BioEngine.Content.Helpers;
 using BioEngine.Data;
 using BioEngine.Site.Filters;
 using BioEngine.Site.Helpers;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Site
 {
@@ -54,7 +53,6 @@ namespace BioEngine.Site
             services.AddMvc(options =>
                 {
                     options.Filters.Add(typeof(ExceptionFilter));
-                    options.AddMetricsResourceFilter();
                 })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
@@ -92,7 +90,6 @@ namespace BioEngine.Site
             {
                 o.ServiceUrl = new Uri(Configuration["BE_PATREON_SERVICE_URL"]);
             });
-            services.Configure<AdminAccessConfig>(o => o.AdminAccessToken = Configuration["BE_ADMIN_ACCESS_TOKEN"]);
 
             services.AddSingleton<PatreonApiHelper>();
 

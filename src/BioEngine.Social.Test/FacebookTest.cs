@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace BioEngine.Social.Twitter.Twitter.Test
+namespace BioEngine.Social.Test
 {
     public class FacebookTest
     {

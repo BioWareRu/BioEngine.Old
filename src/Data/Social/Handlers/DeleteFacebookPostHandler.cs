@@ -2,7 +2,6 @@
 using BioEngine.Data.Core;
 using BioEngine.Data.Social.Commands;
 using BioEngine.Social.Facebook;
-using BioEngine.Social.Twitter;
 using JetBrains.Annotations;
 
 namespace BioEngine.Data.Social.Handlers

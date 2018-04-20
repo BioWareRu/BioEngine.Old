@@ -18,6 +18,7 @@ namespace BioEngine.Site
                 .CreateDefaultBuilder(args)
                 .AddSerilog()
                 .AddAppMetrics()
+                .ConfigureBioEngine()
                 .UseStartup<Startup>()
                 .Build();
     }

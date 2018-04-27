@@ -47,7 +47,12 @@ namespace BioEngine.Web
                 {
                     metricsBuilder.Configuration.Configure(options =>
                     {
-                        options.DefaultContextLabel = whBuilder.Configuration["BW_APP_NAME"];
+                        var defaultContextLabel = whBuilder.HostingEnvironment.ApplicationName;
+                        if (!string.IsNullOrEmpty(whBuilder.Configuration["BW_APP_NAME"]))
+                        {
+                            defaultContextLabel = whBuilder.Configuration["BW_APP_NAME"];
+                        }
+                        options.DefaultContextLabel = defaultContextLabel;
                         options.GlobalTags["env"] = whBuilder.HostingEnvironment.IsStaging()
                             ? "stage"
                             : whBuilder.HostingEnvironment.IsProduction() ? "prod" : "dev";

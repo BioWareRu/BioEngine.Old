@@ -8,13 +8,17 @@ steps:
   displayName: 'publish site'
 - script: dotnet publish src/API/BioEngine.API.csproj -c Release --output ./.docker/publish
   displayName: 'publish api'
-- script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) src/Site/.docker
+- script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) -t biowareru/bioengine-site:latest src/Site/.docker
   displayName: 'build site image'
-- script: docker build -f src/API/.docker/Dockerfile -t biowareru/bioengine-api:1.0-$(build.buildId) src/API/.docker
+- script: docker build -f src/API/.docker/Dockerfile -t biowareru/bioengine-api:1.0-$(build.buildId) -t biowareru/bioengine-api:latest src/API/.docker
   displayName: 'build api image'
 - script: docker login -u $(dockerId) -p $(dockerPswd)
   displayName: 'login to docker hub'
-- script: docker push biowareru/bioengine-site:1.0-$(build.buildId)
+- script:
+  - docker push biowareru/bioengine-site:1.0-$(build.buildId)
+  - docker push biowareru/bioengine-site:latest
   displayName: 'push site image'
-- script: docker push biowareru/bioengine-api:1.0-$(build.buildId)
+- script:
+  - docker push biowareru/bioengine-api:1.0-$(build.buildId)
+  - docker push biowareru/bioengine-api:latest
   displayName: 'push api image'

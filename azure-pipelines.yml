@@ -14,11 +14,11 @@ steps:
   displayName: 'build api image'
 - script: docker login -u $(dockerId) -p $(dockerPswd)
   displayName: 'login to docker hub'
-- script:
-  - docker push biowareru/bioengine-site:1.0-$(build.buildId)
-  - docker push biowareru/bioengine-site:latest
+- script: |
+    docker push biowareru/bioengine-site:1.0-$(build.buildId)
+    docker push biowareru/bioengine-site:latest
   displayName: 'push site image'
-- script:
-  - docker push biowareru/bioengine-api:1.0-$(build.buildId)
-  - docker push biowareru/bioengine-api:latest
+- script: |
+    docker push biowareru/bioengine-api:1.0-$(build.buildId)
+    docker push biowareru/bioengine-api:latest
   displayName: 'push api image'

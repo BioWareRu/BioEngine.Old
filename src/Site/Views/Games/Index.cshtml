@@ -163,7 +163,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Url.Base().PublicUrl(Model.Game), Model.Game.Desc, Url.Base().GameLogoUrl(Model.Game), Model.Game.Title))
+                @await Html.PartialAsync("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Url.Base().PublicUrl(Model.Game), Model.Game.Desc, Url.Base().GameLogoUrl(Model.Game), Model.Game.Title))
             </div>
         </footer>
     </article>

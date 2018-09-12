@@ -17,7 +17,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Html.Raw(Model.File.Title)</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.File.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
+            @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.File.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <p>

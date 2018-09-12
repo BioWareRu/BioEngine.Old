@@ -14,13 +14,13 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">Файлы</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
+            @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Files().ParentFilesUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <div class="files">
             @foreach (var cat in Model.Cats)
             {
-                @Html.Partial("FileCatPartial", cat)
+                @await Html.PartialAsync("FileCatPartial", cat)
             }
 
         </div>

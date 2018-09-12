@@ -6,8 +6,8 @@
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.8.0" />
-    <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="NEST" Version="6.0.2" />
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="NEST" Version="6.3.0" />
   </ItemGroup>
 </Project>

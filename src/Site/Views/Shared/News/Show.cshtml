@@ -42,7 +42,7 @@
                   datetime="@Model.Date.DateTime.ToString("yyyy-MM-dd hh:mm:ss")">
                 @Model.Date.DateTime.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),&nbsp;@Model.News.Author.Name</time>
         </div>
-        @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.News.Parent, x => Url.News().ParentNewsUrl(Model.News), x => Url.Base().ParentIconUrl(Model.News)))
+        @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.News.Parent, x => Url.News().ParentNewsUrl(Model.News), x => Url.Base().ParentIconUrl(Model.News)))
     </header>
 
     <div class="b-text">
@@ -61,7 +61,7 @@
         }
 
         <div class="article-list__footer-controls">
-            @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Model.NewsUrl, Model.Description, Model.Image, Model.News.Title))
+            @await Html.PartialAsync("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Model.NewsUrl, Model.Description, Model.Image, Model.News.Title))
             <a class="article-list__comments" href="@Model.CommentsUrl">@Html.Raw(Localizer.Plural("Comments", Model.News.Comments))</a>
         </div>
     </footer>

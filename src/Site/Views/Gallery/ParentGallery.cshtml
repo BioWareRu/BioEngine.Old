@@ -14,7 +14,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">Галерея</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
+            @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
 
         <div class="files">

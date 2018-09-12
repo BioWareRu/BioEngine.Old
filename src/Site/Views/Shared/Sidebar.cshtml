@@ -1,5 +1,5 @@
 ﻿@using BioEngine.Site.ViewComponents
-@Html.Partial("~/Views/Shared/UserBlock.cshtml")
+@await Html.PartialAsync("~/Views/Shared/UserBlock.cshtml")
 <div class="sidebar__content-wrp">
     <form action="@Url.Action("Index", "Search")" class="search">
         <input class="search__input" type="search" placeholder="Поиск" name="query"/>

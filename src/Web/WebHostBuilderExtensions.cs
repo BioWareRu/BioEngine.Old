@@ -11,6 +11,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
+using Serilog.Sinks.Graylog.Core;
 
 namespace BioEngine.Web
 {

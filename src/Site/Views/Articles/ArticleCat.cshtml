@@ -20,7 +20,7 @@
                     <div>@Html.Raw(Model.ArticleCat.Descr)</div>
                 }
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Articles().ParentArticlesUrl(Model.ArticleCat), x => Url.Base().ParentIconUrl(x)))
+            @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(parent, x => Url.Articles().ParentArticlesUrl(Model.ArticleCat), x => Url.Base().ParentIconUrl(x)))
         </header>
         @if (string.IsNullOrEmpty(Model.ArticleCat.Content))
         {

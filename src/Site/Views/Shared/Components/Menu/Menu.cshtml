@@ -61,7 +61,7 @@
             </a>
             @if (menuItem.Children.Any())
             {
-                @Html.Partial("Menu", new MenuLevel {Items = menuItem.Children, Level = Model.Level + 1})
+                @await Html.PartialAsync("Menu", new MenuLevel {Items = menuItem.Children, Level = Model.Level + 1})
             }
         </li>
     }

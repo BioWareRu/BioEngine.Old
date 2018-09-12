@@ -85,7 +85,7 @@
         @RenderBody()
     </main>
     <aside class="page-layout__sidebar">
-        @Html.Partial("~/Views/Shared/Sidebar.cshtml")
+        @await Html.PartialAsync("~/Views/Shared/Sidebar.cshtml")
     </aside>
 </div>
 <!--footer-->

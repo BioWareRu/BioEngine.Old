@@ -26,7 +26,7 @@
 
         <footer class="article__footer">
             <div class="article__footer-controls">
-                @Html.Partial("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Url.Articles().PublicUrl(Model.Article), Model.Description, Model.Image, Model.Article.Title))
+                @await Html.PartialAsync("~/Views/Shared/Likes.cshtml", new YaShareViewModel(Url.Articles().PublicUrl(Model.Article), Model.Description, Model.Image, Model.Article.Title))
             </div>
         </footer>
     </article>

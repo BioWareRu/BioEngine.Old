@@ -15,7 +15,7 @@
             <div class="article__title-wrap">
                 <h2 class="article__title">@Model.GalleryCat.Title</h2>
             </div>
-            @Html.Partial("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.GalleryCat.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
+            @await Html.PartialAsync("~/Views/Shared/ParentHeader.cshtml", new ParentHeaderViewModel(Model.GalleryCat.Parent, x => Url.Gallery().ParentGalleryUrl(x), x => Url.Base().ParentIconUrl(x)))
         </header>
         <div id="nanoGallery">
             @foreach (var pic in Model.GalleryCat.Items)

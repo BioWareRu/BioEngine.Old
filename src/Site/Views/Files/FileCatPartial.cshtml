@@ -19,7 +19,7 @@
                 }
                 @foreach (var child in Model.Children)
                 {
-                    @Html.Partial("FileCatPartial", child)
+                    @await Html.PartialAsync("FileCatPartial", child)
                 }
             </ul>
         </li>

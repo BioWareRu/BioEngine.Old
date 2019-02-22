@@ -65,15 +65,18 @@ namespace BioEngine.Site.Controllers
             var allNews = (await Mediator.Send(new GetNewsQuery())).models;
             foreach (var news in allNews)
             {
+                var date = DateTimeOffset.FromUnixTimeSeconds(news.Date);
                 nodes.Add(new SitemapNode(Url.News().PublicUrl(news, true).ToString())
                 {
                     News = new SitemapNews(new NewsPublication(news.Title, "ru"),
-                        DateTimeOffset.FromUnixTimeSeconds(news.Date).Date,
+                        date.UtcDateTime,
                         news.Title),
                     ChangeFrequency = ChangeFrequency.Weekly,
-                    Priority = 0.9M
+                    Priority = 0.9M,
+                    LastModificationDate = date.UtcDateTime
                 });
             }
+
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
@@ -91,6 +94,7 @@ namespace BioEngine.Site.Controllers
                     Priority = 0.9M
                 });
             }
+
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
@@ -104,18 +108,21 @@ namespace BioEngine.Site.Controllers
                 nodes.Add(new SitemapNode(Url.Articles().CatPublicUrl(articleCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
-                    Priority = 0.9M
+                    Priority = 0.9M,
+                    LastModificationDate = DateTime.UtcNow
                 });
             }
+
             foreach (var article in (await Mediator.Send(new GetArticlesQuery())).models)
             {
                 nodes.Add(new SitemapNode(Url.Articles().PublicUrl(article).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
-                    LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(article.Date).Date,
+                    LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(article.Date).UtcDateTime,
                     Priority = 0.9M
                 });
             }
+
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
@@ -129,18 +136,21 @@ namespace BioEngine.Site.Controllers
                 nodes.Add(new SitemapNode(Url.Files().CatPublicUrl(fileCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
-                    Priority = 0.9M
+                    Priority = 0.9M,
+                    LastModificationDate = DateTime.UtcNow
                 });
             }
+
             foreach (var file in (await Mediator.Send(new GetFilesQuery())).models)
             {
                 nodes.Add(new SitemapNode(Url.Files().PublicUrl(file).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
-                    LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(file.Date).Date,
+                    LastModificationDate = DateTimeOffset.FromUnixTimeSeconds(file.Date).UtcDateTime,
                     Priority = 0.8M
                 });
             }
+
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
 
@@ -154,9 +164,11 @@ namespace BioEngine.Site.Controllers
                 nodes.Add(new SitemapNode(Url.Gallery().CatPublicUrl(galleryCat).ToString())
                 {
                     ChangeFrequency = ChangeFrequency.Weekly,
-                    Priority = 0.9M
+                    Priority = 0.9M,
+                    LastModificationDate = DateTime.UtcNow
                 });
             }
+
             return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
         }
     }

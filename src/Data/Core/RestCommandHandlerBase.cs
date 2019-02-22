@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
@@ -18,7 +19,7 @@ namespace BioEngine.Data.Core
             _validators = validators;
         }
 
-        protected override async Task<TResponse> HandleCore(TCommand command)
+        public override async Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken)
         {
             Logger.LogInformation($"Validate command {typeof(TCommand)}");
             await Validate(command);
@@ -34,6 +35,7 @@ namespace BioEngine.Data.Core
                 var result = await validator.ValidateAsync(command);
                 validattionResuls.Add(result);
             }
+
             if (validattionResuls.Any(x => !x.IsValid))
             {
                 throw new ValidationException(validattionResuls.SelectMany(x => x.Errors));

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using BioEngine.Data.DB;
 using MediatR;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
-    internal abstract class CommandHandlerBase<TRequest> : AsyncNotificationHandler<TRequest>
+    internal abstract class CommandHandlerBase<TRequest> : INotificationHandler<TRequest>
         where TRequest : INotification
     {
         protected abstract Task ExecuteCommandAsync(TRequest command);
@@ -25,11 +26,11 @@ namespace BioEngine.Data.Core
             Mapper = context.Mapper;
             Repository = context.Repository;
         }
-
-        protected override Task HandleCore(TRequest command)
+       
+        public Task Handle(TRequest notification, CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"Run command {GetType().FullName} for request {command.GetType().FullName}");
-            var result = ExecuteCommandAsync(command);
+            Logger.LogInformation($"Run command {GetType().FullName} for request {notification.GetType().FullName}");
+            var result = ExecuteCommandAsync(notification);
             Logger.LogInformation("Command excuted");
             return result;
         }

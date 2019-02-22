@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BioEngine.Common.Base;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Data.Core
 {
-    internal abstract class QueryHandlerBase<TRequest, TResponse> : AsyncRequestHandler<TRequest, TResponse>
+    internal abstract class QueryHandlerBase<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         protected abstract Task<TResponse> RunQueryAsync(TRequest message);
@@ -50,10 +51,10 @@ namespace BioEngine.Data.Core
             return query;
         }
 
-        protected override Task<TResponse> HandleCore(TRequest message)
+        public virtual Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"Run query {GetType().FullName} for message {message.GetType().FullName}");
-            var result = RunQueryAsync(message);
+            Logger.LogInformation($"Run query {GetType().FullName} for message {request.GetType().FullName}");
+            var result = RunQueryAsync(request);
             Logger.LogInformation("Query completed");
             return result;
         }

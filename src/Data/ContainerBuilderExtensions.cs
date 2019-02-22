@@ -51,40 +51,17 @@ namespace BioEngine.Data
                 .As<IMediator>()
                 .InstancePerLifetimeScope();
 
-            var mediatrOpenTypes = new[]
+            containerBuilder.Register<ServiceFactory>(context =>
             {
-                typeof(RequestHandler<>),
-                typeof(AsyncRequestHandler<,>),
-                typeof(NotificationHandler<>),
-                typeof(AsyncNotificationHandler<>)
-            };
+                var c = context.Resolve<IComponentContext>();
+                return t => c.Resolve(t);
+            });
 
-            foreach (var mediatrOpenType in mediatrOpenTypes)
-            {
-                containerBuilder
-                    .RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
-                    .AsClosedTypesOf(mediatrOpenType)
-                    .AsImplementedInterfaces();
-            }
+            containerBuilder.RegisterAssemblyTypes(typeof(HandlerBase).GetTypeInfo().Assembly)
+                .AsImplementedInterfaces();
 
             containerBuilder.RegisterGeneric(typeof(RequestPostProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
             containerBuilder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
-
-            containerBuilder.Register<SingleInstanceFactory>(ctx =>
-            {
-                var c = ctx.Resolve<IComponentContext>();
-                return t =>
-                {
-                    object o;
-                    return c.TryResolve(t, out o) ? o : null;
-                };
-            });
-
-            containerBuilder.Register<MultiInstanceFactory>(ctx =>
-            {
-                var c = ctx.Resolve<IComponentContext>();
-                return t => (IEnumerable<object>) c.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
-            });
 
             containerBuilder.RegisterGeneric(typeof(HandlerContext<>)).InstancePerDependency();
 

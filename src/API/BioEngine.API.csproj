@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.1.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />
@@ -16,6 +17,6 @@
     <ProjectReference Include="..\Web\BioEngine.Web.csproj" />
   </ItemGroup>
   <PropertyGroup>
-    <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
+    <UserSecretsId>bioengine</UserSecretsId>
   </PropertyGroup>
 </Project>

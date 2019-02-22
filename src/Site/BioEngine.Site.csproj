@@ -26,6 +26,6 @@
     <ProjectReference Include="..\Web\BioEngine.Web.csproj" />
   </ItemGroup>
   <PropertyGroup>
-    <UserSecretsId>6669c488-cfea-43d0-a0f5-a50c9ee9ca59</UserSecretsId>
+    <UserSecretsId>bioengine</UserSecretsId>
   </PropertyGroup>
 </Project>

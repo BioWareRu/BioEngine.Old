@@ -32,6 +32,7 @@ namespace BioEngine.API.Controllers
             return Model(file);
         }
         
+        [HttpDelete("{id}")]
         public override Task<IActionResult> Delete(int id)
         {
             throw new System.NotImplementedException();

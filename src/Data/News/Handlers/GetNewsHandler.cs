@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Data.Core;
@@ -43,12 +44,20 @@ namespace BioEngine.Data.News.Handlers
                 .Include(x => x.Developer)
                 .Include(x => x.Topic);
 
-            var data = await GetDataAsync(query, message);
-            foreach (var newse in data.models)
+            try
             {
-                newse.PublicUrl = _urlManager.News.PublicUrl(newse, true);
+                var data = await GetDataAsync(query, message);
+                foreach (var newse in data.models)
+                {
+                    newse.PublicUrl = _urlManager.News.PublicUrl(newse, true);
+                }
+                return data;
             }
-            return data;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
     }
 }

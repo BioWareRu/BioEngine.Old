@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -25,6 +26,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace BioEngine.API
 {
@@ -111,6 +113,25 @@ namespace BioEngine.API
             });
             services.AddMvc();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info {Title = "BioEngine", Version = "v1"});
+
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "Auth token",
+                    Name = "authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
+            });
+
             var builder = services.AddBioEngineData(Configuration);
 
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
@@ -137,6 +158,9 @@ namespace BioEngine.API
             {
                 context.Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "BioEngine API V1"); });
 
             app.UseAuthentication();
             app.UseCors("allorigins");

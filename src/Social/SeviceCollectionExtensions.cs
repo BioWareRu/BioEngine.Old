@@ -24,7 +24,7 @@ namespace BioEngine.Social
 
 
             services.AddSingleton<ISocialService, TwitterSocialService>();
-            services.AddSingleton<ISocialService, FacebookSocialService>();
+            //services.AddSingleton<ISocialService, FacebookSocialService>();
         }
     }
 }

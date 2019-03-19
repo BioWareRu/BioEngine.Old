@@ -38,6 +38,15 @@ namespace BioEngine.Common.Models
 
         [NotMapped]
         public int Position { get; set; }
+        
+        public int AuthorId { get; set; }
+        
+        [JsonProperty]
+        public int Date { get; set; }
+        
+        [ForeignKey(nameof(AuthorId))]
+        public User Author { get; set; }
+        
 
         [JsonProperty]
         public List<GalleryPicFile> Files

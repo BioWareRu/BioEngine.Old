@@ -9,16 +9,16 @@ steps:
       feedsToUse: 'select'
       verbosityRestore: 'minimal'
       vstsFeed: 'BioEngine'
-      
+
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
       custom: publish
-      publishWebProjects: false
+      publishWebProjects: true
       zipAfterPublish: false
       modifyOutputPath: false
       arguments: '--no-restore -c Release --output ./.docker/publish'
-      projects: 'src/Site/BioEngine.Site.csproj;src/API/BioEngine.API.csproj'
+      projects: '**/*.csproj'
 
   - script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) -t biowareru/bioengine-site:latest src/Site/.docker
     displayName: 'build site image'

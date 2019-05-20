@@ -3,21 +3,21 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="2.1.0" />
+    <PackageReference Include="App.Metrics.Health.Checks.Network" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.Redis" Version="0.4.1" />
-    <PackageReference Include="App.Metrics.AspNetCore" Version="3.0.0" />
-    <PackageReference Include="App.Metrics.AspNetCore.Health" Version="2.1.0" />
-    <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="3.0.0" />
-    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="3.0.0" />
-    <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="3.0.0" />
-    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="3.0.0" />
+    <PackageReference Include="App.Metrics.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.AspNetCore.Health" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.AspNetCore.Mvc" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.AspNetCore.Reporting" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="3.1.0" />
+    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Exceptions" Version="5.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
-    <PackageReference Include="Serilog.Sinks.Graylog" Version="2.0.7" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
+    <PackageReference Include="Serilog.Sinks.Graylog" Version="2.0.8" />
     <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\BioEngine.Common.csproj" />

@@ -2,23 +2,35 @@ pool:
   vmImage: 'ubuntu-16.04'
 
 steps:
-- script: dotnet restore
-  displayName: 'restore'
-- script: dotnet publish src/Site/BioEngine.Site.csproj -c Release --output ./.docker/publish
-  displayName: 'publish site'
-- script: dotnet publish src/API/BioEngine.API.csproj -c Release --output ./.docker/publish
-  displayName: 'publish api'
-- script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) -t biowareru/bioengine-site:latest src/Site/.docker
-  displayName: 'build site image'
-- script: docker build -f src/API/.docker/Dockerfile -t biowareru/bioengine-api:1.0-$(build.buildId) -t biowareru/bioengine-api:latest src/API/.docker
-  displayName: 'build api image'
-- script: docker login -u $(dockerId) -p $(dockerPswd)
-  displayName: 'login to docker hub'
-- script: |
-    docker push biowareru/bioengine-site:1.0-$(build.buildId)
-    docker push biowareru/bioengine-site:latest
-  displayName: 'push site image'
-- script: |
-    docker push biowareru/bioengine-api:1.0-$(build.buildId)
-    docker push biowareru/bioengine-api:latest
-  displayName: 'push api image'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: restore
+      projects: '**/*.csproj'
+      feedsToUse: 'select'
+      verbosityRestore: 'minimal'
+      vstsFeed: 'BioEngine'
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: custom
+      custom: publish
+      publishWebProjects: false
+      zipAfterPublish: false
+      modifyOutputPath: false
+      arguments: '--no-restore -c Release --output ./.docker/publish'
+      projects: '**/*.csproj'
+      
+  - script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) -t biowareru/bioengine-site:latest src/Site/.docker
+    displayName: 'build site image'
+  - script: docker build -f src/API/.docker/Dockerfile -t biowareru/bioengine-api:1.0-$(build.buildId) -t biowareru/bioengine-api:latest src/API/.docker
+    displayName: 'build api image'
+  - script: docker login -u $(dockerId) -p $(dockerPswd)
+    displayName: 'login to docker hub'
+  - script: |
+      docker push biowareru/bioengine-site:1.0-$(build.buildId)
+      docker push biowareru/bioengine-site:latest
+    displayName: 'push site image'
+  - script: |
+      docker push biowareru/bioengine-api:1.0-$(build.buildId)
+      docker push biowareru/bioengine-api:latest
+    displayName: 'push api image'

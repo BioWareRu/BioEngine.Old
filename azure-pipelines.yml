@@ -9,7 +9,7 @@ steps:
       feedsToUse: 'select'
       verbosityRestore: 'minimal'
       vstsFeed: 'BioEngine'
-
+      
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
@@ -18,8 +18,8 @@ steps:
       zipAfterPublish: false
       modifyOutputPath: false
       arguments: '--no-restore -c Release --output ./.docker/publish'
-      projects: '**/*.csproj'
-      
+      projects: 'src/Site/BioEngine.Site.csproj;src/API/BioEngine.API.csproj'
+
   - script: docker build -f src/Site/.docker/Dockerfile -t biowareru/bioengine-site:1.0-$(build.buildId) -t biowareru/bioengine-site:latest src/Site/.docker
     displayName: 'build site image'
   - script: docker build -f src/API/.docker/Dockerfile -t biowareru/bioengine-api:1.0-$(build.buildId) -t biowareru/bioengine-api:latest src/API/.docker

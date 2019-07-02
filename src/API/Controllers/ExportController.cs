@@ -13,7 +13,6 @@ using BioEngine.Routing;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.API.Controllers
 {
@@ -25,13 +24,11 @@ namespace BioEngine.API.Controllers
     public class ExportController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<ExportController> _logger;
         private readonly BioUrlManager _urlManager;
 
-        public ExportController(IMediator mediator, ILogger<ExportController> logger, BioUrlManager urlManager)
+        public ExportController(IMediator mediator, BioUrlManager urlManager)
         {
             _mediator = mediator;
-            _logger = logger;
             _urlManager = urlManager;
         }
 
@@ -65,28 +62,28 @@ namespace BioEngine.API.Controllers
             var news = (await _mediator.Send(new GetNewsQuery())).models;
             foreach (var newse in news)
             {
-                export.News.Add(new NewsExport(newse));
+                export.News.Add(new NewsExport(newse, _urlManager));
             }
 
             //articles cats
             var articlesCats = (await _mediator.Send(new GetArticlesCategoriesQuery())).models;
             foreach (var cat in articlesCats)
             {
-                export.ArticlesCats.Add(new ArticleCatExport(cat));
+                export.ArticlesCats.Add(new ArticleCatExport(cat, _urlManager));
             }
 
             //articles
             var articles = (await _mediator.Send(new GetArticlesQuery())).models;
             foreach (var item in articles)
             {
-                export.Articles.Add(new ArticleExport(item));
+                export.Articles.Add(new ArticleExport(item, _urlManager));
             }
 
             //files cats
             var filesCats = (await _mediator.Send(new GetFilesCategoriesQuery())).models;
             foreach (var cat in filesCats)
             {
-                export.FilesCats.Add(new FileCatExport(cat));
+                export.FilesCats.Add(new FileCatExport(cat, _urlManager));
             }
 
             //files
@@ -95,7 +92,7 @@ namespace BioEngine.API.Controllers
             {
                 if (!string.IsNullOrEmpty(item.YtId) || item.Link.Contains("files.bioware.ru"))
                 {
-                    export.Files.Add(new FileExport(item));
+                    export.Files.Add(new FileExport(item, _urlManager));
                 }
             }
 
@@ -103,7 +100,7 @@ namespace BioEngine.API.Controllers
             var galleryCats = (await _mediator.Send(new GetGalleryCategoriesQuery())).models;
             foreach (var cat in galleryCats)
             {
-                export.GalleryCats.Add(new GalleryCatExport(cat));
+                export.GalleryCats.Add(new GalleryCatExport(cat, _urlManager));
             }
 
             //gallery pics
@@ -119,16 +116,16 @@ namespace BioEngine.API.Controllers
 
     public class Export
     {
-        public List<DeveloperExport> Developers { get; set; } = new List<DeveloperExport>();
-        public List<GameExport> Games { get; set; } = new List<GameExport>();
-        public List<TopicExport> Topics { get; set; } = new List<TopicExport>();
-        public List<NewsExport> News { get; set; } = new List<NewsExport>();
-        public List<ArticleCatExport> ArticlesCats { get; set; } = new List<ArticleCatExport>();
-        public List<ArticleExport> Articles { get; set; } = new List<ArticleExport>();
-        public List<FileCatExport> FilesCats { get; set; } = new List<FileCatExport>();
-        public List<FileExport> Files { get; set; } = new List<FileExport>();
-        public List<GalleryCatExport> GalleryCats { get; set; } = new List<GalleryCatExport>();
-        public List<GalleryExport> GalleryPics { get; set; } = new List<GalleryExport>();
+        public readonly List<DeveloperExport> Developers = new List<DeveloperExport>();
+        public readonly List<GameExport> Games = new List<GameExport>();
+        public readonly List<TopicExport> Topics = new List<TopicExport>();
+        public readonly List<NewsExport> News = new List<NewsExport>();
+        public readonly List<ArticleCatExport> ArticlesCats = new List<ArticleCatExport>();
+        public readonly List<ArticleExport> Articles = new List<ArticleExport>();
+        public readonly List<FileCatExport> FilesCats = new List<FileCatExport>();
+        public readonly List<FileExport> Files = new List<FileExport>();
+        public readonly List<GalleryCatExport> GalleryCats = new List<GalleryCatExport>();
+        public readonly List<GalleryExport> GalleryPics = new List<GalleryExport>();
     }
 
     public class DeveloperExport
@@ -137,18 +134,20 @@ namespace BioEngine.API.Controllers
         {
             Id = developer.Id;
             Url = developer.Url;
+            FullUrl = urlManager.Base.ParentUrl(developer).ToString();
             Name = developer.Name;
             Info = developer.Info;
             Desc = developer.Desc;
             Logo = urlManager.Base.ParentIconUrl(developer).ToString();
         }
 
-        public int Id { get; set; }
-        public string Url { get; set; }
-        public string Name { get; set; }
-        public string Info { get; set; }
-        public string Desc { get; set; }
-        public string Logo { get; set; }
+        public int Id;
+        public string Url;
+        public string FullUrl;
+        public string Name;
+        public string Info;
+        public string Desc;
+        public string Logo;
     }
 
     public class GameExport
@@ -158,6 +157,7 @@ namespace BioEngine.API.Controllers
             Id = game.Id;
             DeveloperId = game.DeveloperId;
             Url = game.Url;
+            FullUrl = urlManager.Base.ParentUrl(game).ToString();
             Title = game.Title;
             Genre = game.Genre;
             ReleaseDate = game.ReleaseDate;
@@ -172,21 +172,22 @@ namespace BioEngine.API.Controllers
             TweetTag = game.TweetTag;
         }
 
-        public int Id { get; set; }
-        public int DeveloperId { get; set; }
-        public string Url { get; set; }
-        public string Title { get; set; }
-        public string Genre { get; set; }
-        public string ReleaseDate { get; set; }
-        public string Platforms { get; set; }
-        public string Desc { get; set; }
-        public string Keywords { get; set; }
-        public string Publisher { get; set; }
-        public string Localizator { get; set; }
-        public string Logo { get; set; }
-        public string SmallLogo { get; set; }
-        public DateTimeOffset Date { get; set; }
-        public string TweetTag { get; set; }
+        public int Id;
+        public int DeveloperId;
+        public string Url;
+        public string FullUrl;
+        public string Title;
+        public string Genre;
+        public string ReleaseDate;
+        public string Platforms;
+        public string Desc;
+        public string Keywords;
+        public string Publisher;
+        public string Localizator;
+        public string Logo;
+        public string SmallLogo;
+        public DateTimeOffset Date;
+        public string TweetTag;
     }
 
     public class TopicExport
@@ -196,26 +197,29 @@ namespace BioEngine.API.Controllers
             Id = topic.Id;
             Title = topic.Title;
             Url = topic.Url;
+            FullUrl = urlManager.Base.ParentUrl(topic).ToString();
             Logo = urlManager.Base.ParentIconUrl(topic).ToString();
             Desc = topic.Desc;
         }
 
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Logo { get; set; }
-        public string Desc { get; set; }
+        public int Id;
+        public string Title;
+        public string Url;
+        public string FullUrl;
+        public string Logo;
+        public string Desc;
     }
 
     public class NewsExport
     {
-        public NewsExport(News news)
+        public NewsExport(News news, BioUrlManager urlManager)
         {
             Id = news.Id;
             GameId = news.GameId;
             DeveloperId = news.DeveloperId;
             TopicId = news.TopicId;
             Url = news.Url;
+            FullUrl = urlManager.News.PublicUrl(news).ToString();
             Source = news.Source;
             Title = news.Title;
             ShortText = news.ShortText;
@@ -232,31 +236,32 @@ namespace BioEngine.API.Controllers
             FacebookId = news.FacebookId;
         }
 
-        public int Id { get; set; }
+        public int Id;
 
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
-        public string Url { get; set; }
-        public string Source { get; set; }
-        public string Title { get; set; }
-        public string ShortText { get; set; }
-        public string AddText { get; set; }
-        public int AuthorId { get; set; }
-        public int? ForumTopicId { get; set; }
-        public int? ForumPostId { get; set; }
-        public int Sticky { get; set; }
-        public DateTimeOffset Date { get; set; }
-        public DateTimeOffset LastChangeDate { get; set; }
-        public int Pub { get; set; }
-        public int Comments { get; set; }
-        public long? TwitterId { get; set; }
-        public string FacebookId { get; set; }
+        public int? GameId;
+        public int? DeveloperId;
+        public int? TopicId;
+        public string Url;
+        public string FullUrl;
+        public string Source;
+        public string Title;
+        public string ShortText;
+        public string AddText;
+        public int AuthorId;
+        public int? ForumTopicId;
+        public int? ForumPostId;
+        public int Sticky;
+        public DateTimeOffset Date;
+        public DateTimeOffset LastChangeDate;
+        public int Pub;
+        public int Comments;
+        public long? TwitterId;
+        public string FacebookId;
     }
 
     public class ArticleCatExport
     {
-        public ArticleCatExport(ArticleCat cat)
+        public ArticleCatExport(ArticleCat cat, BioUrlManager urlManager)
         {
             Id = cat.Id;
             GameId = cat.GameId;
@@ -265,24 +270,26 @@ namespace BioEngine.API.Controllers
             CatId = cat.CatId;
             Title = cat.Title;
             Url = cat.Url;
+            FullUrl = urlManager.Articles.CatPublicUrl(cat).ToString();
             Desc = cat.Descr;
             Content = cat.Content;
         }
 
-        public int Id { get; set; }
-        public int? CatId { get; set; }
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Desc { get; set; }
-        public string Content { get; set; }
+        public int Id;
+        public int? CatId;
+        public int? GameId;
+        public int? DeveloperId;
+        public int? TopicId;
+        public string Title;
+        public string Url;
+        public string FullUrl;
+        public string Desc;
+        public string Content;
     }
 
     public class ArticleExport
     {
-        public ArticleExport(Article article)
+        public ArticleExport(Article article, BioUrlManager urlManager)
         {
             Id = article.Id;
 
@@ -290,6 +297,7 @@ namespace BioEngine.API.Controllers
             DeveloperId = article.DeveloperId;
             TopicId = article.TopicId;
             Url = article.Url;
+            FullUrl = urlManager.Articles.PublicUrl(article).ToString();
             Source = article.Source;
             CatId = article.CatId;
             Title = article.Title;
@@ -301,26 +309,27 @@ namespace BioEngine.API.Controllers
             Pub = article.Pub;
         }
 
-        public int Id { get; set; }
+        public int Id;
 
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
-        public string Url { get; set; }
-        public string Source { get; set; }
-        public int? CatId { get; set; }
-        public string Title { get; set; }
-        public string Announce { get; set; }
-        public string Text { get; set; }
-        public int AuthorId { get; set; }
-        public int Count { get; set; }
-        public DateTimeOffset Date { get; set; }
-        public int Pub { get; set; }
+        public int? GameId;
+        public int? DeveloperId;
+        public int? TopicId;
+        public string Url;
+        public string FullUrl;
+        public string Source;
+        public int? CatId;
+        public string Title;
+        public string Announce;
+        public string Text;
+        public int AuthorId;
+        public int Count;
+        public DateTimeOffset Date;
+        public int Pub;
     }
 
     public class FileCatExport
     {
-        public FileCatExport(FileCat cat)
+        public FileCatExport(FileCat cat, BioUrlManager urlManager)
         {
             Id = cat.Id;
             GameId = cat.GameId;
@@ -329,28 +338,31 @@ namespace BioEngine.API.Controllers
             CatId = cat.CatId;
             Title = cat.Title;
             Url = cat.Url;
+            FullUrl = urlManager.Files.CatPublicUrl(cat).ToString();
             Desc = cat.Descr;
         }
 
-        public int Id { get; set; }
-        public int? CatId { get; set; }
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
-        public string Title { get; set; }
-        public string Desc { get; set; }
-        public string Url { get; set; }
+        public int Id;
+        public int? CatId;
+        public int? GameId;
+        public int? DeveloperId;
+        public int? TopicId;
+        public string Title;
+        public string Desc;
+        public string Url;
+        public string FullUrl;
     }
 
     public class FileExport
     {
-        public FileExport(File file)
+        public FileExport(File file, BioUrlManager urlManager)
         {
             Id = file.Id;
 
             GameId = file.GameId;
             DeveloperId = file.DeveloperId;
             Url = file.Url;
+            FullUrl = urlManager.Files.PublicUrl(file).ToString();
             CatId = file.CatId;
             Title = file.Title;
             Announce = file.Announce;
@@ -364,32 +376,33 @@ namespace BioEngine.API.Controllers
             }
             else
             {
-                Link = file.Link.Replace("http://files.bioware.ru", "");    
+                Link = file.Link.Replace("http://files.bioware.ru", "");
             }
 
             Date = DateTimeOffset.FromUnixTimeSeconds(file.Date);
         }
 
-        public int Id { get; set; }
+        public int Id;
 
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public string Url { get; set; }
-        public int CatId { get; set; }
-        public string Title { get; set; }
-        public string Desc { get; set; }
-        public string Announce { get; set; }
-        public string Link { get; set; }
-        public int Size { get; set; }
-        public string YtId { get; set; }
-        public int AuthorId { get; set; }
-        public int Count { get; set; }
-        public DateTimeOffset Date { get; set; }
+        public int? GameId;
+        public int? DeveloperId;
+        public string Url;
+        public string FullUrl;
+        public int CatId;
+        public string Title;
+        public string Desc;
+        public string Announce;
+        public string Link;
+        public int Size;
+        public string YtId;
+        public int AuthorId;
+        public int Count;
+        public DateTimeOffset Date;
     }
 
     public class GalleryCatExport
     {
-        public GalleryCatExport(GalleryCat cat)
+        public GalleryCatExport(GalleryCat cat, BioUrlManager urlManager)
         {
             Id = cat.Id;
             GameId = cat.GameId;
@@ -398,17 +411,19 @@ namespace BioEngine.API.Controllers
             CatId = cat.CatId;
             Title = cat.Title;
             Url = cat.Url;
+            FullUrl = urlManager.Gallery.CatPublicUrl(cat).ToString();
             Desc = cat.Desc;
         }
 
-        public int Id { get; set; }
-        public int? CatId { get; set; }
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int? TopicId { get; set; }
-        public string Title { get; set; }
-        public string Desc { get; set; }
-        public string Url { get; set; }
+        public int Id;
+        public int? CatId;
+        public int? GameId;
+        public int? DeveloperId;
+        public int? TopicId;
+        public string Title;
+        public string Desc;
+        public string Url;
+        public string FullUrl;
     }
 
     public class GalleryExport
@@ -432,23 +447,26 @@ namespace BioEngine.API.Controllers
                     Url = urlManager.Gallery.FullUrl(pic, i).ToString()
                 });
             }
+
+            FullUrl = urlManager.Gallery.PublicUrl(pic).ToString();
         }
 
-        public int Id { get; set; }
+        public int Id;
 
-        public int? GameId { get; set; }
-        public int? DeveloperId { get; set; }
-        public int CatId { get; set; }
-        public string Desc { get; set; }
-        public int Pub { get; set; }
-        public int AuthorId { get; set; }
-        public DateTimeOffset Date { get; set; }
-        public List<GalleryPicExport> Files { get; set; } = new List<GalleryPicExport>();
+        public int? GameId;
+        public int? DeveloperId;
+        public int CatId;
+        public string Desc;
+        public int Pub;
+        public int AuthorId;
+        public DateTimeOffset Date;
+        public readonly List<GalleryPicExport> Files = new List<GalleryPicExport>();
+        public string FullUrl;
     }
 
     public class GalleryPicExport
     {
-        public string Url { get; set; }
-        public string FileName { get; set; }
+        public string Url;
+        public string FileName;
     }
 }

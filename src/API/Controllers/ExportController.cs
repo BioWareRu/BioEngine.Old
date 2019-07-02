@@ -197,7 +197,6 @@ namespace BioEngine.API.Controllers
             Id = topic.Id;
             Title = topic.Title;
             Url = topic.Url;
-            FullUrl = urlManager.Base.ParentUrl(topic).ToString();
             Logo = urlManager.Base.ParentIconUrl(topic).ToString();
             Desc = topic.Desc;
         }
@@ -205,7 +204,6 @@ namespace BioEngine.API.Controllers
         public int Id;
         public string Title;
         public string Url;
-        public string FullUrl;
         public string Logo;
         public string Desc;
     }

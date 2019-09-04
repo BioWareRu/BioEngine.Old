@@ -10,7 +10,7 @@
     <ProjectReference Include="..\Social\BioEngine.Social.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
     <PackageReference Include="AutoMapper" Version="8.1.0" />
     <PackageReference Include="FluentValidation" Version="8.4.0" />

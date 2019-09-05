@@ -8,6 +8,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="AutoMapper" Version="8.1.0" />
-    <PackageReference Include="NEST" Version="6.7.0" />
+    <PackageReference Include="NEST" Version="7.3.0" />
   </ItemGroup>
 </Project>

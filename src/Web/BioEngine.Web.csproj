@@ -15,7 +15,7 @@
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Exceptions" Version="5.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
-    <PackageReference Include="Serilog.Sinks.Graylog" Version="2.0.8" />
+    <PackageReference Include="Serilog.Sinks.Graylog" Version="2.0.11" />
     <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
   </ItemGroup>
